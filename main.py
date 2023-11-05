@@ -8,7 +8,6 @@ from uuid import UUID
 import langsmith
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from langchain.chat_models import ChatOpenAI
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder, PromptTemplate
 from langchain.schema import Document
@@ -28,6 +27,9 @@ from langserve import add_routes
 from langsmith import Client
 from pydantic import BaseModel
 from voyage import VoyageEmbeddings
+
+from llm_pipeline import get_pipeline
+from langchain.llms.huggingface_pipeline import HuggingFacePipeline
 
 RESPONSE_TEMPLATE = """\
 You are an expert programmer and problem-solver, tasked with answering any question \
@@ -186,11 +188,8 @@ def create_chain(
     )
 
 
-llm = ChatOpenAI(
-    model="gpt-3.5-turbo-16k",
-    streaming=True,
-    temperature=0,
-)
+MODEL_ID = "meta-llama/Llama-2-7b-chat-hf"
+llm = HuggingFacePipeline(pipeline=get_pipeline(MODEL_ID))
 retriever = get_retriever()
 answer_chain = create_chain(
     llm,

@@ -18,7 +18,11 @@ weaviate-client = "^3.23.2"
 psycopg2 = "^2.9.7"
 lxml = "^4.9.3"
 langserve = {extras = ["server"], version = "^0.0.8"}
-
+faiss-cpu = "^1.7.4"
+transformers = "^4.33.3"
+torch = "^2.1.0"
+bitsandbytes = "^0.41.1"
+accelerate = "^0.23.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.9.1"

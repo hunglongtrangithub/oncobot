@@ -2,7 +2,7 @@
 import logging
 import os
 import re
-from parser import langchain_docs_extractor
+from parse import langchain_docs_extractor
 
 import weaviate
 from bs4 import BeautifulSoup, SoupStrainer

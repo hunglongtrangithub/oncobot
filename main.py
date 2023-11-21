@@ -196,7 +196,10 @@ answer_chain = create_chain(
     retriever,
 )
 
-
+@app.get("/test")
+async def test():
+    print("Hello World!")
+    return {"result": "Hello World!"}
 add_routes(app, answer_chain, path="/chat", input_type=ChatRequest)
 
 

@@ -6,7 +6,7 @@ authors = ["SN <6432132+samnoyes@users.noreply.github.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10,<3.13"
+python = "^3.11"
 openai = "^0.28.0"
 fastapi = "^0.103.1"
 pydantic = "1.10"
@@ -15,7 +15,6 @@ uvicorn = "^0.23.2"
 beautifulsoup4 = "^4.12.2"
 tiktoken = "^0.4.0"
 weaviate-client = "^3.23.2"
-psycopg2 = "^2.9.7"
 lxml = "^4.9.3"
 langserve = {extras = ["server"], version = "^0.0.8"}
 faiss-cpu = "^1.7.4"

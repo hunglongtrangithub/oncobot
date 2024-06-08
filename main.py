@@ -5,7 +5,7 @@ import os
 from typing import AsyncGenerator
 
 from fastapi import FastAPI, File, HTTPException, UploadFile, Form
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from pathlib import Path
@@ -25,17 +25,17 @@ from config import settings
 logger = get_logger(__name__)
 
 
-chat_model = CustomChatHuggingFace("meta-llama/Meta-Llama-3-8B-Instruct")
+# chat_model = CustomChatHuggingFace("meta-llama/Meta-Llama-3-8B-Instruct")
 # chat_model = CustomChatHuggingFace("facebook/opt-125m")
-# chat_model = DummyChat()
+chat_model = DummyChat()
 retriever = CustomRetriever(num_docs=1, semantic_ratio=0.1)
 chain = RAGChain(retriever, chat_model)
-tts = CoquiTTS()
-transcribe = WhisperSTT()
-# tts = DummyTTS()
-# transcribe = DummyOpenAIWhisperSTT()
-# talker = DummyTalker()
-talker = CustomSadTalker()
+# tts = CoquiTTS()
+# transcribe = WhisperSTT()
+# talker = CustomSadTalker()
+tts = DummyTTS()
+transcribe = DummyOpenAIWhisperSTT()
+talker = DummyTalker()
 
 
 app = FastAPI()
@@ -120,7 +120,13 @@ async def transcribe_audio(
         f.write(user_audio_file.file.read())
     try:
         transcript = await transcribe.arun(audio_path=file_path)
-        return {"transcript": transcript}
+        return JSONResponse(
+            content={"transcript": transcript},
+            background=BackgroundTask(
+                delete_file,
+                file_path,
+            ),
+        )
     except Exception as e:
         error_message = f"Internal server error from endpoint /transcribe_audio: {e}"
         logger.error(error_message)

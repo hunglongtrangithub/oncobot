@@ -457,6 +457,20 @@ export function ChatWindow(props: { titleText?: string }) {
     }
   };
 
+  const toggleRecording = (callback_action: null | "audio" | "video" = null) => {
+    if (selectedChatbot === "") {
+      toast.error("Please select a chatbot first.");
+      return;
+    }
+    if (isRecording) {
+      setIsRecording(false);
+      recorderRef.current.stop(callback_action);
+    } else {
+      setIsRecording(true);
+      recorderRef.current.start();
+    }
+  }
+  
   return (
     <div className="flex flex-col items-center p-8 rounded grow max-h-full">
       {messages.length > 0 && (
@@ -541,7 +555,11 @@ export function ChatWindow(props: { titleText?: string }) {
               isRecording ? (
                 <MdStop />
               ) : isTranscribing ? (
-                <Spinner />
+                <CircularProgress
+                  isIndeterminate
+                  size="30px"
+                  color="blue.300"
+                />
               ) : (
                 <MdMic />
               )
@@ -549,13 +567,7 @@ export function ChatWindow(props: { titleText?: string }) {
             type="submit"
             onClick={(e) => {
               e.preventDefault();
-              if (isRecording) {
-                setIsRecording(false);
-                recorderRef.current.stop("video");
-              } else {
-                setIsRecording(true);
-                recorderRef.current.start();
-              }
+              toggleRecording("video");
             }}
           />
         </VStack>
@@ -616,13 +628,7 @@ export function ChatWindow(props: { titleText?: string }) {
             type="submit"
             onClick={(e) => {
               e.preventDefault();
-              if (isRecording) {
-                setIsRecording(false);
-                recorderRef.current.stop();
-              } else {
-                setIsRecording(true);
-                recorderRef.current.start();
-              }
+              toggleRecording();
             }}
           />
         </InputLeftElement>

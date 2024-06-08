@@ -67,11 +67,10 @@ class SadTalker():
                 mp3_to_wav(driven_audio, audio_path.replace('.mp3', '.wav'), 16000)
                 audio_path = audio_path.replace('.mp3', '.wav')
             else:
-                shutil.move(driven_audio, input_dir)
+                shutil.copy(driven_audio, input_dir)
 
         elif use_idle_mode:
             audio_path = os.path.join(input_dir, 'idlemode_'+str(length_of_audio)+'.wav') ## generate audio from this new audio_path
-            from pydub import AudioSegment
             one_sec_segment = AudioSegment.silent(duration=1000*length_of_audio)  #duration in milliseconds
             one_sec_segment.export(audio_path, format="wav")
         else:

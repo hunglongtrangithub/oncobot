@@ -65,8 +65,13 @@ class DummyChat(BaseChat):
     async def astream(
         self, current_conversation: List[Dict[str, str]]
     ) -> AsyncGenerator[str, None]:
+        import asyncio
+
         async def async_generator():
-            yield "DummyChat astream:" + self.default_message
+            await asyncio.sleep(1)
+            for _ in range(100):
+                await asyncio.sleep(0.01)
+                yield "DummyChat astream:" + self.default_message
 
         return async_generator()
 

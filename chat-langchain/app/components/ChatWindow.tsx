@@ -57,6 +57,8 @@ export function ChatWindow(props: { titleText?: string }) {
   >([]);
   const [chatbots, setChatbots] = useState<string[]>([]);
   const [selectedChatbot, setSelectedChatbot] = useState<string>("");
+  const [abortController, setAbortController] =
+    useState<AbortController | null>(null);
 
   const fetchBots = async () => {
     const response = await fetch("api/bots").then((res) => res.json());
@@ -143,6 +145,9 @@ export function ChatWindow(props: { titleText?: string }) {
     ]);
     setIsLoading(true);
 
+    const controller = new AbortController();
+    setAbortController(controller);
+
     let accumulatedMessage = "";
     let runId: string | undefined = undefined;
     let sources: Source[] | undefined = undefined;
@@ -173,6 +178,7 @@ export function ChatWindow(props: { titleText?: string }) {
       const sourceStepName = "FindDocs";
       let streamedResponse: Record<string, any> = {};
       if (noStream) {
+        // FIXME: resolve the error: AbortError: signal is aborted without reason
         await fetch(apiBaseUrl + "/chat/ainvoke_log", {
           method: "POST",
           headers: {
@@ -182,6 +188,7 @@ export function ChatWindow(props: { titleText?: string }) {
             question: messageValue,
             chat_history: chatHistory,
           }),
+          signal: controller.signal,
         })
           .then((response) => {
             console.log(response);
@@ -226,6 +233,7 @@ export function ChatWindow(props: { titleText?: string }) {
             question: messageValue,
             chat_history: chatHistory,
           }),
+          signal: controller.signal,
           openWhenHidden: true,
           onerror(err) {
             throw err;
@@ -298,7 +306,12 @@ export function ChatWindow(props: { titleText?: string }) {
       }
       return accumulatedMessage;
     } catch (e: any) {
-      toast.error(e.toString());
+      if (e.name === "AbortError") {
+        console.log("sendMessage fetch request was aborted");
+        toast.info("Fetching LLM response was canceled.");
+      } else {
+        toast.error(e.toString());
+      }
       setMessages((prevMessages) => prevMessages.slice(0, -1));
       setIsLoading(false);
       setInput(messageValue);
@@ -320,37 +333,68 @@ export function ChatWindow(props: { titleText?: string }) {
     formData.append("message", message);
     formData.append("conversationId", conversationId);
     formData.append("chatbot", selectedChatbot);
+
+    const controller = new AbortController();
+    setAbortController(controller);
+
     setIsSpeechLoading(true);
-    const audioResponse = await fetch(apiBaseUrl + "/text_to_speech", {
-      method: "POST",
-      body: formData,
-    });
-    if (!audioResponse.ok) {
-      const errorMessage = await audioResponse.text();
-      console.error("Failed to fetch audio:", errorMessage);
-      toast.error("Failed to transform text to speech for AI response:" + errorMessage);
+    try {
+      const audioResponse = await fetch(apiBaseUrl + "/text_to_speech", {
+        method: "POST",
+        body: formData,
+        signal: controller.signal,
+      });
 
+      if (!audioResponse.ok) {
+        const errorMessage = await audioResponse.text();
+        console.error("Failed to fetch audio:", errorMessage);
+        toast.error(
+          "Failed to transform text to speech for AI response:" + errorMessage,
+        );
+
+        setIsSpeechLoading(false);
+        return;
+      }
+
+      const audioBlob = await audioResponse.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+
+      console.log("playing audio");
+      audio.play();
+
+      audio.onplay = () => {
+        console.log("audio playing");
+        setIsSpeechLoading(false);
+        setIsSpeechPlaying(true);
+      };
+
+      audio.onended = () => {
+        console.log("audio ended");
+        setIsSpeechPlaying(false);
+      };
+
+      // Handle abort controller's signal
+      controller.signal.addEventListener("abort", () => {
+        if (audio) {
+          audio.pause();
+          audio.currentTime = 0; // Reset the audio playback position
+        }
+        console.log("Audio playback was paused");
+        toast.info("Audio playback was canceled.");
+        setIsSpeechLoading(false);
+        setIsSpeechPlaying(false);
+      });
+    } catch (error: any) {
+      if (error.name === "AbortError") {
+        console.log("Audio playback was aborted");
+        toast.info("Audio playback was canceled.");
+      } else {
+        console.error("Audio playback error:", error);
+        toast.error("Failed to play audio.");
+      }
       setIsSpeechLoading(false);
-      return;
     }
-
-    const audioBlob = await audioResponse.blob();
-    const audioUrl = URL.createObjectURL(audioBlob);
-    const audio = new Audio(audioUrl);
-
-    console.log("playing audio");
-    audio.play();
-
-    audio.onplay = () => {
-      console.log("audio playing");
-      setIsSpeechLoading(false);
-      setIsSpeechPlaying(true);
-    };
-
-    audio.onended = () => {
-      console.log("audio ended");
-      setIsSpeechPlaying(false);
-    };
   };
 
   const playMessageVideo = async (message: string, selectedChatbot: string) => {
@@ -364,60 +408,97 @@ export function ChatWindow(props: { titleText?: string }) {
     formData.append("message", message);
     formData.append("conversationId", conversationId);
     formData.append("chatbot", selectedChatbot);
+
+    const controller = new AbortController();
+    setAbortController(controller);
+
     setIsSpeechLoading(true);
-    const audioResponse = await fetch(apiBaseUrl + "/text_to_speech", {
-      method: "POST",
-      body: formData,
-    });
-    if (!audioResponse.ok) {
-      const errorMessage = await audioResponse.text();
-      console.error("Failed to fetch audio:", errorMessage);
-      toast.error("Failed to transform text to speech for AI response:" + errorMessage);
+    try {
+      const audioResponse = await fetch(apiBaseUrl + "/text_to_speech", {
+        method: "POST",
+        body: formData,
+        signal: controller.signal,
+      });
 
-      setIsSpeechLoading(false);
-      return;
-    }
-    const audioBlob = await audioResponse.blob();
+      if (!audioResponse.ok) {
+        const errorMessage = await audioResponse.text();
+        console.error("Failed to fetch audio:", errorMessage);
+        toast.error(
+          "Failed to transform text to speech for AI response:" + errorMessage,
+        );
 
-    formData = new FormData();
-    formData.append("bot_speech_file", audioBlob, `${selectedChatbot}.mp3`);
-    const botImageBlob = await fetch(`/bots/${selectedChatbot}.jpg`).then(
-      (res) => res.blob(),
-    );
-    formData.append("bot_image_file", botImageBlob, `${selectedChatbot}.jpg`);
-    formData.append("conversationId", conversationId);
-    formData.append("chatbot", selectedChatbot);
-    const videoResponse = await fetch(apiBaseUrl + "/speech_to_video", {
-      method: "POST",
-      body: formData,
-    });
-    if (!videoResponse.ok) {
-      const errorMessage = await videoResponse.text();
-      console.error("Failed to fetch video:", errorMessage);
-      toast.error("Failed to transform text to video for AI response:" + errorMessage);
-
-      setIsSpeechLoading(false);
-      return;
-    }
-    setIsVideoPlaying(true);
-    const videoBlob = await videoResponse.blob();
-
-    const videoUrl = URL.createObjectURL(videoBlob);
-    if (videoRef.current) {
-      videoRef.current.src = videoUrl;
-      videoRef.current.play();
-
-      videoRef.current.onplay = () => {
-        console.log("video playing");
         setIsSpeechLoading(false);
-        setIsSpeechPlaying(true);
-      };
+        return;
+      }
+      const audioBlob = await audioResponse.blob();
 
-      videoRef.current.onended = () => {
-        console.log("video ended");
+      formData = new FormData();
+      formData.append("bot_speech_file", audioBlob, `${selectedChatbot}.mp3`);
+      const botImageBlob = await fetch(`/bots/${selectedChatbot}.jpg`).then(
+        (res) => res.blob(),
+      );
+      formData.append("bot_image_file", botImageBlob, `${selectedChatbot}.jpg`);
+      formData.append("conversationId", conversationId);
+      formData.append("chatbot", selectedChatbot);
+
+      const videoResponse = await fetch(apiBaseUrl + "/speech_to_video", {
+        method: "POST",
+        body: formData,
+        signal: controller.signal,
+      });
+
+      if (!videoResponse.ok) {
+        const errorMessage = await videoResponse.text();
+        console.error("Failed to fetch video:", errorMessage);
+        toast.error(
+          "Failed to transform text to video for AI response:" + errorMessage,
+        );
+
+        setIsSpeechLoading(false);
+        return;
+      }
+      setIsVideoPlaying(true);
+      const videoBlob = await videoResponse.blob();
+
+      const videoUrl = URL.createObjectURL(videoBlob);
+      if (videoRef.current) {
+        videoRef.current.src = videoUrl;
+        videoRef.current.play();
+
+        videoRef.current.onplay = () => {
+          console.log("video playing");
+          setIsSpeechLoading(false);
+          setIsSpeechPlaying(true);
+        };
+
+        videoRef.current.onended = () => {
+          console.log("video ended");
+          setIsSpeechPlaying(false);
+          setIsVideoPlaying(false);
+        };
+      }
+
+      // Handle abort controller's signal
+      controller.signal.addEventListener("abort", () => {
+        if (videoRef.current) {
+          videoRef.current.pause();
+          videoRef.current.currentTime = 0; // Reset the video playback position
+        }
+        console.log("Video playback was aborted");
+        toast.info("Video playback was canceled.");
+        setIsSpeechLoading(false);
         setIsSpeechPlaying(false);
         setIsVideoPlaying(false);
-      };
+      });
+    } catch (error: any) {
+      if (error.name === "AbortError") {
+        console.log("Video playback was aborted");
+        toast.info("Video playback was canceled.");
+      } else {
+        console.error("Video playback error:", error);
+        toast.error("Failed to play video.");
+      }
+      setIsSpeechLoading(false);
     }
   };
 
@@ -431,37 +512,63 @@ export function ChatWindow(props: { titleText?: string }) {
     formData.append("user_audio_file", audioBlob, `${conversationId}.mp3`);
     formData.append("conversationId", conversationId);
 
-    setIsTranscribing(true);
-    const response = await fetch(apiBaseUrl + "/transcribe_audio", {
-      method: "POST",
-      body: formData,
-    });
+    const controller = new AbortController();
+    setAbortController(controller);
 
-    if (response.ok) {
-      const data = await response.json();
-      console.log(data);
-      const userMessage = data.transcript;
-      setIsTranscribing(false);
-      sendMessage(userMessage).then((aiMessage) => {
-        if (!aiMessage) return;
-        console.log("AI Message:", aiMessage);
-        if (callback_action === "audio") {
-          playMessageAudio(aiMessage, selectedChatbotRef.current);
-        } else if (callback_action === "video") {
-          playMessageVideo(aiMessage, selectedChatbotRef.current);
-        }
+    setIsTranscribing(true);
+    try {
+      const response = await fetch(apiBaseUrl + "/transcribe_audio", {
+        method: "POST",
+        body: formData,
+        signal: controller.signal,
       });
-    } else {
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        const userMessage = data.transcript;
+        setIsTranscribing(false);
+        sendMessage(userMessage).then((aiMessage) => {
+          if (!aiMessage) return;
+          console.log("AI Message:", aiMessage);
+          if (callback_action === "audio") {
+            playMessageAudio(aiMessage, selectedChatbotRef.current);
+          } else if (callback_action === "video") {
+            playMessageVideo(aiMessage, selectedChatbotRef.current);
+          }
+        });
+      } else {
+        setIsTranscribing(false);
+        toast.error("Failed to transform user audio to text.");
+      }
+    } catch (error: any) {
+      if (error.name === "AbortError") {
+        console.log("Transcription was aborted");
+        toast.info("Transcription was canceled.");
+      } else {
+        console.error("Transcription error:", error);
+        toast.error("Failed to transform user audio to text.");
+      }
       setIsTranscribing(false);
-      toast.error("Failed to transform user audio to text.");
     }
   };
 
-  const toggleRecording = (callback_action: null | "audio" | "video" = null) => {
-    if (selectedChatbot === "") {
-      toast.error("Please select a chatbot first.");
-      return;
+  const cancelOperation = () => {
+    if (abortController) {
+      abortController.abort();
+      setIsLoading(false);
+      setIsTranscribing(false);
+      setIsSpeechLoading(false);
+      setIsSpeechPlaying(false);
+      setIsVideoPlaying(false);
+
+      setAbortController(null); // Clear the abort controller after aborting
     }
+  };
+
+  const toggleRecording = (
+    callback_action: null | "audio" | "video" = null,
+  ) => {
     if (isRecording) {
       setIsRecording(false);
       recorderRef.current.stop(callback_action);
@@ -469,8 +576,8 @@ export function ChatWindow(props: { titleText?: string }) {
       setIsRecording(true);
       recorderRef.current.start();
     }
-  }
-  
+  };
+
   return (
     <div className="flex flex-col items-center p-8 rounded grow max-h-full">
       {messages.length > 0 && (
@@ -533,6 +640,17 @@ export function ChatWindow(props: { titleText?: string }) {
                 <RiRobot2Line />
               )
             }
+            onClick={(e) => {
+              e.preventDefault();
+              if (selectedChatbot === "") {
+                toast.error("Please select a chatbot first.");
+                return;
+              }
+              if (isSpeechLoading || isSpeechPlaying) {
+                cancelOperation();
+                return;
+              }
+            }}
           />
         </VStack>
         <VStack spacing={10}>
@@ -555,11 +673,7 @@ export function ChatWindow(props: { titleText?: string }) {
               isRecording ? (
                 <MdStop />
               ) : isTranscribing ? (
-                <CircularProgress
-                  isIndeterminate
-                  size="30px"
-                  color="blue.300"
-                />
+                <Spinner />
               ) : (
                 <MdMic />
               )
@@ -567,6 +681,14 @@ export function ChatWindow(props: { titleText?: string }) {
             type="submit"
             onClick={(e) => {
               e.preventDefault();
+              if (selectedChatbot === "") {
+                toast.error("Please select a chatbot first.");
+                return;
+              }
+              if (isTranscribing) {
+                cancelOperation();
+                return;
+              }
               toggleRecording("video");
             }}
           />
@@ -604,6 +726,8 @@ export function ChatWindow(props: { titleText?: string }) {
                 aiEmoji="🦜"
                 isMostRecent={index === 0}
                 messageCompleted={!isLoading}
+                selectedChatbot={selectedChatbot}
+                conversationId={conversationId}
               ></ChatMessageBubble>
             ))
         ) : (
@@ -628,6 +752,10 @@ export function ChatWindow(props: { titleText?: string }) {
             type="submit"
             onClick={(e) => {
               e.preventDefault();
+              if (isTranscribing) {
+                cancelOperation();
+                return;
+              }
               toggleRecording();
             }}
           />
@@ -660,6 +788,10 @@ export function ChatWindow(props: { titleText?: string }) {
             type="submit"
             onClick={(e) => {
               e.preventDefault();
+              if (isLoading) {
+                cancelOperation();
+                return;
+              }
               sendMessage();
             }}
           />

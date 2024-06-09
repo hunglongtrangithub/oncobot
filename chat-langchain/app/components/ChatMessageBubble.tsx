@@ -118,8 +118,11 @@ export function ChatMessageBubble(props: {
   aiEmoji?: string;
   isMostRecent: boolean;
   messageCompleted: boolean;
+  selectedChatbot: string;
+  conversationId: string;
 }) {
   const { role, content, text, runId } = props.message;
+  const { conversationId, selectedChatbot } = props;
   const isUser = role === "user";
   const [isLoading, setIsLoading] = useState(false);
   const [traceIsLoading, setTraceIsLoading] = useState(false);
@@ -128,6 +131,8 @@ export function ChatMessageBubble(props: {
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [comment, setComment] = useState("");
   const [feedbackColor, setFeedbackColor] = useState("");
+  const [abortController, setAbortController] =
+    useState<AbortController | null>(null);
   const upButtonRef = useRef(null);
   const downButtonRef = useRef(null);
 
@@ -257,9 +262,12 @@ export function ChatMessageBubble(props: {
       emojis: buttonId === "upButton" ? ["👍"] : ["👎"],
     });
   };
-  // NOTE: May need to remove this function in the future
-  const playMessageAudio = (message: string) => {
-    console.log("play message audio");
+
+  const playMessageAudioWithSpeechSynthesis = (
+    message: string,
+    controller: AbortController,
+  ) => {
+    console.log("play message audio with speech synthesis");
 
     // Check if speech synthesis is supported
     if (!window.speechSynthesis) {
@@ -290,7 +298,100 @@ export function ChatMessageBubble(props: {
       console.log("audio ended");
       setIsSpeechPlaying(false);
     };
+
+    // Handle abort controller's signal for speech synthesis
+    controller.signal.addEventListener("abort", () => {
+      window.speechSynthesis.cancel();
+      console.log("Speech synthesis was canceled");
+      toast.info("Speech synthesis was canceled.");
+      setIsSpeechLoading(false);
+      setIsSpeechPlaying(false);
+    });
   };
+
+  const playMessageAudio = async (message: string, selectedChatbot: string) => {
+    console.log("play message audio");
+    if (selectedChatbot === "") {
+      toast.error("Please select a chatbot to play audio.");
+      return;
+    }
+
+    const formData = new FormData();
+    const botAudioBlob = await fetch(`/bots/${selectedChatbot}.mp3`).then(
+      (res) => res.blob(),
+    );
+    formData.append("bot_voice_file", botAudioBlob, `${selectedChatbot}.mp3`);
+    formData.append("message", message);
+    formData.append("conversationId", conversationId);
+    formData.append("chatbot", selectedChatbot);
+
+    const controller = new AbortController();
+    setAbortController(controller);
+
+    setIsSpeechLoading(true);
+    try {
+      const audioResponse = await fetch(apiBaseUrl + "/text_to_speech", {
+        method: "POST",
+        body: formData,
+        signal: controller.signal,
+      });
+      if (!audioResponse.ok) {
+        const errorMessage = await audioResponse.text();
+        console.error("Failed to fetch audio:", errorMessage);
+        playMessageAudioWithSpeechSynthesis(message, controller);
+        setIsSpeechLoading(false);
+        return;
+      }
+
+      const audioBlob = await audioResponse.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+
+      console.log("playing audio");
+      audio.play();
+
+      audio.onplay = () => {
+        console.log("audio playing");
+        setIsSpeechLoading(false);
+        setIsSpeechPlaying(true);
+      };
+
+      audio.onended = () => {
+        console.log("audio ended");
+        setIsSpeechPlaying(false);
+      };
+
+      // Handle abort controller's signal for audio playback
+      controller.signal.addEventListener("abort", () => {
+        if (audio) {
+          audio.pause();
+          audio.currentTime = 0; // Reset the audio playback position
+        }
+        console.log("Audio playback was paused");
+        toast.info("Audio playback was canceled.");
+        setIsSpeechLoading(false);
+        setIsSpeechPlaying(false);
+      });
+    } catch (error: any) {
+      if (error.name === "AbortError") {
+        console.log("Audio playback was aborted");
+        toast.info("Audio playback was canceled.");
+      } else {
+        console.error("Audio playback error:", error);
+        toast.error("Failed to play audio.");
+      }
+      setIsSpeechLoading(false);
+    }
+  };
+  
+  const cancelOperation = () => {
+    if (abortController) {
+      abortController.abort();
+      setIsSpeechLoading(false);
+      setIsSpeechPlaying(false);
+      setAbortController(null);
+    }
+  }
 
   return (
     <VStack align="start" spacing={5} pb={5}>
@@ -407,15 +508,18 @@ export function ChatMessageBubble(props: {
               colorScheme="blue"
               onClick={(e) => {
                 e.preventDefault();
-                if (isSpeechLoading || isSpeechPlaying) return;
-                playMessageAudio(text);
+                if (isSpeechLoading || isSpeechPlaying) {
+                  cancelOperation();
+                  return;
+                }
+                playMessageAudio(text, selectedChatbot);
               }}
             >
               🔉 Audio
             </Button>
             <Spacer />
-          {isSpeechPlaying ? (
-            <Spinner emptyColor="white"/>
+            {isSpeechPlaying ? (
+              <Spinner emptyColor="white" />
             ) : isSpeechLoading ? (
               <CircularProgress isIndeterminate size="30px" color="blue.300" />
             ) : null}

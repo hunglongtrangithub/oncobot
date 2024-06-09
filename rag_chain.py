@@ -82,7 +82,7 @@ And the follow-up question:
 
 {question}
 
-Extract the name of the patient that is the most relevant to the follow-up question. Do not \
+Extract the name of the patient that is the most relevant to the conversation leading up to the follow-up question. Do not \
 include any other information in your response.
 """
 

@@ -113,7 +113,7 @@ class CropAndExtract():
         frames_pil = [Image.fromarray(cv2.resize(frame,(pic_size, pic_size))) for frame in x_full_frames]
         if len(frames_pil) == 0:
             print('No face is detected in the input file')
-            return None, None
+            return None, None, None
 
         # save crop info
         for frame in frames_pil:

@@ -1,1 +1,1 @@
-from sad_talker.src.gradio_demo import SadTalker
+from sad_talker.src.sad_talker import SadTalker

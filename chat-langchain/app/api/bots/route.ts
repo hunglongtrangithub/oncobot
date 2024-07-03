@@ -3,15 +3,22 @@ import fs from "fs/promises";
 import path from "path";
 
 let cachedBots: string[] | null = null;
+let cacheLastUpdated: Date | null = null;
 
 const getBots = async () => {
-  if (cachedBots) {
-    console.log("Returning cached bots");
-    return cachedBots;
-  }
-
   const botsDir = path.resolve(process.cwd(), "public", "bots");
+
   try {
+    const dirStat = await fs.stat(botsDir);
+    const dirModifiedTime = dirStat.mtime;
+
+    // If the directory has been modified since the last cache update, invalidate the cache
+    if (cacheLastUpdated && dirModifiedTime <= cacheLastUpdated) {
+      console.log("Returning cached bots");
+      return cachedBots;
+    }
+
+    // Read the directory contents and update the cache
     const botFiles = await fs.readdir(botsDir);
     const botNames = botFiles
       .map((file) => path.parse(file).name)
@@ -24,7 +31,8 @@ const getBots = async () => {
     });
 
     cachedBots = bots;
-    console.log("Cached bots.");
+    cacheLastUpdated = new Date();
+    console.log("Updated and cached bots.");
     return bots;
   } catch (error) {
     console.error("Error reading bots directory:", error);
@@ -36,3 +44,4 @@ export async function GET() {
   const bots = await getBots();
   return NextResponse.json({ bots });
 }
+

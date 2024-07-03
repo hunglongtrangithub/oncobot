@@ -6,6 +6,9 @@ from uuid import uuid4
 from bson import ObjectId
 import meilisearch
 from config import settings
+from logger_config import get_logger
+
+logger = get_logger(__name__)
 
 EMBEDDER_NAME = "default"
 INDEX_NAME = "clinical_docs"
@@ -35,15 +38,15 @@ def get_api_keys():
         if search_key and admin_key:
             break
         elif key.actions == search_actions and key.indexes == search_indexes:
-            print("Found existing search key.")
+            logger.info("Found existing search key.")
             search_key = key
         elif key.actions == admin_actions and key.indexes == admin_indexes:
-            print("Found existing admin key.")
+            logger.info("Found existing admin key.")
             admin_key = key
 
     # Create keys if they do not exist
     if not search_key:
-        print("Creating search key...")
+        logger.info("Creating search key...")
         search_uid = str(uuid4())
         master_client.create_key(
             options={
@@ -57,7 +60,7 @@ def get_api_keys():
         search_key = master_client.get_key(search_uid)
 
     if not admin_key:
-        print("Creating admin key...")
+        logger.info("Creating admin key...")
         admin_uid = str(uuid4())
         master_client.create_key(
             options={

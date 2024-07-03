@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 import shutil
 from logger_config import get_logger
@@ -21,13 +22,17 @@ class DummyTalker:
 
 
 class CustomSadTalker(SadTalker):
-    def __init__(self):
+    def __init__(self, batch_size=150, device=None, dtype=None, parallel_mode=None):
         checkpoint_path = Path(__file__).parent / "sad_talker/checkpoints"
         config_path = Path(__file__).parent / "sad_talker/src/config"
         super().__init__(
             checkpoint_path=str(checkpoint_path),
             config_path=str(config_path),
+            device=device,
+            dtype=dtype,
+            parallel_mode=parallel_mode,
         )
+        self.batch_size = batch_size
         logger.info(f"CustomSadTalker initialized.")
 
     def run(
@@ -35,39 +40,38 @@ class CustomSadTalker(SadTalker):
         video_path: str,
         audio_path: str,
         image_path: str,
-        delete_generated_files=True,
+        batch_size=None,
+        delete_generated_files=False,
     ):
         logger.info(f"Generating video at {video_path}")
+        animation_tag = Path(video_path).stem
+        result_dir = str(Path(__file__).parent / "video")
         try:
-            result_dir = str(Path(__file__).parent / "video")
             returned_video_path = super().test(
                 source_image=image_path,
                 driven_audio=audio_path,
+                batch_size=batch_size or self.batch_size,
                 result_dir=result_dir,
+                tag=animation_tag,
             )
 
-            # copy returned_video_path to video_path
-            shutil.copy(returned_video_path, video_path)
-            if delete_generated_files:
-                # delete returned_video_path's parent directory
-                shutil.rmtree(Path(returned_video_path).parent)
-                logger.info(
-                    f"Deleted generated files at {Path(returned_video_path).parent}"
-                )
-
+            # move returned_video_path to video_path
+            shutil.move(returned_video_path, video_path)
             logger.info(f"Created video at {video_path}")
         except Exception as e:
             error_message = f"Failed to generate video: {e}"
-            logger.error(error_message)
-            raise Exception(error_message)
+            logger.error(error_message, exc_info=True)
+            raise
+        finally:
+            if delete_generated_files:
+                delete_path = os.path.join(result_dir, animation_tag)
+                if os.path.exists(delete_path):
+                    shutil.rmtree(delete_path, ignore_errors=True)
+                    logger.info(f"Deleted generated files at {delete_path}")
 
     async def arun(self, video_path: str, audio_path: str, image_path: str):
         self.run(video_path, audio_path, image_path)
 
 
 if __name__ == "__main__":
-    talker = CustomSadTalker()
-    video_path = str(Path(__file__).parent / "video/chatbot2__1.mp4")
-    audio_path = str(Path(__file__).parent / "voices/chatbot2.mp3")
-    image_path = str(Path(__file__).parent / "faces/chatbot2.jpg")
-    talker.run(video_path, audio_path, image_path)
+    pass

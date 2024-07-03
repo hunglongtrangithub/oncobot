@@ -24,13 +24,14 @@ import {
   Spinner,
   CircularProgress,
   Avatar,
-  HStack,
   VStack,
   Button,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
+  Spacer,
+  Stack,
 } from "@chakra-ui/react";
 import { ArrowUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import { MdMic, MdStop } from "react-icons/md";
@@ -59,6 +60,14 @@ export function ChatWindow(props: { titleText?: string }) {
   const [selectedChatbot, setSelectedChatbot] = useState<string>("");
   const [abortController, setAbortController] =
     useState<AbortController | null>(null);
+  const [userVideoStream, setUserVideoStream] = useState<MediaStream | null>(
+    null,
+  );
+  useEffect(() => {
+    if (userVideoRef.current) {
+      userVideoRef.current.srcObject = userVideoStream;
+    }
+  }, [userVideoStream]);
 
   const fetchBots = async () => {
     const response = await fetch("api/bots").then((res) => res.json());
@@ -78,10 +87,12 @@ export function ChatWindow(props: { titleText?: string }) {
   }, [selectedChatbot]);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const userVideoRef = useRef<HTMLVideoElement | null>(null);
 
   const recorderRef = useRef({
-    audioChunks: [] as Blob[],
     mediaRecorder: null as MediaRecorder | null,
+    audioChunks: [] as Blob[],
+    // videoStream: null as MediaStream | null, // Add a property to keep track of the video stream
 
     start: async function () {
       if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
@@ -92,12 +103,18 @@ export function ChatWindow(props: { titleText?: string }) {
         );
       }
       console.log("start recording");
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: true,
+      });
       this.mediaRecorder = new MediaRecorder(stream);
 
+      setUserVideoStream(stream); // Set the stream state
+
       this.mediaRecorder.ondataavailable = (event) => {
+        console.log("audioChunks.length:", this.audioChunks.length);
         this.audioChunks.push(event.data);
-        console.log("Chunk length: ", this.audioChunks.length);
+        // setAudioChunks((prevChunks) => [...prevChunks, event.data]);
       };
       this.mediaRecorder.start(10); // HACK: This is a temporary fix to prevent the first chunk from being empty
     },
@@ -110,9 +127,9 @@ export function ChatWindow(props: { titleText?: string }) {
           this.mediaRecorder?.stream
             .getTracks()
             .forEach((track) => track.stop()); // Stop all tracks
-          this.audioChunks = []; // Clear audioChunks after stopping
-          this.mediaRecorder = null; // Reset mediaRecorder after stopping
-
+          this.audioChunks = [];
+          // setAudioChunks([]); // Clear audioChunks after stopping
+          setUserVideoStream(null); // Reset videoStream after stopping
           await transcribeAndSendMessage(audioBlob, callback_action);
         };
         this.mediaRecorder.stop();
@@ -123,6 +140,7 @@ export function ChatWindow(props: { titleText?: string }) {
   const sendMessage = async (
     message?: string,
     noStream: boolean = false,
+    callback_action: null | "audio" | "video" = null,
   ): Promise<string | undefined> => {
     console.log("API Base Url:", apiBaseUrl);
     if (messageContainerRef.current) {
@@ -304,6 +322,11 @@ export function ChatWindow(props: { titleText?: string }) {
           },
         });
       }
+      if (callback_action === "audio") {
+        playMessageAudio(accumulatedMessage, selectedChatbotRef.current);
+      } else if (callback_action === "video") {
+        playMessageVideo(accumulatedMessage, selectedChatbotRef.current);
+      }
       return accumulatedMessage;
     } catch (e: any) {
       if (e.name === "AbortError") {
@@ -324,6 +347,10 @@ export function ChatWindow(props: { titleText?: string }) {
   };
 
   const playMessageAudio = async (message: string, selectedChatbot: string) => {
+    if (selectedChatbot === "") {
+      toast.error("Please select a chatbot first.");
+      return;
+    }
     console.log("play message audio");
     const formData = new FormData();
     const botAudioBlob = await fetch(`/bots/${selectedChatbot}.mp3`).then(
@@ -398,13 +425,21 @@ export function ChatWindow(props: { titleText?: string }) {
   };
 
   const playMessageVideo = async (message: string, selectedChatbot: string) => {
+    if (selectedChatbot === "") {
+      toast.error("Please select a chatbot first.");
+      return;
+    }
     console.log("play speech video");
 
     let formData = new FormData();
     const botAudioBlob = await fetch(`/bots/${selectedChatbot}.mp3`).then(
       (res) => res.blob(),
     );
+    const botImageBlob = await fetch(`/bots/${selectedChatbot}.jpg`).then(
+      (res) => res.blob(),
+    );
     formData.append("bot_voice_file", botAudioBlob, `${selectedChatbot}.mp3`);
+    formData.append("bot_image_file", botImageBlob, `${selectedChatbot}.jpg`);
     formData.append("message", message);
     formData.append("conversationId", conversationId);
     formData.append("chatbot", selectedChatbot);
@@ -414,34 +449,7 @@ export function ChatWindow(props: { titleText?: string }) {
 
     setIsSpeechLoading(true);
     try {
-      const audioResponse = await fetch(apiBaseUrl + "/text_to_speech", {
-        method: "POST",
-        body: formData,
-        signal: controller.signal,
-      });
-
-      if (!audioResponse.ok) {
-        const errorMessage = await audioResponse.text();
-        console.error("Failed to fetch audio:", errorMessage);
-        toast.error(
-          "Failed to transform text to speech for AI response:" + errorMessage,
-        );
-
-        setIsSpeechLoading(false);
-        return;
-      }
-      const audioBlob = await audioResponse.blob();
-
-      formData = new FormData();
-      formData.append("bot_speech_file", audioBlob, `${selectedChatbot}.mp3`);
-      const botImageBlob = await fetch(`/bots/${selectedChatbot}.jpg`).then(
-        (res) => res.blob(),
-      );
-      formData.append("bot_image_file", botImageBlob, `${selectedChatbot}.jpg`);
-      formData.append("conversationId", conversationId);
-      formData.append("chatbot", selectedChatbot);
-
-      const videoResponse = await fetch(apiBaseUrl + "/speech_to_video", {
+      const videoResponse = await fetch(apiBaseUrl + "/text_to_video", {
         method: "POST",
         body: formData,
         signal: controller.signal,
@@ -578,9 +586,14 @@ export function ChatWindow(props: { titleText?: string }) {
     }
   };
 
+  const noStream = false;
+  const callbackAfterRecordingAudio = null;
+  const callbackAfterRecordingVideo = "video";
+  const callbackAfterInputtingText = null;
+
   return (
     <div className="flex flex-col items-center p-8 rounded grow max-h-full">
-      {messages.length > 0 && (
+      {messages.length === messages.length && (
         <Flex direction={"column"} alignItems={"center"} paddingBottom={"20px"}>
           <Heading fontSize="2xl" fontWeight={"medium"} mb={1} color={"white"}>
             {titleText}
@@ -590,8 +603,8 @@ export function ChatWindow(props: { titleText?: string }) {
           </Heading>
         </Flex>
       )}
-      <HStack spacing={400}>
-        <VStack spacing={10}>
+      <Stack direction={["column", "row"]} spacing={"24px"}>
+        <VStack spacing={"12px"}>
           {isVideoPlaying ? (
             <video
               ref={videoRef}
@@ -653,18 +666,36 @@ export function ChatWindow(props: { titleText?: string }) {
             }}
           />
         </VStack>
-        <VStack spacing={10}>
-          <Avatar
-            name="User"
-            style={{
-              width: "150px",
-              height: "150px",
-              objectFit: "cover",
-              borderRadius: "50%",
-              border: "3px solid gray",
-            }}
-            src="/images/user.png"
-          />
+        <Spacer />
+        <VStack spacing={"12px"}>
+          {isRecording ? (
+            <video
+              ref={userVideoRef}
+              autoPlay
+              playsInline
+              muted
+              style={{
+                width: "150px",
+                height: "150px",
+                objectFit: "cover",
+                borderRadius: "50%",
+                border: "3px solid gray",
+                transform: "scaleX(-1)",
+              }}
+            />
+          ) : (
+            <Avatar
+              name="User"
+              style={{
+                width: "150px",
+                height: "150px",
+                objectFit: "cover",
+                borderRadius: "50%",
+                border: "3px solid gray",
+              }}
+              src="/images/user.png"
+            />
+          )}
           <IconButton
             colorScheme="blue"
             rounded={"full"}
@@ -689,11 +720,11 @@ export function ChatWindow(props: { titleText?: string }) {
                 cancelOperation();
                 return;
               }
-              toggleRecording("video");
+              toggleRecording(callbackAfterRecordingVideo);
             }}
           />
         </VStack>
-      </HStack>
+      </Stack>
       <Menu>
         <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
           {selectedChatbot || "Select Chatbot"}
@@ -756,7 +787,7 @@ export function ChatWindow(props: { titleText?: string }) {
                 cancelOperation();
                 return;
               }
-              toggleRecording();
+              toggleRecording(callbackAfterRecordingAudio);
             }}
           />
         </InputLeftElement>
@@ -765,14 +796,14 @@ export function ChatWindow(props: { titleText?: string }) {
           maxRows={5}
           marginRight={"56px"}
           marginLeft={"56px"}
-          placeholder="What is LangChain Expression Language?"
+          placeholder="Ask me about a patient..."
           textColor={"white"}
           borderColor={"rgb(58, 58, 61)"}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
-              sendMessage();
+              sendMessage(input, noStream, callbackAfterInputtingText);
             } else if (e.key === "Enter" && e.shiftKey) {
               e.preventDefault();
               setInput(input + "\n");
@@ -792,12 +823,11 @@ export function ChatWindow(props: { titleText?: string }) {
                 cancelOperation();
                 return;
               }
-              sendMessage();
+              sendMessage(input, noStream, callbackAfterInputtingText);
             }}
           />
         </InputRightElement>
       </InputGroup>
-
       {messages.length === 0 ? (
         <footer className="flex justify-center absolute bottom-8">
           <a

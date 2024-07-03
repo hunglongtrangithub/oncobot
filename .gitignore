@@ -151,6 +151,14 @@ llm_llama/
 index/
 docs/
 
+# ignore generated audio and video files
+audio/
+video/
+
+# ignore bot face and voice files
+faces/
+voices/
+
 # ignore SadTalker model weights
 checkpoints
 gfpgan

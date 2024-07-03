@@ -47,31 +47,39 @@ class BaseChat(ABC):
 
 
 class DummyChat(BaseChat):
-    def __init__(self, default_message: str = "This is a dummy chat message."):
+    def __init__(
+        self,
+        default_message: str = "This is a dummy chat message.",
+    ):
         logger.info("DummyChat initialized.")
         self.default_message = default_message
 
     def invoke(self, current_conversation: List[Dict[str, str]]) -> str:
-        return "DummyChat invoke:" + self.default_message
+        return "DummyChat invoke: " + self.default_message
 
     def stream(
         self, current_conversation: List[Dict[str, str]]
     ) -> Generator[str, None, None]:
-        yield "DummyChat stream:" + self.default_message
+        yield "DummyChat stream: " + self.default_message
 
     async def ainvoke(self, current_conversation: List[Dict[str, str]]) -> str:
-        return "DummyChat ainvoke:" + self.default_message
+        return "DummyChat ainvoke: " + self.default_message
 
     async def astream(
-        self, current_conversation: List[Dict[str, str]]
+        self, current_conversation: List[Dict[str, str]], stream: bool = False
     ) -> AsyncGenerator[str, None]:
         import asyncio
 
+        num_repeats = 1
+
         async def async_generator():
             await asyncio.sleep(1)
-            for _ in range(100):
-                await asyncio.sleep(0.01)
-                yield "DummyChat astream:" + self.default_message
+            if stream:
+                for _ in range(num_repeats):
+                    await asyncio.sleep(0.01)
+                    yield "DummyChat astream: " + self.default_message
+            else:
+                yield ("DummyChat astream: " + self.default_message) * num_repeats
 
         return async_generator()
 
@@ -81,7 +89,7 @@ class CustomChatHuggingFace(BaseChat):
     default_generation_kwargs = {
         # "truncation": True,
         # "max_length": 512,
-        "max_new_tokens": 512,
+        "max_new_tokens": 128,
         "num_return_sequences": 1,
         "do_sample": True,
         "temperature": 0.1,
@@ -92,12 +100,14 @@ class CustomChatHuggingFace(BaseChat):
     def __init__(
         self,
         checkpoint: str = "meta-llama/Llama-2-7b-chat-hf",
+        device: Optional[str] = None,
         model=None,
         tokenizer=None,
+        max_chat_length: int = 2048,
         generation_kwargs: Optional[Dict[str, Union[int, bool, float]]] = None,
     ):
         self._huggingface_login()
-        self.device = self._determine_device()
+        self.device = self._determine_device() if not device else device
         self.checkpoint = checkpoint
         try:
             self.tokenizer = (
@@ -124,7 +134,12 @@ class CustomChatHuggingFace(BaseChat):
             logger.error(f"Failed to load model: {e}")
             raise
 
-        self.max_length = 8192  # can modify this to be the context length of the model
+        self.max_chat_length = max_chat_length  # can modify this to be the context length of the model. Also depends on how much memory is available (GPU or CPU)
+        logger.info(f"Chat max length: {self.max_chat_length} tokens")
+        if self.max_chat_length > self.model.config.max_position_embeddings:
+            logger.warning(
+                f"Max chat length is greater than model's max position embeddings: {self.model.config.max_position_embeddings}"
+            )
 
         self.generation_kwargs = generation_kwargs or self.default_generation_kwargs
         if self.generation_kwargs.get("temperature") == 0:
@@ -175,17 +190,19 @@ class CustomChatHuggingFace(BaseChat):
 
         tokenized_chat_history = self.tokenizer(
             text=chat_history, return_tensors="pt"  # type: ignore
-        ).to(self.device)
+        )
 
+        # truncate chat history to max_length before moving to device
         tokenized_chat_history["input_ids"] = tokenized_chat_history["input_ids"][  # type: ignore
-            :, -self.max_length :
+            :, -self.max_chat_length :
         ]
         tokenized_chat_history["attention_mask"] = tokenized_chat_history[  # type: ignore
             "attention_mask"
         ][
-            :, -self.max_length :
+            :, -self.max_chat_length :
         ]
 
+        tokenized_chat_history = tokenized_chat_history.to(self.device)
         prompt_size = tokenized_chat_history["input_ids"].shape[1]  # type: ignore
         try:
             generated_tokens = self.model.generate(
@@ -223,12 +240,12 @@ class CustomChatHuggingFace(BaseChat):
         ).to(self.device)
 
         tokenized_chat_history["input_ids"] = tokenized_chat_history["input_ids"][  # type: ignore
-            :, -self.max_length :
+            :, -self.max_chat_length :
         ]
         tokenized_chat_history["attention_mask"] = tokenized_chat_history[  # type: ignore
             "attention_mask"
         ][
-            :, -self.max_length :
+            :, -self.max_chat_length :
         ]
 
         thread = Thread(

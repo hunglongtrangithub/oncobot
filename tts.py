@@ -294,15 +294,16 @@ class BarkSuno:
 
 
 class DummyTTS:
-    def __init__(self):
+    def __init__(self, dummy_audio_file: str = "examples/chatbot1.mp3"):
         logger.info("Dummy TTS initialized.")
+        self.dummy_audio_file = dummy_audio_file
 
     def run(self, text: str, file_path: str, voice_path: str):
         """Synchronously copy audio content to specified file path."""
         try_create_directory(Path(file_path).resolve().parent)
         try:
-            # Copy the content of the voice file to the specified file path
-            shutil.copy(voice_path, file_path)
+            # Copy the content of the dummy audio file to the specified file path
+            shutil.copy(self.dummy_audio_file, file_path)
             logger.info("Dummy TTS file copied successfully.")
         except Exception as e:
             logger.error(f"Error in Dummy TTS method: {e}")
@@ -315,8 +316,7 @@ class DummyTTS:
             # Simulate async operation, if needed
             await asyncio.sleep(0)  # No delay needed, just for async syntax
 
-            # Copy the content of the voice file to the specified file path
-            shutil.copy(voice_path, file_path)
+            shutil.copy(self.dummy_audio_file, file_path)
             logger.info("Dummy Async TTS file copied successfully.")
         except Exception as e:
             logger.error(f"Error in Dummy Async TTS method: {e}")

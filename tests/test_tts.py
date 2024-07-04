@@ -6,7 +6,7 @@ import sys
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 from tts import XTTS, OpenAITTS, ReplicateTortoiseTTS, BarkSuno
 
-voice_path = str(Path(__file__).parent / "examples" / "chatbot1.mp3")
+voice_path = str(Path(__file__).parent.parent / "examples" / "chatbot1.mp3")
 
 
 def test_barksuno_run():

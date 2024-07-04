@@ -34,8 +34,8 @@ def test_talker():
         # parallel_mode="dp",
     )
     video_path = str(Path(__file__).parent / "video/chatbot1__1.mp4")
-    audio_path = str(Path(__file__).parent / "examples/fake_patient3.wav")
-    image_path = str(Path(__file__).parent / "examples/chatbot1.jpg")
+    audio_path = str(Path(__file__).parent.parent / "examples/fake_patient3.wav")
+    image_path = str(Path(__file__).parent.parent / "examples/chatbot1.jpg")
     start = time.time()
     talker.run(
         video_path,

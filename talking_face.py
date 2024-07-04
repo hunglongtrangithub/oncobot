@@ -9,12 +9,12 @@ logger = get_logger(__name__)
 
 
 class DummyTalker:
-    def __init__(self):
+    def __init__(self, dummy_video_file: str = "examples/chatbot1.mp4"):
         logger.info("DummyTalker initialized")
+        self.dummy_video_file = dummy_video_file
 
     def run(self, video_path: str, audio_path: str, image_path: str):
-        # copy video/chatbot1__1.mp4 to video_path
-        shutil.copy(Path(__file__).parent / "video/chatbot1__1.mp4", video_path)
+        shutil.copy(self.dummy_video_file, video_path)
         logger.info(f"Created video {video_path}")
 
     async def arun(self, video_path: str, audio_path: str, image_path: str):

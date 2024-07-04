@@ -22,9 +22,13 @@ def try_open_audio_file(file_path: Path) -> BinaryIO:
 
 
 class WhisperSTT:
-    def __init__(self, model_name: str = "openai/whisper-large-v3", device: Optional[str] = None):
+    def __init__(
+        self, model_name: str = "openai/whisper-large-v3", device: Optional[str] = None
+    ):
         self.model_name = model_name
-        self.device = device if device else "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = (
+            device if device else "cuda" if torch.cuda.is_available() else "cpu"
+        )
         self.torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
 
         self.model = AutoModelForSpeechSeq2Seq.from_pretrained(
@@ -140,11 +144,7 @@ class OpenAIWhisperSTT:
 
 class DummyOpenAIWhisperSTT:
     def __init__(self, default_transcription_text="This is a dummy transcription."):
-        self.default_transcription_text = (
-            "This is a dummy transcription."
-            if default_transcription_text is None
-            else default_transcription_text
-        )
+        self.default_transcription_text = default_transcription_text
 
     def _get_openai_api_key(self):
         # Simulate retrieval of API key

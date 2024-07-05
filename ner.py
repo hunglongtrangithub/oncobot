@@ -14,7 +14,9 @@ class NERProcessor:
         adjacent_separator: str = "",
     ):
         self.ner = (
-            pipeline("token-classification", model=model_name, device=device) if not ner else ner
+            pipeline("token-classification", model=model_name, device=device)
+            if not ner
+            else ner
         )
         self.adjacent_separator = adjacent_separator
 
@@ -80,6 +82,32 @@ class NERProcessor:
                 offset += len(insertion)
         total_text = f"{text}\n\nNER inserted text:\n{modified_text}"
         return total_text
+
+
+class DummyNERProcessor:
+    def __init__(
+        self,
+        model_name: str = "dummy",
+        device: Optional[str] = None,
+        ner=None,
+        adjacent_separator: str = "",
+    ):
+        self.model_name = model_name
+        self.device = device
+        self.ner = ner
+        self.adjacent_separator = adjacent_separator
+
+    def get_ner_entities(self, text: str) -> List[Tuple[str, Optional[str], int]]:
+        # This method doesn't actually perform NER. It just returns some hard-coded results.
+        return [
+            (text, "ORG", 0),
+            (text, "LOC", 27),
+            (text, "MONEY", 44),
+        ]
+
+    def get_ner_inserted_text(self, text: str) -> str:
+        # This method doesn't actually perform NER. It just returns the input text with some hard-coded insertions.
+        return f"{text}\n\nNER inserted text:\n{text} [ORG] [LOC] [MONEY]"
 
 
 if __name__ == "__main__":

@@ -17,7 +17,7 @@ dev:
 		--entrypoint "/bin/sh" \
 		--mount type=bind,source=$(shell pwd),target=/app \
 		$(IMAGE_NAME) \
-		-c "yarn dev"
+		-c "yarn dev -p $(PORT)"
 
 
 # Interactive shell into the Docker CONTAINER_NAME

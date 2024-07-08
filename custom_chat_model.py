@@ -1,19 +1,18 @@
-import logging
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
     TextIteratorStreamer,
 )
+from typing import Dict, AsyncGenerator, Generator, Optional, Union, List
+from jinja2.exceptions import TemplateError
+from abc import ABC, abstractmethod
+
 from huggingface_hub import login
+from threading import Thread
 import torch
 import openai
 import replicate
 import groq
-from threading import Thread
-from typing import Dict, AsyncGenerator, Generator, Optional, Union, List
-import asyncio
-from concurrent.futures import ThreadPoolExecutor
-from jinja2.exceptions import TemplateError
 
 from logger_config import get_logger
 from config import settings
@@ -22,36 +21,78 @@ from chat_templates import CHAT_TEMPLATES
 logger = get_logger(__name__)
 
 
-class BaseChat:
+class BaseChat(ABC):
     def __init__(self):
         logger.info("BaseChat initialized.")
-        self.executor = ThreadPoolExecutor()
+
+    @abstractmethod
+    def invoke(self, current_conversation: List[Dict[str, str]]) -> str:
+        pass
+
+    @abstractmethod
+    def stream(
+        self, current_conversation: List[Dict[str, str]]
+    ) -> Generator[str, None, None]:
+        pass
+
+    @abstractmethod
+    async def ainvoke(self, current_conversation: List[Dict[str, str]]) -> str:
+        pass
+
+    @abstractmethod
+    async def astream(
+        self, current_conversation: List[Dict[str, str]]
+    ) -> AsyncGenerator[str, None]:
+        pass
+
+
+class DummyChat(BaseChat):
+    def __init__(
+        self,
+        default_message: str = "This is a dummy chat message.",
+    ):
+        logger.info("DummyChat initialized.")
+        self.default_message = default_message
 
     def invoke(self, current_conversation: List[Dict[str, str]]) -> str:
-        return "This is a dummy response."
+        return "DummyChat invoke: " + self.default_message
 
     def stream(
         self, current_conversation: List[Dict[str, str]]
     ) -> Generator[str, None, None]:
-        yield "This is a dummy response."
+        yield "DummyChat stream: " + self.default_message
 
     async def ainvoke(self, current_conversation: List[Dict[str, str]]) -> str:
-        return "This is a dummy response."
+        return "DummyChat ainvoke: " + self.default_message
 
     async def astream(
-        self, current_conversation: List[Dict[str, str]]
+        self, current_conversation: List[Dict[str, str]], stream: bool = False
     ) -> AsyncGenerator[str, None]:
-        yield "This is a dummy response."
+        import asyncio
+
+        num_repeats = 1
+
+        async def async_generator():
+            await asyncio.sleep(1)
+            if stream:
+                for _ in range(num_repeats):
+                    await asyncio.sleep(0.01)
+                    yield "DummyChat astream: " + self.default_message
+            else:
+                yield ("DummyChat astream: " + self.default_message) * num_repeats
+
+        return async_generator()
 
 
 class CustomChatHuggingFace(BaseChat):
+
     default_generation_kwargs = {
         # "truncation": True,
         # "max_length": 512,
-        "max_new_tokens": 512,
+        "max_new_tokens": 128,
         "num_return_sequences": 1,
         "do_sample": True,
-        "temperature": 0.7,
+        "temperature": 0.1,
         "top_k": 50,
         "top_p": 0.95,
     }
@@ -59,20 +100,23 @@ class CustomChatHuggingFace(BaseChat):
     def __init__(
         self,
         checkpoint: str = "meta-llama/Llama-2-7b-chat-hf",
+        device: Optional[str] = None,
         model=None,
         tokenizer=None,
+        max_chat_length: int = 2048,
         generation_kwargs: Optional[Dict[str, Union[int, bool, float]]] = None,
     ):
         self._huggingface_login()
-        self.device = self._determine_device()
+        self.device = self._determine_device() if not device else device
+        self.checkpoint = checkpoint
         try:
             self.tokenizer = (
-                AutoTokenizer.from_pretrained(checkpoint)
+                AutoTokenizer.from_pretrained(self.checkpoint)
                 if not tokenizer
                 else tokenizer
             )
             self.tokenizer.chat_template = CHAT_TEMPLATES.get(
-                checkpoint, self.tokenizer.default_chat_template
+                self.checkpoint, self.tokenizer.default_chat_template
             )
         except Exception as e:
             logger.error(f"Failed to load tokenizer: {e}")
@@ -80,8 +124,8 @@ class CustomChatHuggingFace(BaseChat):
         try:
             self.model = (
                 AutoModelForCausalLM.from_pretrained(
-                    checkpoint,
-                    device_map="auto",
+                    self.checkpoint,
+                    device_map="auto" if self.device == "cuda" else self.device,
                 )
                 if not model
                 else model
@@ -89,9 +133,28 @@ class CustomChatHuggingFace(BaseChat):
         except Exception as e:
             logger.error(f"Failed to load model: {e}")
             raise
-        self.max_length = 128  # can modify this to be the max length of the model
+
+        self.max_chat_length = max_chat_length  # can modify this to be the context length of the model. Also depends on how much memory is available (GPU or CPU)
+        logger.info(f"Chat max length: {self.max_chat_length} tokens")
+        if self.max_chat_length > self.model.config.max_position_embeddings:
+            logger.warning(
+                f"Max chat length is greater than model's max position embeddings: {self.model.config.max_position_embeddings}"
+            )
+
         self.generation_kwargs = generation_kwargs or self.default_generation_kwargs
-        self.executor = ThreadPoolExecutor()
+        if self.generation_kwargs.get("temperature") == 0:
+            self.generation_kwargs["do_sample"] = False
+
+        # add end-of-sequence tokens for Llama 3 Instruct models
+        if (
+            self.checkpoint == "meta-llama/Meta-Llama-3-8B-Instruct"
+            or self.checkpoint == "meta-llama/Meta-Llama-3-70B-Instruct"
+        ):
+            terminators = [
+                self.tokenizer.eos_token_id,
+                self.tokenizer.convert_tokens_to_ids("<|eot_id|>"),
+            ]
+            self.generation_kwargs["eos_token_id"] = terminators  # type: ignore
 
         logger.info(f"{checkpoint} initialized.")
         logger.info("Initialized on device: {}".format(self.device))
@@ -110,8 +173,6 @@ class CustomChatHuggingFace(BaseChat):
     def _determine_device(self):
         if torch.cuda.is_available():
             return "cuda"
-        elif torch.backends.mps.is_available():
-            return "mps"
         else:
             return "cpu"
 
@@ -129,17 +190,19 @@ class CustomChatHuggingFace(BaseChat):
 
         tokenized_chat_history = self.tokenizer(
             text=chat_history, return_tensors="pt"  # type: ignore
-        ).to(self.device)
+        )
 
+        # truncate chat history to max_length before moving to device
         tokenized_chat_history["input_ids"] = tokenized_chat_history["input_ids"][  # type: ignore
-            :, -self.max_length :
+            :, -self.max_chat_length :
         ]
         tokenized_chat_history["attention_mask"] = tokenized_chat_history[  # type: ignore
             "attention_mask"
         ][
-            :, -self.max_length :
+            :, -self.max_chat_length :
         ]
 
+        tokenized_chat_history = tokenized_chat_history.to(self.device)
         prompt_size = tokenized_chat_history["input_ids"].shape[1]  # type: ignore
         try:
             generated_tokens = self.model.generate(
@@ -177,12 +240,12 @@ class CustomChatHuggingFace(BaseChat):
         ).to(self.device)
 
         tokenized_chat_history["input_ids"] = tokenized_chat_history["input_ids"][  # type: ignore
-            :, -self.max_length :
+            :, -self.max_chat_length :
         ]
         tokenized_chat_history["attention_mask"] = tokenized_chat_history[  # type: ignore
             "attention_mask"
         ][
-            :, -self.max_length :
+            :, -self.max_chat_length :
         ]
 
         thread = Thread(
@@ -223,14 +286,19 @@ class CustomChatHuggingFace(BaseChat):
     async def astream(
         self, current_conversation: list[dict[str, str]]
     ) -> AsyncGenerator[str, None]:
-        try:
-            for item in self.stream(current_conversation):
-                yield item
-        except Exception as e:
-            logger.error(
-                f"Error in astream generator: {e}",
-            )
-            raise
+        async def async_generator():
+            try:
+                for new_text in self.stream(current_conversation):
+                    yield new_text
+            except Exception as e:
+                logger.error(
+                    f"Error in astream generator: {e}",
+                    exc_info=True,
+                    stack_info=True,
+                )
+                raise
+
+        return async_generator()
 
 
 class CustomChatOpenAI(BaseChat):
@@ -304,18 +372,21 @@ class CustomChatOpenAI(BaseChat):
     async def astream(
         self, current_conversation: List[Dict[str, str]]
     ) -> AsyncGenerator[str, None]:
-        try:
-            completion = await self.async_client.chat.completions.create(
-                model=self.model_name,
-                messages=current_conversation,  # type: ignore
-                stream=True,
-            )
-            async for chunk in completion:
-                token = chunk.choices[0].delta.content or ""
-                yield token
-        except Exception as e:
-            self._handle_api_error(e)
-            raise
+        async def async_generator():
+            try:
+                completion = await self.async_client.chat.completions.create(
+                    model=self.model_name,
+                    messages=current_conversation,  # type: ignore
+                    stream=True,
+                )
+                async for chunk in completion:
+                    token = chunk.choices[0].delta.content or ""
+                    yield token
+            except Exception as e:
+                self._handle_api_error(e)
+                raise
+
+        return async_generator()
 
 
 class CustomChatLlamaReplicate(BaseChat):
@@ -422,25 +493,30 @@ class CustomChatLlamaReplicate(BaseChat):
     async def astream(
         self, current_conversation: List[Dict[str, str]]
     ) -> AsyncGenerator[str, None]:
-        try:
-            output = await replicate.async_stream(
-                self.model_name,
-                input={
-                    "prompt": self.process_chat(current_conversation),
-                    "max_new_tokens": 512,
-                    "temperature": 0.75,
-                },
-            )
-            async for chunk in output:
-                if chunk.event.value == "output":
-                    yield chunk.data
-                elif chunk.event.value == "error":
-                    logger.error(f"Error in Replicate stream: {chunk.data}")
-                elif chunk.event.value == "done":
-                    logger.info(f"Replicate stream done: {chunk.data or 'successful'}")
-        except Exception as e:
-            self._handle_error(e, context="astream")
-            raise
+        async def async_generator():
+            try:
+                output = await replicate.async_stream(
+                    self.model_name,
+                    input={
+                        "prompt": self.process_chat(current_conversation),
+                        "max_new_tokens": 512,
+                        "temperature": 0.75,
+                    },
+                )
+                async for chunk in output:
+                    if chunk.event.value == "output":
+                        yield chunk.data
+                    elif chunk.event.value == "error":
+                        logger.error(f"Error in Replicate stream: {chunk.data}")
+                    elif chunk.event.value == "done":
+                        logger.info(
+                            f"Replicate stream done: {chunk.data or 'successful'}"
+                        )
+            except Exception as e:
+                self._handle_error(e, context="astream")
+                raise
+
+        return async_generator()
 
 
 class CustomChatGroq(BaseChat):
@@ -529,26 +605,28 @@ class CustomChatGroq(BaseChat):
     async def astream(
         self, current_conversation: List[Dict[str, str]]
     ) -> AsyncGenerator[str, None]:
-        try:
-            completion = await self.async_client.chat.completions.create(
-                model=self.model_name,
-                messages=current_conversation,  # type: ignore
-                **self.generation_kwargs,
-                stream=True,
-            )
-            async for chunk in completion:
-                token = chunk.choices[0].delta.content or ""
-                yield token
-        except Exception as e:
-            self._handle_api_error(e)
-            raise
+        async def async_generator():
+            try:
+                completion = await self.async_client.chat.completions.create(
+                    model=self.model_name,
+                    messages=current_conversation,  # type: ignore
+                    **self.generation_kwargs,
+                    stream=True,
+                )
+                async for chunk in completion:
+                    token = chunk.choices[0].delta.content or ""
+                    yield token
+            except Exception as e:
+                self._handle_api_error(e)
+                raise
+
+        return async_generator()
 
 
 # CHECKPOINT = "facebook/opt-125m"
-CHECKPOINT = "meta-llama/Llama-2-7b-chat-hf"
+# CHECKPOINT = "meta-llama/Llama-2-7b-chat-hf"
 # CHECKPOINT = "georgesung/llama2_7b_chat_uncensored"
 # CHECKPOINT = "Tap-M/Luna-AI-Llama2-Uncensored"
-chat_llm = CustomChatHuggingFace(CHECKPOINT)
 
 # from llm_llama.model_generator.llm_pipeline import load_fine_tuned_model
 # from pathlib import Path
@@ -561,3 +639,7 @@ chat_llm = CustomChatHuggingFace(CHECKPOINT)
 
 # chat_llm = CustomChatOpenAI()
 # chat_llm = CustomChatHuggingFace()
+
+# model_name = "mixtral-8x7b-32768"
+# model_name = "llama3-8b-8192"
+# chat_llm = CustomChatGroq(model_name=model_name)

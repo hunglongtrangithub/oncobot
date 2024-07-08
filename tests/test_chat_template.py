@@ -6,8 +6,6 @@ from jinja2 import Template
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 from chat_templates import CHAT_TEMPLATES
 
-tokenizer = AutoTokenizer.from_pretrained("georgesung/llama2_7b_chat_uncensored")
-
 
 messages = [
     {"role": "system", "content": "Welcome to the chat!"},
@@ -27,18 +25,18 @@ def test_llama2_chat_template():
     chat = tokenizer.apply_chat_template(
         messages,
         tokenize=False,
-        add_generation_prompt=True,
+        add_generation_prompt=False,
         chat_template=CHAT_TEMPLATES[model_id],
     )
-    chat_with_default_template = tokenizer.apply_chat_template(
-        messages,
-        tokenize=False,
-        add_generation_prompt=True,
-    )
     print(chat)
-    print(chat_with_default_template)
-    print(chat.strip() == chat_with_default_template.strip())
-    print(len(chat), len(chat_with_default_template))
+    # chat_with_default_template = tokenizer.apply_chat_template(
+    #     messages,
+    #     tokenize=False,
+    #     add_generation_prompt=True,
+    # )
+    # print(chat_with_default_template)
+    # print(chat.strip() == chat_with_default_template.strip())
+    # print(len(chat), len(chat_with_default_template))
 
 
 def test_uncensored_llama2_chat_template():
@@ -61,6 +59,18 @@ def test_uncensored_llama2_chat_template():
     print(len(chat), len(chat_with_default_template))
 
 
+def test_llama3_instruct_template():
+    model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    chat = tokenizer.apply_chat_template(
+        messages,
+        tokenize=False,
+        add_generation_prompt=True,
+        chat_template=CHAT_TEMPLATES[model_id],
+    )
+    print(chat)
+
+
 def test_chat_template_string():
     CHAT_TEMPLATE_STRING = """\
 {%- for message in messages %}
@@ -80,6 +90,7 @@ Unknown Role: {{ message.content -}}\n
 
 
 if __name__ == "__main__":
-    # test_llama2_chat_template()
+    test_llama2_chat_template()
     # test_chat_template_string()
-    test_uncensored_llama2_chat_template()
+    # test_uncensored_llama2_chat_template()
+    # test_llama3_instruct_template()

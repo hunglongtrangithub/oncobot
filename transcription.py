@@ -1,13 +1,13 @@
-import torch
-from typing import BinaryIO
-from openai import OpenAI, AsyncOpenAI
-from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
-import replicate
+from typing import BinaryIO, Optional
 import asyncio
 from pathlib import Path
 
+import torch
+from openai import OpenAI, AsyncOpenAI
+from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
+import replicate
+
 from logger_config import get_logger
-from concurrent.futures import ThreadPoolExecutor
 from config import settings
 
 logger = get_logger(__name__)
@@ -22,9 +22,13 @@ def try_open_audio_file(file_path: Path) -> BinaryIO:
 
 
 class WhisperSTT:
-    def __init__(self):
-        self.model_name = "openai/whisper-large-v3"
-        self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
+    def __init__(
+        self, model_name: str = "openai/whisper-large-v3", device: Optional[str] = None
+    ):
+        self.model_name = model_name
+        self.device = (
+            device if device else "cuda" if torch.cuda.is_available() else "cpu"
+        )
         self.torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
 
         self.model = AutoModelForSpeechSeq2Seq.from_pretrained(
@@ -48,7 +52,7 @@ class WhisperSTT:
             torch_dtype=self.torch_dtype,
             device=self.device,
         )
-        self.executor = ThreadPoolExecutor()
+
         logger.info(f"{self.model_name} initialized.")
         logger.info("Initialized on device: {}".format(self.device))
         if self.device == torch.device("cuda"):
@@ -69,15 +73,6 @@ class WhisperSTT:
 
     async def arun(self, audio_path: str) -> str:
         try:
-            #     transcription = await asyncio.get_event_loop().run_in_executor(
-            #         self.executor,
-            #         self.run,
-            #         audio_path,
-            #     )
-            #     return transcription
-            # except asyncio.CancelledError:
-            #     logger.info("Async transcription method was cancelled.")
-            #     raise
             return self.run(audio_path)
         except Exception as e:
             logger.error(f"Error in async transcription method: {e}")
@@ -149,11 +144,7 @@ class OpenAIWhisperSTT:
 
 class DummyOpenAIWhisperSTT:
     def __init__(self, default_transcription_text="This is a dummy transcription."):
-        self.default_transcription_text = (
-            "This is a dummy transcription."
-            if default_transcription_text is None
-            else default_transcription_text
-        )
+        self.default_transcription_text = default_transcription_text
 
     def _get_openai_api_key(self):
         # Simulate retrieval of API key
@@ -175,9 +166,6 @@ class DummyOpenAIWhisperSTT:
         # Return a default dummy transcription text
         return self.default_transcription_text
 
-
-# transcribe = OpenAIWhisperSTT()
-transcribe = WhisperSTT()
 
 if __name__ == "__main__":
     path_to_audio = "./tests/audio/moe-moe-kyun.mp3"

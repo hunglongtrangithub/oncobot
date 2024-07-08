@@ -144,12 +144,21 @@ pyvenv.cfg
 node_modules/
 .envrc
 
-# Ignore generated speech file
-audio/
-
 # ignore model directory
 llm_llama/
 
-# ignore docs and index directories
-docs/
+# ignore docs directories and index files
 index/
+docs/
+
+# ignore generated audio and video files
+audio/
+video/
+
+# ignore bot face and voice files
+faces/
+voices/
+
+# ignore SadTalker model weights
+checkpoints
+gfpgan

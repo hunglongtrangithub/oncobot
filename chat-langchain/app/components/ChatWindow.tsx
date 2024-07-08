@@ -10,13 +10,13 @@ import { Renderer } from "marked";
 import hljs from "highlight.js";
 import "highlight.js/styles/gradient-dark.css";
 
+import { Flex, Box } from "@chakra-ui/react";
+import { useColorMode } from "@chakra-ui/react";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { applyPatch } from "fast-json-patch";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
-  Heading,
-  Flex,
   IconButton,
   InputGroup,
   InputRightElement,
@@ -36,13 +36,28 @@ import {
 import { ArrowUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import { MdMic, MdStop } from "react-icons/md";
 
+import Footer from "./Footer";
+import { Header } from "./Header";
 import { Source } from "./SourceBubble";
 import { apiBaseUrl } from "../utils/constants";
 import { RiRobot2Line } from "react-icons/ri";
-import Image from "next/image";
 
-export function ChatWindow(props: { titleText?: string }) {
-  const { titleText = "Medical Chatbot" } = props;
+export function ChatWindow(props: {
+  titleText: string;
+  lightMode: string;
+  darkMode: string;
+}) {
+  const { titleText, lightMode, darkMode } = props;
+  const avatarStyle: React.CSSProperties = {
+    width: "250px",
+    height: "250px",
+    objectFit: "cover",
+    borderRadius: "50%",
+    border: "3px solid gray",
+  };
+  const [isVoiceChatActive, setIsVoiceChatActive] = useState<boolean>(false);
+  const { colorMode, toggleColorMode } = useColorMode();
+  const toggleVoiceChat = () => setIsVoiceChatActive(!isVoiceChatActive);
   const conversationId = uuidv4();
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
   const [messages, setMessages] = useState<Array<Message>>([]);
@@ -92,9 +107,8 @@ export function ChatWindow(props: { titleText?: string }) {
   const recorderRef = useRef({
     mediaRecorder: null as MediaRecorder | null,
     audioChunks: [] as Blob[],
-    // videoStream: null as MediaStream | null, // Add a property to keep track of the video stream
 
-    start: async function () {
+    start: async function (camera: boolean = false) {
       if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
         return Promise.reject(
           new Error(
@@ -105,7 +119,7 @@ export function ChatWindow(props: { titleText?: string }) {
       console.log("start recording");
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: true,
-        video: true,
+        video: camera,
       });
       this.mediaRecorder = new MediaRecorder(stream);
 
@@ -114,7 +128,6 @@ export function ChatWindow(props: { titleText?: string }) {
       this.mediaRecorder.ondataavailable = (event) => {
         console.log("audioChunks.length:", this.audioChunks.length);
         this.audioChunks.push(event.data);
-        // setAudioChunks((prevChunks) => [...prevChunks, event.data]);
       };
       this.mediaRecorder.start(10); // HACK: This is a temporary fix to prevent the first chunk from being empty
     },
@@ -128,7 +141,6 @@ export function ChatWindow(props: { titleText?: string }) {
             .getTracks()
             .forEach((track) => track.stop()); // Stop all tracks
           this.audioChunks = [];
-          // setAudioChunks([]); // Clear audioChunks after stopping
           setUserVideoStream(null); // Reset videoStream after stopping
           await transcribeAndSendMessage(audioBlob, callback_action);
         };
@@ -575,6 +587,7 @@ export function ChatWindow(props: { titleText?: string }) {
   };
 
   const toggleRecording = (
+    camera: boolean = false,
     callback_action: null | "audio" | "video" = null,
   ) => {
     if (isRecording) {
@@ -582,7 +595,7 @@ export function ChatWindow(props: { titleText?: string }) {
       recorderRef.current.stop(callback_action);
     } else {
       setIsRecording(true);
-      recorderRef.current.start();
+      recorderRef.current.start(camera);
     }
   };
 
@@ -592,261 +605,258 @@ export function ChatWindow(props: { titleText?: string }) {
   const callbackAfterInputtingText = null;
 
   return (
-    <div className="flex flex-col items-center p-8 rounded grow max-h-full">
-      {messages.length === messages.length && (
-        <Flex direction={"column"} alignItems={"center"} paddingBottom={"20px"}>
-          <Heading fontSize="2xl" fontWeight={"medium"} mb={1} color={"white"}>
-            {titleText}
-          </Heading>
-          <Heading fontSize="md" fontWeight={"normal"} mb={1} color={"white"}>
-            We appreciate feedback!
-          </Heading>
-        </Flex>
-      )}
-      <Stack direction={["column", "row"]} spacing={"24px"}>
-        <VStack spacing={"12px"}>
-          {isVideoPlaying ? (
-            <video
-              ref={videoRef}
-              style={{
-                width: "150px",
-                height: "150px",
-                objectFit: "cover",
-                borderRadius: "50%",
-                border: "3px solid gray",
-              }}
-              autoPlay
-            >
-              Your browser does not support the video tag.
-            </video>
-          ) : (
-            <Avatar
-              style={{
-                width: "150px",
-                height: "150px",
-                objectFit: "cover",
-                borderRadius: "50%",
-                border: "3px solid gray",
-              }}
-              name="ChatBot"
-              src={
-                selectedChatbot !== ""
-                  ? `/bots/${selectedChatbot}.jpg`
-                  : "/images/bot.png"
-              }
-            />
-          )}
-          <IconButton
-            colorScheme="blue"
-            rounded={"full"}
-            aria-label="Bot status"
-            icon={
-              isSpeechPlaying ? (
-                <Spinner />
-              ) : isSpeechLoading ? (
-                <CircularProgress
-                  isIndeterminate
-                  size="30px"
-                  color="blue.300"
+    <Flex
+      as="main" // This makes the semantic element 'main'
+      direction="column" // Stacks children vertically by default
+      align="stretch" // Stretches children to fill the width
+      width="full" // Ensures the Flex takes full width of its container
+      minHeight="100vh" // Optional: full height of the viewport
+      overflow="auto" // If you need scrolling
+    >
+      <Header
+        titleText={titleText}
+        lightMode={lightMode}
+        darkMode={darkMode}
+        toggleVoiceChat={toggleVoiceChat}
+        isVoiceChatActive={isVoiceChatActive}
+        toggleColorMode={toggleColorMode}
+        colorMode={colorMode}
+      />
+      <Spacer />
+      {isVoiceChatActive ? (
+        <>
+          <Stack
+            direction={["column", "row"]}
+            alignItems={"center"}
+            justifyContent={"center"}
+          >
+            <Spacer />
+            <VStack>
+              {isVideoPlaying ? (
+                <video ref={videoRef} style={avatarStyle} autoPlay>
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                <Avatar
+                  style={avatarStyle}
+                  src={
+                    selectedChatbot !== ""
+                      ? `/bots/${selectedChatbot}.jpg`
+                      : "/images/bot.png"
+                  }
+                />
+              )}
+              <IconButton
+                colorScheme="blue"
+                rounded={"full"}
+                aria-label="Bot status"
+                icon={
+                  isSpeechPlaying ? (
+                    <Spinner />
+                  ) : isSpeechLoading ? (
+                    <CircularProgress
+                      isIndeterminate
+                      size="30px"
+                      color="blue.300"
+                    />
+                  ) : (
+                    <RiRobot2Line />
+                  )
+                }
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (selectedChatbot === "") {
+                    toast.error("Please select a chatbot first.");
+                    return;
+                  }
+                  if (isSpeechLoading || isSpeechPlaying) {
+                    cancelOperation();
+                    return;
+                  }
+                }}
+              />
+            </VStack>
+            <Spacer />
+            <VStack>
+              {isRecording ? (
+                <video
+                  ref={userVideoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  style={{
+                    ...avatarStyle,
+                    transform: "scaleX(-1)",
+                  }}
                 />
               ) : (
-                <RiRobot2Line />
-              )
-            }
-            onClick={(e) => {
-              e.preventDefault();
-              if (selectedChatbot === "") {
-                toast.error("Please select a chatbot first.");
-                return;
-              }
-              if (isSpeechLoading || isSpeechPlaying) {
-                cancelOperation();
-                return;
-              }
-            }}
-          />
-        </VStack>
-        <Spacer />
-        <VStack spacing={"12px"}>
-          {isRecording ? (
-            <video
-              ref={userVideoRef}
-              autoPlay
-              playsInline
-              muted
-              style={{
-                width: "150px",
-                height: "150px",
-                objectFit: "cover",
-                borderRadius: "50%",
-                border: "3px solid gray",
-                transform: "scaleX(-1)",
-              }}
-            />
-          ) : (
-            <Avatar
-              name="User"
-              style={{
-                width: "150px",
-                height: "150px",
-                objectFit: "cover",
-                borderRadius: "50%",
-                border: "3px solid gray",
-              }}
-              src="/images/user.png"
-            />
-          )}
-          <IconButton
-            colorScheme="blue"
-            rounded={"full"}
-            aria-label="User mic status"
-            icon={
-              isRecording ? (
-                <MdStop />
-              ) : isTranscribing ? (
-                <Spinner />
-              ) : (
-                <MdMic />
-              )
-            }
-            type="submit"
-            onClick={(e) => {
-              e.preventDefault();
-              if (selectedChatbot === "") {
-                toast.error("Please select a chatbot first.");
-                return;
-              }
-              if (isTranscribing) {
-                cancelOperation();
-                return;
-              }
-              toggleRecording(callbackAfterRecordingVideo);
-            }}
-          />
-        </VStack>
-      </Stack>
-      <Menu>
-        <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-          {selectedChatbot || "Select Chatbot"}
-        </MenuButton>
-        <MenuList>
-          {chatbots.map((bot) => (
-            <MenuItem
-              key={bot}
-              onClick={() => {
-                console.log("Selected chatbot: ", bot);
-                setSelectedChatbot(bot);
-              }}
-            >
-              {bot}
-            </MenuItem>
-          ))}
-        </MenuList>
-      </Menu>
-      <div
-        className="flex flex-col-reverse w-full mb-2 overflow-auto"
-        ref={messageContainerRef}
-      >
-        {messages.length > 0 ? (
-          [...messages]
-            .reverse()
-            .map((m, index) => (
-              <ChatMessageBubble
-                key={m.id}
-                message={{ ...m }}
-                aiEmoji="🦜"
-                isMostRecent={index === 0}
-                messageCompleted={!isLoading}
-                selectedChatbot={selectedChatbot}
-                conversationId={conversationId}
-              ></ChatMessageBubble>
-            ))
-        ) : (
-          <EmptyState onChoice={sendInitialQuestion} titleText={titleText} />
-        )}
-      </div>
-      <InputGroup size="md" alignItems={"center"}>
-        <InputLeftElement h="full">
-          <IconButton
-            colorScheme="blue"
-            rounded={"full"}
-            aria-label="Send"
-            icon={
-              isRecording ? (
-                <MdStop />
-              ) : isTranscribing ? (
-                <Spinner />
-              ) : (
-                <MdMic />
-              )
-            }
-            type="submit"
-            onClick={(e) => {
-              e.preventDefault();
-              if (isTranscribing) {
-                cancelOperation();
-                return;
-              }
-              toggleRecording(callbackAfterRecordingAudio);
-            }}
-          />
-        </InputLeftElement>
-        <AutoResizeTextarea
-          value={input}
-          maxRows={5}
-          marginRight={"56px"}
-          marginLeft={"56px"}
-          placeholder="Ask me about a patient..."
-          textColor={"white"}
-          borderColor={"rgb(58, 58, 61)"}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              sendMessage(input, noStream, callbackAfterInputtingText);
-            } else if (e.key === "Enter" && e.shiftKey) {
-              e.preventDefault();
-              setInput(input + "\n");
-            }
-          }}
-        />
-        <InputRightElement h="full">
-          <IconButton
-            colorScheme="blue"
-            rounded={"full"}
-            aria-label="Send"
-            icon={isLoading ? <Spinner /> : <ArrowUpIcon />}
-            type="submit"
-            onClick={(e) => {
-              e.preventDefault();
-              if (isLoading) {
-                cancelOperation();
-                return;
-              }
-              sendMessage(input, noStream, callbackAfterInputtingText);
-            }}
-          />
-        </InputRightElement>
-      </InputGroup>
-      {messages.length === 0 ? (
-        <footer className="flex justify-center absolute bottom-8">
-          <a
-            href="hhttps://github.com/hunglongtrangithub/chat-langchain"
-            target="_blank"
-            className="text-white flex items-center"
+                <Avatar style={avatarStyle} />
+              )}
+              <IconButton
+                colorScheme="blue"
+                rounded={"full"}
+                aria-label="User mic status"
+                icon={
+                  isRecording ? (
+                    <MdStop />
+                  ) : isTranscribing ? (
+                    <Spinner />
+                  ) : (
+                    <MdMic />
+                  )
+                }
+                type="submit"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (selectedChatbot === "") {
+                    toast.error("Please select a chatbot first.");
+                    return;
+                  }
+                  if (isTranscribing) {
+                    cancelOperation();
+                    return;
+                  }
+                  toggleRecording(true, callbackAfterRecordingVideo);
+                }}
+              />
+            </VStack>
+            <Spacer />
+          </Stack>
+          <Spacer />
+          <Box
+            display="flex" // Enables flexbox layout.
+            flexDirection={["column", "row"]} // Stacks children vertically in reverse order.
+            alignItems={"center"} // Aligns children along the center of the cross axis.
+            justifyContent={"center"} // Aligns children along the center of the main axis.
+            width="full" // Takes the full width of its container.
+            mb={2} // Margin-bottom, where each unit is typically 4px in Chakra UI.
+            p={8} // Padding on all sides, each unit is typically 4px, so 8 units equal 32px.
           >
-            <Image
-              src="/images/github-mark.svg"
-              alt="Github Logo"
-              width={20}
-              height={20}
-            />
-            <span>View Source</span>
-          </a>
-        </footer>
+            <Menu>
+              <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                {selectedChatbot || "Select Chatbot"}
+              </MenuButton>
+              <MenuList>
+                {chatbots.map((bot) => (
+                  <MenuItem
+                    key={bot}
+                    onClick={() => {
+                      console.log("Selected chatbot: ", bot);
+                      setSelectedChatbot(bot);
+                    }}
+                  >
+                    {bot}
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </Menu>
+          </Box>
+          <Spacer />
+        </>
       ) : (
-        ""
+        <>
+          <Box
+            display="flex" // Enables flexbox layout.
+            flexDirection="column-reverse" // Stacks children vertically in reverse order.
+            width="full" // Takes the full width of its container.
+            mb={2} // Margin-bottom, where each unit is typically 4px in Chakra UI.
+            overflow="auto" // Allows scrolling for overflow content.
+            p={8} // Padding on all sides, each unit is typically 4px, so 8 units equal 32px.
+            ref={messageContainerRef} // Ref for DOM access or manipulation.
+          >
+            {messages.length > 0 ? (
+              [...messages]
+                .reverse()
+                .map((m, index) => (
+                  <ChatMessageBubble
+                    key={m.id}
+                    message={{ ...m }}
+                    aiEmoji="🦜"
+                    isMostRecent={index === 0}
+                    messageCompleted={!isLoading}
+                    selectedChatbot={selectedChatbot}
+                    conversationId={conversationId}
+                    lightMode={lightMode}
+                    darkMode={darkMode}
+                  ></ChatMessageBubble>
+                ))
+            ) : (
+              <EmptyState
+                onChoice={sendInitialQuestion}
+                lightMode={lightMode}
+                darkMode={darkMode}
+              />
+            )}
+          </Box>
+          <Spacer />
+          <Box px={4}>
+            <InputGroup size="md" alignItems={"center"}>
+              <InputLeftElement h="full">
+                <IconButton
+                  colorScheme="blue"
+                  rounded={"full"}
+                  aria-label="Send"
+                  icon={
+                    isRecording ? (
+                      <MdStop />
+                    ) : isTranscribing ? (
+                      <Spinner />
+                    ) : (
+                      <MdMic />
+                    )
+                  }
+                  type="submit"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (isTranscribing) {
+                      cancelOperation();
+                      return;
+                    }
+                    toggleRecording(false, callbackAfterRecordingAudio);
+                  }}
+                />
+              </InputLeftElement>
+              <AutoResizeTextarea
+                value={input}
+                maxRows={5}
+                marginRight={"56px"}
+                marginLeft={"56px"}
+                placeholder="Ask me about a patient..."
+                textColor={colorMode === "light" ? "black" : "white"}
+                borderColor={colorMode === "light" ? "gray.900" : "gray.100"}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage(input, noStream, callbackAfterInputtingText);
+                  } else if (e.key === "Enter" && e.shiftKey) {
+                    e.preventDefault();
+                    setInput(input + "\n");
+                  }
+                }}
+              ></AutoResizeTextarea>
+              <InputRightElement h="full">
+                <IconButton
+                  colorScheme="blue"
+                  rounded={"full"}
+                  aria-label="Send"
+                  icon={isLoading ? <Spinner /> : <ArrowUpIcon />}
+                  type="submit"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (isLoading) {
+                      cancelOperation();
+                      return;
+                    }
+                    sendMessage(input, noStream, callbackAfterInputtingText);
+                  }}
+                />
+              </InputRightElement>
+            </InputGroup>
+          </Box>
+        </>
       )}
-    </div>
+      <Footer colorMode={colorMode} />
+    </Flex>
   );
 }

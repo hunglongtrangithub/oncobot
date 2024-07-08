@@ -18,7 +18,7 @@ import json
 from logger_config import get_logger
 from retriever import CustomRetriever
 from custom_chat_model import DummyChat, CustomChatHuggingFace
-from ner import NERProcessor
+from ner import DummyNERProcessor, NERProcessor
 from rag_chain import ChatRequest, RAGChain
 from tts import DummyTTS, XTTS
 from transcription import DummyOpenAIWhisperSTT, WhisperSTT
@@ -28,27 +28,30 @@ from config import settings
 logger = get_logger(__name__)
 
 
-chat_model = CustomChatHuggingFace(
-    "meta-llama/Meta-Llama-3-8B-Instruct",
-    device="cuda:0",
-    max_chat_length=2048,
-)
-# default_message = "Fake Patient 3 is diagnosed with stage 2 invasive ductal carcinoma of the right breast, metastatic to right axillary lymph nodes."
-# chat_model = DummyChat(default_message=default_message)
+# chat_model = CustomChatHuggingFace(
+#     "meta-llama/Meta-Llama-3-8B-Instruct",
+#     device="cuda:0",
+#     max_chat_length=2048,
+# )
+default_message = "Fake Patient 3 is diagnosed with stage 2 invasive ductal carcinoma of the right breast, metastatic to right axillary lymph nodes."
+chat_model = DummyChat(default_message=default_message)
 retriever = CustomRetriever(num_docs=5, semantic_ratio=0.1)
-ner = NERProcessor(device="cuda:0")
+# ner = NERProcessor(device="cuda:0")
+ner = DummyNERProcessor()
 chain = RAGChain(retriever, chat_model, ner)
-tts = XTTS(use_deepspeed=True)
-transcribe = WhisperSTT(device="cuda:4")
-# transcribe = DummyOpenAIWhisperSTT()
-talker = CustomSadTalker(
-    # batch_size=75,
-    # device=[1, 2, 4],
-    # parallel_mode="dp",
-    batch_size=75,
-    device="cuda:3",
-    dtype=torch.float16,
-)
+# tts = XTTS(use_deepspeed=True)
+tts = DummyTTS()
+# transcribe = WhisperSTT(device="cuda:4")
+transcribe = DummyOpenAIWhisperSTT()
+# talker = CustomSadTalker(
+#     # batch_size=75,
+#     # device=[1, 2, 4],
+#     # parallel_mode="dp",
+#     batch_size=75,
+#     device="cuda:3",
+#     dtype=torch.float16,
+# )
+talker = DummyTalker()
 
 
 app = FastAPI()
@@ -80,7 +83,7 @@ async def astream_generator(subscription: AsyncGenerator):
                 print(f"op: {op}, path: {path}, chunk: {chunk}")
             yield f"event: data\ndata: {post_processing(op, path, chunk)}\n\n"
             # HACK: This is a temporary fix to prevent the browser from being unable to handle the stream when it becomes too fast
-            await asyncio.sleep(0.01)
+            # await asyncio.sleep(0.01)
     except asyncio.TimeoutError:
         error_message = "Stream timed out"
         logger.error(error_message)

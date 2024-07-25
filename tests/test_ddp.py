@@ -5,7 +5,6 @@ import time
 import os
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
-from torch import optim
 
 
 class ToyModel(nn.Module):
@@ -69,8 +68,8 @@ def process_batch(rank, world_size, models, batches, result_queue):
         # Concatenate all results only at rank 0
         print("Concatenating results. Number of results:", len(result_list))
         for i in range(world_size):
-            print(f"Result {i} shape:", result_list[i].shape)
-        final_result = torch.cat(result_list, dim=0)
+            print(f"Result {i} shape:", result_list[i].shape) # type: ignore
+        final_result = torch.cat(result_list, dim=0) # type: ignore
         print("Final result shape:", final_result.shape)
         final_result = final_result.cpu()
         print("Final result shape after moving to CPU:", final_result.shape)
@@ -78,7 +77,7 @@ def process_batch(rank, world_size, models, batches, result_queue):
         print(f"Rank {rank} done.")
 
 
-def main():
+def test_ddp():
 
     # Create a large tensor
     data = torch.randn(10000, 10)
@@ -107,7 +106,7 @@ def main():
 
         start = time.time()
         # Spawn processes
-        mp.spawn(
+        mp.spawn( # type: ignore
             process_batch,
             args=(world_size, models, batches, result_queue),
             nprocs=world_size,
@@ -127,10 +126,37 @@ def main():
         print("Processing time:", time.time() - start)
 
 
+def test_divide_batch():
+    data = torch.Tensor(range(200))
+    print(data)
+    data = data.view(25, 4, 2)
+    total_frames = 98
+    batches = []
+    num_devices = 7
+    num_batches = data.shape[0]
+    batches_per_device = (num_batches + num_devices - 1) // num_devices
+    frames_per_device = (total_frames + num_devices - 1) // num_devices
+    for i in range(num_devices):
+        start_idx = i * batches_per_device
+        end_idx = min((i + 1) * batches_per_device, num_batches)
+        batch_data = data[start_idx:end_idx]
+        num_frames = (
+            frames_per_device
+            if i < num_devices - 1
+            else total_frames - i * frames_per_device
+        )
+        batches.append([batch_data, num_frames])
+        print(f"Batch {i}:", batch_data.shape)
+        print(f"Num frames {i}:", num_frames)
+    new_data = torch.cat([batch.flatten() for batch, _ in batches], dim=0)
+    print(new_data)
+    assert data == new_data, "Data not equal"
+
+
 if __name__ == "__main__":
-    main()
+    test_ddp()
     pause = 5
     for i in range(pause):
         print(f"Pausing for {pause - i} seconds")
         time.sleep(1)
-    main()
+    test_ddp()

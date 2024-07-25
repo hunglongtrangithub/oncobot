@@ -3,22 +3,12 @@ import time
 import torch
 import torch.distributed as dist
 import torch.nn as nn
-import torch.optim as optim
 import torch.multiprocessing as mp
-
-from torch.nn.parallel import DistributedDataParallel as DDP
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-
-# sad_talker = SadTalker(
-#     checkpoint_path="sad_talker/checkpoints",
-#     config_path="sad_talker/src/config",
-# )
-# generator = sad_talker.animate_from_coeff.generator
+# Simulate a model that takes in a source image, driving keypoints, and source keypoints
 class Model(nn.Module):
-    # Our model
-
     def __init__(self, input_size, output_size):
         super(Model, self).__init__()
         self.fc = nn.Linear(input_size, output_size)
@@ -186,10 +176,9 @@ class DDPDemo:
         with mp.Manager() as manager:
             world_size = len(self.devices)
             result_queue = manager.Queue()
-            print("Spawning processes...")
             start_time = time.time()
             # Spawn processes
-            mp.spawn(
+            mp.spawn(  # type: ignore
                 self._ddp_worker,
                 args=(
                     world_size,

@@ -51,14 +51,14 @@ export function EmptyState(props: {
         Example Questions
       </Heading>
       <Flex marginTop={"25px"} grow={1} maxWidth={"800px"} width={"100%"}>
-        <CustomCard text="What is the diagnosis of Fake Patient1?" />
+        <CustomCard text="What was Fake Patient1’s blood pressure during her last visit?" />
         <Spacer />
-        <CustomCard text="What is the treatment for Fake Patient2?" />
+        <CustomCard text="How did Fake Patient2 tolerate the biopsy procedure?" />
       </Flex>
       <Flex marginTop={"25px"} grow={1} maxWidth={"800px"} width={"100%"}>
-        <CustomCard text="What is the diagnosis of Fake Patient3?" />
+        <CustomCard text="What is the stage of Fake Patient3's right breast cancer?" />
         <Spacer />
-        <CustomCard text="What is the treatment for Fake Patient4?" />
+        <CustomCard text="Describe Fake Patient4's past medical history in one sentence." />
       </Flex>
     </div>
   );

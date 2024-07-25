@@ -155,7 +155,7 @@ export const Header = (props: {
           maxWidth={"150px"}
         >
           <Button onClick={toggleVoiceChat}>
-            {isVoiceChatActive ? "Voice Chat" : "Text Chat"}
+            {!isVoiceChatActive ? "Voice Chat" : "Text Chat"}
           </Button>
           <Spacer />
           <Button onClick={toggleColorMode}>

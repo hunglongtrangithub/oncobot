@@ -1,23 +1,14 @@
+from contextlib import contextmanager
+import asyncio
+import time
 import sys
 from pathlib import Path
 import os
 
 os.chdir(Path(__file__).parent.parent)
 sys.path.append(str(Path(__file__).resolve().parent.parent))
-import asyncio
-from rag_chain import RAGChain
-from custom_chat_model import CustomChatHuggingFace
-from vectorstore import get_vectorstore
-import time
-from contextlib import contextmanager
-
-
-CHECKPOINT = "meta-llama/Meta-Llama-3-8B-Instruct"
-chat_model = CustomChatHuggingFace(CHECKPOINT)
-
-vectorstore = get_vectorstore("clinical_index")
-
-chain = RAGChain(vectorstore, chat_model)
+from main import chain
+from rag_chain import ChatRequest
 
 
 @contextmanager

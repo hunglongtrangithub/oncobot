@@ -28,10 +28,12 @@ with open(sad_talker_paths["facerender_yaml"]) as f:
 
 def test_talker():
     talker = CustomSadTalker(
-        batch_size=50,
-        device=[3, 4],
-        # dtype=torch.float16,
+        batch_size=60,
+        device="cuda:4",
+        torch_dtype="float16",
         # parallel_mode="dp",
+        # quanto_weights="int8",
+        # quanto_activations=None,
     )
     video_path = str(Path(__file__).parent / "video/chatbot1__1.mp4")
     audio_path = str(Path(__file__).parent.parent / "examples/fake_patient3.wav")
@@ -77,16 +79,16 @@ def test_generator():
     num_frames = 15
     batch_size = batch_size * num_frames
     source_image = (
-        torch.randn(batch_size, 3, 256, 256).type(torch.FloatTensor).to(device="cuda")
+        torch.randn(batch_size, 3, 256, 256).type(torch.float32).to(device="cuda")
     )
     kp_source = {
         "value": torch.randn(batch_size, 15, 3)
-        .type(torch.FloatTensor)
+        .type(torch.float32)
         .to(device="cuda")
     }
     kp_driving = {
         "value": torch.randn(batch_size, 15, 3)
-        .type(torch.FloatTensor)
+        .type(torch.float32)
         .to(device="cuda")
     }
     print(f"source_image memory size: {size(source_image)/1024:.2f} KB")

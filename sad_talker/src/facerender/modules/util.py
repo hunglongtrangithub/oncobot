@@ -713,4 +713,3 @@ class audio2image(nn.Module):
             source_image, kp_source=kp_source, kp_driving=kp_transformed_generated
         )
         return generated
-

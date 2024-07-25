@@ -113,6 +113,7 @@ def get_rotation_matrix(yaw, pitch, roll):
 def keypoint_transformation(kp_canonical, he, wo_exp=False):
     kp = kp_canonical["value"]  # (bs, k, 3)
     yaw, pitch, roll = he["yaw"], he["pitch"], he["roll"]
+
     yaw = headpose_pred_to_degree(yaw)
     pitch = headpose_pred_to_degree(pitch)
     roll = headpose_pred_to_degree(roll)
@@ -166,7 +167,7 @@ def make_animation(
         kp_canonical = kp_detector(source_image)
         he_source = mapping(source_semantics)
         kp_source = keypoint_transformation(kp_canonical, he_source)
-        print("target_semantics.shape", target_semantics.shape)
+
         for frame_idx in tqdm(range(target_semantics.shape[1]), "Face Renderer:"):
             target_semantics_frame = target_semantics[:, frame_idx]
             he_driving = mapping(target_semantics_frame)
@@ -185,14 +186,6 @@ def make_animation(
             # print("kp_source['value'].shape", kp_source["value"].shape)
             # print("kp_norm['value'].shape", kp_norm["value"].shape)
             out = generator(source_image, kp_source=kp_source, kp_driving=kp_norm)
-            """
-            source_image_new = out['prediction'].squeeze(1)
-            kp_canonical_new =  kp_detector(source_image_new)
-            he_source_new = he_estimator(source_image_new) 
-            kp_source_new = keypoint_transformation(kp_canonical_new, he_source_new, wo_exp=True)
-            kp_driving_new = keypoint_transformation(kp_canonical_new, he_driving, wo_exp=True)
-            out = generator(source_image_new, kp_source=kp_source_new, kp_driving=kp_driving_new)
-            """
             predictions.append(out["prediction"])
             # print("out['prediction'].shape", out["prediction"].shape)
         predictions_ts = torch.stack(predictions, dim=1)

@@ -3,15 +3,17 @@ import time
 import os
 import torch
 import uuid
+
+from pydub import AudioSegment
+import torch.distributed as dist
+import torch.multiprocessing as mp
+
 from sad_talker.src.utils.preprocess import CropAndExtract
 from sad_talker.src.test_audio2coeff import Audio2Coeff
 from sad_talker.src.facerender.animate import AnimateFromCoeff, save_data_to_video
 from sad_talker.src.generate_batch import get_data
 from sad_talker.src.generate_facerender_batch import get_facerender_data
 from sad_talker.src.utils.init_path import init_path
-from pydub import AudioSegment
-import torch.distributed as dist
-import torch.multiprocessing as mp
 
 
 def mp3_to_wav(mp3_filename, wav_filename, frame_rate):
@@ -30,6 +32,7 @@ class SadTalker:
         device=None,
         dtype=None,
         parallel_mode=None,
+        **quanto_config,
     ):
         self.devices = self._parse_devices(device)
         self.parallel_mode = parallel_mode
@@ -45,6 +48,7 @@ class SadTalker:
         self.image_size = image_size
         self.image_preprocess = image_preprocess
         self.dtype = dtype
+        self.quanto_config = quanto_config
         self.initialize_all_models()
 
     def _parse_devices(self, device):
@@ -91,7 +95,12 @@ class SadTalker:
         self.audio_to_coeff = Audio2Coeff(sad_talker_paths, self.devices[0])
         if self.parallel_mode == "ddp":
             self.animate_from_coeff = [
-                AnimateFromCoeff(sad_talker_paths, device=device, dtype=self.dtype)
+                AnimateFromCoeff(
+                    sad_talker_paths,
+                    device=device,
+                    dtype=self.dtype,
+                    **self.quanto_config,
+                )
                 for device in self.devices
             ]
         elif self.parallel_mode == "dp":
@@ -101,12 +110,16 @@ class SadTalker:
                     device=self.devices[0],
                     dtype=self.dtype,
                     dp_device_ids=self.devices,
+                    **self.quanto_config,
                 )
             ]
         else:
             self.animate_from_coeff = [
                 AnimateFromCoeff(
-                    sad_talker_paths, device=self.devices[0], dtype=self.dtype
+                    sad_talker_paths,
+                    device=self.devices[0],
+                    dtype=self.dtype,
+                    **self.quanto_config,
                 )
             ]
         print("Models loaded.")
@@ -118,6 +131,7 @@ class SadTalker:
         if ".mp3" in driven_audio:
             audio_path = driven_audio.replace(".mp3", ".wav")
             mp3_to_wav(driven_audio, audio_path, 16000)
+            os.remove(driven_audio)
         else:
             audio_path = driven_audio
         return audio_path
@@ -217,15 +231,9 @@ class SadTalker:
             torch.cuda.set_device(device)
 
             model = self.animate_from_coeff[rank]
-            # print("Using AnimateFromCoeff model at device:", model.device)
-            # print("Data batch device:", data_batches[rank].device)
             local_result = model.generate(data_batches[rank])
-            # print(f"Rank {rank} finished processing. Result shape:", local_result.shape)
 
-            # Prepare a list to collect all results at rank 0
             gathered_results = [None] * world_size
-
-            # Gather all results to rank 0
             dist.all_gather_object(gathered_results, local_result.to(0))
 
             if rank == 0:
@@ -246,9 +254,8 @@ class SadTalker:
                 return self.animate_from_coeff[0].generate(data_batches[0])
             except Exception as e:
                 print("Error in single process:", e)
-                raise
-            finally:
                 self.clean()
+                raise
 
         with mp.Manager() as manager:
             world_size = len(self.devices)
@@ -278,7 +285,6 @@ class SadTalker:
         source_image,
         driven_audio,
         still_mode=False,
-        # use_enhancer=False,
         batch_size=1,
         pose_style=0,
         exp_scale=1.0,
@@ -287,62 +293,68 @@ class SadTalker:
         result_dir="./results/",
         tag=None,
     ):
+        try:
+            time_tag = str(uuid.uuid4()) if tag is None else tag
+            save_dir = os.path.join(result_dir, time_tag)
+            os.makedirs(save_dir, exist_ok=True)
 
-        time_tag = str(uuid.uuid4()) if tag is None else tag
-        save_dir = os.path.join(result_dir, time_tag)
-        os.makedirs(save_dir, exist_ok=True)
+            start_time = time.time()
+            audio_path = self._prepare_audio(driven_audio)
+            first_coeff_path, crop_pic_path, crop_info = self._preprocess_image(
+                source_image, save_dir
+            )
+            print("Preprocess time:", time.time() - start_time)
 
-        start_time = time.time()
-        audio_path = self._prepare_audio(driven_audio)
-        first_coeff_path, crop_pic_path, crop_info = self._preprocess_image(
-            source_image, save_dir
-        )
-        print("Preprocess time:", time.time() - start_time)
+            start_time = time.time()
+            batch = get_data(
+                first_coeff_path,
+                audio_path,
+                self.devices[0],
+                ref_eyeblink_coeff_path=None,
+                still=still_mode,
+                length_of_audio=length_of_audio,
+                use_blink=use_blink,
+            )
+            coeff_path = self.audio_to_coeff.generate(batch, save_dir, pose_style)
+            print("Audio2Coeff time:", time.time() - start_time)
 
-        start_time = time.time()
-        batch = get_data(
-            first_coeff_path,
-            audio_path,
-            self.devices[0],
-            ref_eyeblink_coeff_path=None,
-            still=still_mode,
-            length_of_audio=length_of_audio,
-            use_blink=use_blink,
-        )
-        coeff_path = self.audio_to_coeff.generate(batch, save_dir, pose_style)
-        print("Audio2Coeff time:", time.time() - start_time)
+            start_time = time.time()
+            data_batches, video_name, audio_path, frame_num = (
+                self._prepare_facerender_data(
+                    coeff_path,
+                    crop_pic_path,
+                    first_coeff_path,
+                    audio_path,
+                    batch_size,
+                    still_mode,
+                    exp_scale,
+                )
+            )
+            video_data = self._get_generated_video_data(data_batches)
+            print("FaceRender time:", time.time() - start_time)
 
-        start_time = time.time()
-        data_batches, video_name, audio_path, frame_num = self._prepare_facerender_data(
-            coeff_path,
-            crop_pic_path,
-            first_coeff_path,
-            audio_path,
-            batch_size,
-            still_mode,
-            exp_scale,
-        )
-        # this method is slow
-        video_data = self._get_generated_video_data(data_batches)
-        print("FaceRender time:", time.time() - start_time)
-
-        start_time = time.time()
-        # this method is slow
-        return_path = save_data_to_video(
-            video_name,
-            audio_path,
-            video_data,
-            crop_info,
-            self.image_size,
-            frame_num,
-            self.image_preprocess,
-            crop_pic_path,
-            save_dir,
-        )
-        print("Save video time:", time.time() - start_time)
-        return return_path
+            start_time = time.time()
+            return_path = save_data_to_video(
+                video_name,
+                audio_path,
+                video_data,
+                crop_info,
+                self.image_size,
+                frame_num,
+                self.image_preprocess,
+                crop_pic_path,
+                save_dir,
+            )
+            print("Save video time:", time.time() - start_time)
+            return return_path
+        except Exception as e:
+            print(f"Error in test: {e}")
+            raise
+        finally:
+            self.clean()
 
     def clean(self, delete_models=False):
+        print("Cleaning up...")
         if delete_models:
             del self.preprocess_model
             del self.audio_to_coeff

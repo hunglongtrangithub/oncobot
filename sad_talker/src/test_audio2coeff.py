@@ -61,7 +61,7 @@ class Audio2Coeff:
         netG = SimpleWrapperV2()
         netG = netG.to(device)
         for param in netG.parameters():
-            netG.requires_grad = False
+            param.requires_grad = False
         netG.eval()
         try:
             if sadtalker_path["use_safetensor"]:

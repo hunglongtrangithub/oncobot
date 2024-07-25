@@ -162,3 +162,5 @@ voices/
 # ignore SadTalker model weights
 checkpoints
 gfpgan
+
+.vscode

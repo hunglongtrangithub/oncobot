@@ -32,15 +32,13 @@ def longest_common_substring(s1, s2):
                 dp[i][j] = 0
 
     # Extract the longest common substring using the ending index and max_length
-    # print(s1)
-    # print(s2)
     if max_length <= 0:
         print("No common substring found")
         return "", 0
     longest_common_substring = s1[
         ending_index_s1 - max_length + 1 : ending_index_s1 + 1
     ]
-    # print(f"Longest common substring: {longest_common_substring}")
+
     return longest_common_substring, max_length
 
 
@@ -77,7 +75,9 @@ class CustomRetriever:
             docs,
             key=lambda doc: longest_common_substring(
                 query,
-                "".join(doc["title"].lower().split("_")),
+                "".join(
+                    doc["title"].lower().split("_")
+                ),  # remove underscores. May not be necessary
                 # doc["title"].lower(),
             )[1],
             reverse=True,

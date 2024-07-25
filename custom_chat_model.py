@@ -21,6 +21,7 @@ from chat_templates import CHAT_TEMPLATES
 logger = get_logger(__name__)
 
 
+# Base class for all custom chat models. All custom chat models should inherit from this class
 class BaseChat(ABC):
     def __init__(self):
         logger.info("BaseChat initialized.")
@@ -134,7 +135,7 @@ class CustomChatHuggingFace(BaseChat):
             logger.error(f"Failed to load model: {e}")
             raise
 
-        self.max_chat_length = max_chat_length  # can modify this to be the context length of the model. Also depends on how much memory is available (GPU or CPU)
+        self.max_chat_length = max_chat_length  # NOTE: can modify this to be the context length of the model. Also depends on how much memory is available (GPU or CPU)
         logger.info(f"Chat max length: {self.max_chat_length} tokens")
         if self.max_chat_length > self.model.config.max_position_embeddings:
             logger.warning(
@@ -248,6 +249,7 @@ class CustomChatHuggingFace(BaseChat):
             :, -self.max_chat_length :
         ]
 
+        # start the generation in a separate thread
         thread = Thread(
             target=self.model.generate,
             kwargs={

@@ -3,7 +3,6 @@
 import time
 import asyncio
 import os
-import torch
 
 from typing import AsyncGenerator
 from fastapi import FastAPI, File, HTTPException, UploadFile, Form
@@ -80,8 +79,6 @@ async def astream_generator(subscription: AsyncGenerator):
             if path == "/stream-output/-":
                 print(f"op: {op}, path: {path}, chunk: {chunk}")
             yield f"event: data\ndata: {post_processing(op, path, chunk)}\n\n"
-            # HACK: This is a temporary fix to prevent the browser from being unable to handle the stream when it becomes too fast
-            # await asyncio.sleep(0.01)
     except asyncio.TimeoutError:
         error_message = "Stream timed out"
         logger.error(error_message)

@@ -1,4 +1,5 @@
-# key: model name on Hugging Face, value: the jinja2 template be set to tokenizer.chat_template
+# NOTE: this dictionary is used to determine the template to format chat history list into one string.
+# # key: model name on Hugging Face, value: the jinja2 template be set to tokenizer.chat_template
 CHAT_TEMPLATES = {
     "meta-llama/Llama-2-7b-chat-hf": """\
 {% if messages[0]['role'] == 'system' %}

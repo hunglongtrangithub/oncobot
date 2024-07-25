@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+# this class bears all environment variables used in the application
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",

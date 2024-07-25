@@ -14,7 +14,7 @@ export function InlineCitation(props: {
       href={source.url}
       target="_blank"
       className={`relative bottom-1.5 text-xs border rounded px-1 ${
-        highlighted ? "bg-[rgb(58,58,61)]" : "bg-[rgb(78,78,81)]"
+        highlighted ? "bg-current" : "bg-transparent"
       }`}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}

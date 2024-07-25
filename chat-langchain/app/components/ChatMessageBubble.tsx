@@ -354,7 +354,7 @@ export function ChatMessageBubble(props: {
             </Button>
             <Spacer />
             {isSpeechPlaying ? (
-              <Spinner emptyColor="white" />
+              <Spinner />
             ) : isSpeechLoading ? (
               <CircularProgress isIndeterminate size="30px" />
             ) : null}

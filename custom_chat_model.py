@@ -1,12 +1,12 @@
+from typing import Dict, AsyncGenerator, Generator, Optional, Union, List
+from jinja2.exceptions import TemplateError
+from abc import ABC, abstractmethod
+
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
     TextIteratorStreamer,
 )
-from typing import Dict, AsyncGenerator, Generator, Optional, Union, List
-from jinja2.exceptions import TemplateError
-from abc import ABC, abstractmethod
-
 from huggingface_hub import login
 from threading import Thread
 import torch
@@ -192,7 +192,7 @@ class CustomChatHuggingFace(BaseChat):
             text=chat_history, return_tensors="pt"  # type: ignore
         )
 
-        # truncate chat history to max_length before moving to device
+        # truncate chat history to max_chat_length before moving to device
         tokenized_chat_history["input_ids"] = tokenized_chat_history["input_ids"][  # type: ignore
             :, -self.max_chat_length :
         ]
@@ -621,25 +621,3 @@ class CustomChatGroq(BaseChat):
                 raise
 
         return async_generator()
-
-
-# CHECKPOINT = "facebook/opt-125m"
-# CHECKPOINT = "meta-llama/Llama-2-7b-chat-hf"
-# CHECKPOINT = "georgesung/llama2_7b_chat_uncensored"
-# CHECKPOINT = "Tap-M/Luna-AI-Llama2-Uncensored"
-
-# from llm_llama.model_generator.llm_pipeline import load_fine_tuned_model
-# from pathlib import Path
-#
-# CHECKPOINT = Path(__file__).parent.resolve() / "llm_llama/Llama-2-7b-chat_peft_128"
-# model, tokenizer = load_fine_tuned_model(CHECKPOINT, peft_model=1)
-# chat_llm = CustomChatHuggingFace(model=model, tokenizer=tokenizer)
-
-# chat_llm = CustomChatLlamaReplicate()
-
-# chat_llm = CustomChatOpenAI()
-# chat_llm = CustomChatHuggingFace()
-
-# model_name = "mixtral-8x7b-32768"
-# model_name = "llama3-8b-8192"
-# chat_llm = CustomChatGroq(model_name=model_name)

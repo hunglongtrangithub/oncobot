@@ -17,41 +17,39 @@ import json
 
 from logger_config import get_logger
 from retriever import CustomRetriever
-from custom_chat_model import DummyChat, CustomChatHuggingFace
-from ner import DummyNERProcessor, NERProcessor
+from custom_chat_model import CustomChatHuggingFace
+from ner import NERProcessor
 from rag_chain import ChatRequest, RAGChain
-from tts import DummyTTS, XTTS
-from transcription import DummyOpenAIWhisperSTT, WhisperSTT
-from talking_face import DummyTalker, CustomSadTalker
+from tts import XTTS
+from transcription import WhisperSTT
+from talking_face import CustomSadTalker
 from config import settings
 
 logger = get_logger(__name__)
 
 
-# chat_model = CustomChatHuggingFace(
-#     "meta-llama/Meta-Llama-3-8B-Instruct",
-#     device="cuda:0",
-#     max_chat_length=2048,
-# )
-default_message = "Fake Patient 3 is diagnosed with stage 2 invasive ductal carcinoma of the right breast, metastatic to right axillary lymph nodes."
-chat_model = DummyChat(default_message=default_message)
+chat_model = CustomChatHuggingFace(
+    "meta-llama/Meta-Llama-3-8B-Instruct",
+    device="cuda:0",
+    max_chat_length=2048,
+)
 retriever = CustomRetriever(num_docs=5, semantic_ratio=0.1)
-# ner = NERProcessor(device="cuda:0")
-ner = DummyNERProcessor()
+ner = NERProcessor(device="cuda:0")
 chain = RAGChain(retriever, chat_model, ner)
-# tts = XTTS(use_deepspeed=True)
-tts = DummyTTS()
-# transcribe = WhisperSTT(device="cuda:4")
-transcribe = DummyOpenAIWhisperSTT()
-# talker = CustomSadTalker(
-#     # batch_size=75,
-#     # device=[1, 2, 4],
-#     # parallel_mode="dp",
-#     batch_size=75,
-#     device="cuda:3",
-#     dtype=torch.float16,
-# )
-talker = DummyTalker()
+tts = XTTS(use_deepspeed=True)
+transcribe = WhisperSTT(device="cuda:1")
+# The comments below show a few options to configure the inference of the talker model.
+# The current settings works well on a 40GB NVIDIA A100 GPU.
+talker = CustomSadTalker(
+    # batch_size=75,
+    # device=[1, 2, 4],
+    # parallel_mode="dp",
+    torch_dtype="float16",
+    device="cuda:2",
+    batch_size=60,
+    # quanto_weights="int8",
+    # quanto_activations=None,
+)
 
 
 app = FastAPI()

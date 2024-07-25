@@ -1,10 +1,11 @@
 import os
 import json
-import csv
 import requests
 from uuid import uuid4
 from bson import ObjectId
+
 import meilisearch
+
 from config import settings
 from logger_config import get_logger
 
@@ -78,11 +79,10 @@ def get_api_keys():
 SEARCH_API_KEY, ADMIN_API_KEY = get_api_keys()
 
 
-docs_folder = "docs"
-json_file_path = f"{docs_folder}/processed_docs.jsonl"
-
-
 def process_docs():
+    docs_folder = "docs"
+    json_file_path = f"{docs_folder}/processed_docs.jsonl"
+
     with open(json_file_path, mode="w", encoding="utf-8") as json_file:
         docs = []
         for patient_folder in os.listdir(docs_folder):

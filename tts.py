@@ -1,5 +1,5 @@
 import time
-from typing import Optional, Literal
+from typing import Optional
 import scipy
 import shutil
 from pathlib import Path
@@ -16,9 +16,11 @@ from TTS.api import TTS
 from TTS.tts.configs.xtts_config import XttsConfig
 from TTS.tts.models.xtts import Xtts
 from TTS.utils.audio.numpy_transforms import save_wav
+import pysbd
 
 from transformers import AutoProcessor, BarkModel
 import torch
+import numpy as np
 
 from logger_config import get_logger
 from config import settings
@@ -46,12 +48,8 @@ def try_open_audio_file(file_path: Path) -> BinaryIO:
 
 
 class XTTS:
-    def __init__(self, model_name: Optional[str] = None, use_deepspeed: bool = False):
-        self.model_name = (
-            "tts_models/multilingual/multi-dataset/xtts_v2"
-            if model_name is None
-            else model_name
-        )
+    def __init__(self, use_deepspeed: bool = False):
+        self.model_name = "tts_models/multilingual/multi-dataset/xtts_v2"
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.tts_api = TTS()
         # Set environment variable to agree to the terms of service
@@ -69,6 +67,18 @@ class XTTS:
             use_deepspeed=use_deepspeed,
         )
         self.model.to(self.device)
+
+        logger.info(f"Supported languages: {self.config.languages}")
+        self.segs = []
+        for lang in self.config.languages:
+            try:
+                segmenter = pysbd.Segmenter(language=lang)
+            except Exception:
+                logger.info(
+                    f"Failed to load pysbd segmenter for language {lang}. Defaulting to 'en'."
+                )
+                segmenter = pysbd.Segmenter(language="en")
+            self.segs.append(segmenter)
 
         logger.info(
             f"{self.model_name} initialized on device {self.device}. Using DeepSpeed: {use_deepspeed}."
@@ -90,7 +100,12 @@ class XTTS:
             size_all /= 1024**3
         return size_all
 
-    def run(self, text: str, file_path: str, voice_path: str):
+    def split_into_sentences(self, text: str, lang_iso: str):
+        return self.segs[self.config.languages.index(lang_iso)].segment(text)
+
+    def run(
+        self, text: str, file_path: str, voice_path: str, split_sentences: bool = True
+    ):
         try_create_directory(Path(file_path).resolve().parent)
         try:
             lang_iso = detect(text)
@@ -99,22 +114,41 @@ class XTTS:
         except Exception as e:
             logger.error(f"Failed to detect language for text: {e}. Defaulting to 'en'")
             lang_iso = "en"
+
+        sens = [text]
+        if split_sentences:
+            print(" > Text splitted to sentences.")
+            sens = self.split_into_sentences(text, lang_iso)
+        print(sens)
+
+        start = time.time()
+        wavs = []
         try:
-            start = time.time()
-            outputs = self.model.synthesize(
-                text=text,
-                config=self.config,
-                speaker_wav=voice_path,
-                language=lang_iso,
-            )
+            for sen in sens:
+                outputs = self.model.synthesize(
+                    text=sen,
+                    config=self.config,
+                    speaker_wav=voice_path,
+                    language=lang_iso,
+                )
+                waveform = outputs["wav"]
+                waveform = waveform.squeeze()
+                wavs += list(waveform)
+                wavs += [0] * 10000
+
             save_wav(
-                wav=outputs["wav"],
+                wav=np.array(wavs),
                 path=file_path,
                 sample_rate=self.output_sample_rate,
             )
         except Exception as e:
             logger.error(f"Error in XTTS method: {e}", exc_info=True)
             raise
+        # compute stats
+        process_time = time.time() - start
+        audio_time = len(wavs) / self.config.audio["sample_rate"]
+        logger.info(f" > Processing time: {process_time}")
+        logger.info(f" > Real-time factor: {process_time / audio_time}")
         logger.info(f"XTTS run method took {time.time() - start:.2f} seconds.")
 
     async def arun(self, text: str, file_path: str, voice_path: str):
@@ -123,32 +157,6 @@ class XTTS:
         except Exception as e:
             logger.error(f"Error in async XTTS method: {e}")
             raise
-
-    def stream(self, text: str, voice_path: str, chunk_size: int = 16_384):
-        try:
-            lang_iso = detect(text)
-            if lang_iso not in self.config.languages:
-                lang_iso = "en"
-        except Exception as e:
-            logger.error(f"Failed to detect language for text: {e}. Defaulting to 'en'")
-            lang_iso = "en"
-
-        gpt_cond_latent, speaker_embedding = self.model.get_conditioning_latents(
-            audio_path=voice_path,
-            gpt_cond_len=self.config.gpt_cond_len,
-            gpt_cond_chunk_len=self.config.gpt_cond_chunk_len,
-            max_ref_length=self.config.max_ref_len,
-            sound_norm_refs=self.config.sound_norm_refs,
-        )
-        streamer = self.model.inference_stream(
-            text,
-            lang_iso,
-            gpt_cond_latent,
-            speaker_embedding,
-            stream_chunk_size=chunk_size,
-            enable_text_splitting=True,
-        )
-        return streamer
 
 
 class OpenAITTS:

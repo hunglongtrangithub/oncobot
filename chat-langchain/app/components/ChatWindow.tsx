@@ -2,8 +2,8 @@
 
 import React, { useRef, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { EmptyState } from "../components/EmptyState";
-import { ChatMessageBubble, Message } from "../components/ChatMessageBubble";
+import { EmptyState } from "./EmptyState";
+import { ChatMessageBubble, Message } from "./ChatMessageBubble";
 import { AutoResizeTextarea } from "./AutoResizeTextarea";
 import { marked } from "marked";
 import { Renderer } from "marked";
@@ -25,6 +25,7 @@ import {
   CircularProgress,
   Avatar,
   VStack,
+  HStack,
   Button,
   Menu,
   MenuButton,
@@ -32,6 +33,7 @@ import {
   MenuItem,
   Spacer,
   Stack,
+  Text,
 } from "@chakra-ui/react";
 import { ArrowUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import { MdMic, MdStop } from "react-icons/md";
@@ -89,6 +91,7 @@ export function ChatWindow(props: {
     const botNames = response.bots;
     console.log("Available chatbots:", botNames);
     setChatbots(botNames);
+    setSelectedChatbot(botNames[0]);
   };
   // Load available chatbots on component mount
   useEffect(() => {
@@ -154,7 +157,7 @@ export function ChatWindow(props: {
     noStream: boolean = false,
     callback_action: null | "audio" | "video" = null,
   ): Promise<string | undefined> => {
-    console.log("API Base Url:", apiBaseUrl);
+    // console.log("API Base Url:", apiBaseUrl);
     if (messageContainerRef.current) {
       messageContainerRef.current.classList.add("grow");
     }
@@ -623,239 +626,239 @@ export function ChatWindow(props: {
         colorMode={colorMode}
       />
       <Spacer />
-      {isVoiceChatActive ? (
-        <>
-          <Stack
-            direction={["column", "row"]}
-            alignItems={"center"}
-            justifyContent={"center"}
-          >
-            <Spacer />
-            <VStack>
-              {isVideoPlaying ? (
-                <video ref={videoRef} style={avatarStyle} autoPlay>
-                  Your browser does not support the video tag.
-                </video>
-              ) : (
-                <Avatar
-                  style={avatarStyle}
-                  src={
-                    selectedChatbot !== ""
-                      ? `/bots/${selectedChatbot}.jpg`
-                      : "/images/bot.png"
-                  }
-                />
-              )}
-              <IconButton
-                colorScheme="blue"
-                rounded={"full"}
-                aria-label="Bot status"
-                icon={
-                  isSpeechPlaying ? (
-                    <Spinner />
-                  ) : isSpeechLoading ? (
-                    <CircularProgress
-                      isIndeterminate
-                      size="30px"
-                      color="blue.300"
-                    />
-                  ) : (
-                    <RiRobot2Line />
-                  )
+      <Stack
+        direction={["column", "row"]}
+        alignItems={"center"}
+        justifyContent={"center"}
+        display={isVoiceChatActive ? "flex" : "none"}
+      >
+        <Spacer />
+        <VStack>
+          {isVideoPlaying ? (
+            <video ref={videoRef} style={avatarStyle} autoPlay>
+              Your browser does not support the video tag.
+            </video>
+          ) : (
+            <Avatar
+              style={avatarStyle}
+              src={
+                selectedChatbot !== ""
+                  ? `/bots/${selectedChatbot}.jpg`
+                  : "/images/bot.png"
+              }
+            />
+          )}
+          <HStack>
+            <IconButton
+              colorScheme="blue"
+              rounded={"full"}
+              aria-label="Bot status"
+              icon={
+                isSpeechPlaying ? (
+                  <Spinner />
+                ) : isLoading || isSpeechLoading ? (
+                  <CircularProgress isIndeterminate size="30px" />
+                ) : (
+                  <RiRobot2Line />
+                )
+              }
+              onClick={(e) => {
+                e.preventDefault();
+                if (selectedChatbot === "") {
+                  toast.error("Please select a chatbot first.");
+                  return;
                 }
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (selectedChatbot === "") {
-                    toast.error("Please select a chatbot first.");
-                    return;
-                  }
-                  if (isSpeechLoading || isSpeechPlaying) {
-                    cancelOperation();
-                    return;
-                  }
-                }}
-              />
-            </VStack>
-            <Spacer />
-            <VStack>
-              {isRecording ? (
-                <video
-                  ref={userVideoRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  style={{
-                    ...avatarStyle,
-                    transform: "scaleX(-1)",
-                  }}
-                />
-              ) : (
-                <Avatar style={avatarStyle} />
-              )}
-              <IconButton
-                colorScheme="blue"
-                rounded={"full"}
-                aria-label="User mic status"
-                icon={
-                  isRecording ? (
-                    <MdStop />
-                  ) : isTranscribing ? (
-                    <Spinner />
-                  ) : (
-                    <MdMic />
-                  )
+                if (isSpeechLoading || isSpeechPlaying) {
+                  cancelOperation();
+                  return;
                 }
-                type="submit"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (selectedChatbot === "") {
-                    toast.error("Please select a chatbot first.");
-                    return;
-                  }
-                  if (isTranscribing) {
-                    cancelOperation();
-                    return;
-                  }
-                  toggleRecording(true, callbackAfterRecordingVideo);
-                }}
-              />
-            </VStack>
+              }}
+            />
             <Spacer />
-          </Stack>
-          <Spacer />
-          <Box
-            display="flex" // Enables flexbox layout.
-            flexDirection={["column", "row"]} // Stacks children vertically in reverse order.
-            alignItems={"center"} // Aligns children along the center of the cross axis.
-            justifyContent={"center"} // Aligns children along the center of the main axis.
-            width="full" // Takes the full width of its container.
-            mb={2} // Margin-bottom, where each unit is typically 4px in Chakra UI.
-            p={8} // Padding on all sides, each unit is typically 4px, so 8 units equal 32px.
-          >
-            <Menu>
-              <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                {selectedChatbot || "Select Chatbot"}
-              </MenuButton>
-              <MenuList>
-                {chatbots.map((bot) => (
-                  <MenuItem
-                    key={bot}
-                    onClick={() => {
-                      console.log("Selected chatbot: ", bot);
-                      setSelectedChatbot(bot);
-                    }}
-                  >
-                    {bot}
-                  </MenuItem>
-                ))}
-              </MenuList>
-            </Menu>
-          </Box>
-          <Spacer />
-        </>
-      ) : (
-        <>
-          <Box
-            display="flex" // Enables flexbox layout.
-            flexDirection="column-reverse" // Stacks children vertically in reverse order.
-            width="full" // Takes the full width of its container.
-            mb={2} // Margin-bottom, where each unit is typically 4px in Chakra UI.
-            overflow="auto" // Allows scrolling for overflow content.
-            p={8} // Padding on all sides, each unit is typically 4px, so 8 units equal 32px.
-            ref={messageContainerRef} // Ref for DOM access or manipulation.
-          >
-            {messages.length > 0 ? (
-              [...messages]
-                .reverse()
-                .map((m, index) => (
-                  <ChatMessageBubble
-                    key={m.id}
-                    message={{ ...m }}
-                    aiEmoji="🦜"
-                    isMostRecent={index === 0}
-                    messageCompleted={!isLoading}
-                    selectedChatbot={selectedChatbot}
-                    conversationId={conversationId}
-                    lightMode={lightMode}
-                    darkMode={darkMode}
-                  ></ChatMessageBubble>
-                ))
-            ) : (
-              <EmptyState
-                onChoice={sendInitialQuestion}
+            <Text maxWidth={"300px"} noOfLines={1}>
+              {isLoading
+                ? "Getting reponse..."
+                : isSpeechLoading
+                ? "Generating speech..."
+                : ""}
+            </Text>
+          </HStack>
+        </VStack>
+        <Spacer />
+        <VStack>
+          {isRecording ? (
+            <video
+              ref={userVideoRef}
+              autoPlay
+              playsInline
+              muted
+              style={{
+                ...avatarStyle,
+                transform: "scaleX(-1)",
+              }}
+            />
+          ) : (
+            <Avatar style={avatarStyle} />
+          )}
+          <IconButton
+            colorScheme="blue"
+            rounded={"full"}
+            aria-label="User mic status"
+            icon={
+              isRecording ? (
+                <MdStop />
+              ) : isTranscribing ? (
+                <Spinner />
+              ) : (
+                <MdMic />
+              )
+            }
+            type="submit"
+            onClick={(e) => {
+              e.preventDefault();
+              if (selectedChatbot === "") {
+                toast.error("Please select a chatbot first.");
+                return;
+              }
+              if (isTranscribing) {
+                cancelOperation();
+                return;
+              }
+              toggleRecording(true, callbackAfterRecordingVideo);
+            }}
+          />
+        </VStack>
+        <Spacer />
+      </Stack>
+      <Spacer display={isVoiceChatActive ? "flex" : "none"} />
+      <Box
+        display={isVoiceChatActive ? "flex" : "none"}
+        flexDirection={["column", "row"]} // Stacks children vertically in reverse order.
+        alignItems={"center"} // Aligns children along the center of the cross axis.
+        justifyContent={"center"} // Aligns children along the center of the main axis.
+        width="full" // Takes the full width of its container.
+        mb={2} // Margin-bottom, where each unit is typically 4px in Chakra UI.
+        p={8} // Padding on all sides, each unit is typically 4px, so 8 units equal 32px.
+      >
+        <Menu>
+          <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+            {selectedChatbot || "Select Chatbot"}
+          </MenuButton>
+          <MenuList>
+            {chatbots.map((bot) => (
+              <MenuItem
+                key={bot}
+                onClick={() => {
+                  console.log("Selected chatbot: ", bot);
+                  setSelectedChatbot(bot);
+                }}
+              >
+                {bot}
+              </MenuItem>
+            ))}
+          </MenuList>
+        </Menu>
+      </Box>
+      <Spacer display={isVoiceChatActive ? "flex" : "none"} />
+      <Box
+        display={isVoiceChatActive ? "none" : "flex"}
+        flexDirection="column-reverse" // Stacks children vertically in reverse order.
+        width="full" // Takes the full width of its container.
+        mb={2} // Margin-bottom, where each unit is typically 4px in Chakra UI.
+        overflow="auto" // Allows scrolling for overflow content.
+        p={8} // Padding on all sides, each unit is typically 4px, so 8 units equal 32px.
+        ref={messageContainerRef} // Ref for DOM access or manipulation.
+      >
+        {messages.length > 0 ? (
+          [...messages]
+            .reverse()
+            .map((m, index) => (
+              <ChatMessageBubble
+                key={m.id}
+                message={{ ...m }}
+                aiEmoji="🦜"
+                isMostRecent={index === 0}
+                messageCompleted={!isLoading}
+                selectedChatbot={selectedChatbot}
+                conversationId={conversationId}
                 lightMode={lightMode}
                 darkMode={darkMode}
-              />
-            )}
-          </Box>
-          <Spacer />
-          <Box px={4}>
-            <InputGroup size="md" alignItems={"center"}>
-              <InputLeftElement h="full">
-                <IconButton
-                  colorScheme="blue"
-                  rounded={"full"}
-                  aria-label="Send"
-                  icon={
-                    isRecording ? (
-                      <MdStop />
-                    ) : isTranscribing ? (
-                      <Spinner />
-                    ) : (
-                      <MdMic />
-                    )
-                  }
-                  type="submit"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (isTranscribing) {
-                      cancelOperation();
-                      return;
-                    }
-                    toggleRecording(false, callbackAfterRecordingAudio);
-                  }}
-                />
-              </InputLeftElement>
-              <AutoResizeTextarea
-                value={input}
-                maxRows={5}
-                marginRight={"56px"}
-                marginLeft={"56px"}
-                placeholder="Ask me about a patient..."
-                textColor={colorMode === "light" ? "black" : "white"}
-                borderColor={colorMode === "light" ? "gray.900" : "gray.100"}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage(input, noStream, callbackAfterInputtingText);
-                  } else if (e.key === "Enter" && e.shiftKey) {
-                    e.preventDefault();
-                    setInput(input + "\n");
-                  }
-                }}
-              ></AutoResizeTextarea>
-              <InputRightElement h="full">
-                <IconButton
-                  colorScheme="blue"
-                  rounded={"full"}
-                  aria-label="Send"
-                  icon={isLoading ? <Spinner /> : <ArrowUpIcon />}
-                  type="submit"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (isLoading) {
-                      cancelOperation();
-                      return;
-                    }
-                    sendMessage(input, noStream, callbackAfterInputtingText);
-                  }}
-                />
-              </InputRightElement>
-            </InputGroup>
-          </Box>
-        </>
-      )}
+              ></ChatMessageBubble>
+            ))
+        ) : (
+          <EmptyState
+            onChoice={sendInitialQuestion}
+            lightMode={lightMode}
+            darkMode={darkMode}
+          />
+        )}
+      </Box>
+      <Spacer display={isVoiceChatActive ? "none" : "flex"} />
+      <Box px={4} display={isVoiceChatActive ? "none" : "flex"}>
+        <InputGroup size="md" alignItems={"center"}>
+          <InputLeftElement h="full">
+            <IconButton
+              colorScheme="blue"
+              rounded={"full"}
+              aria-label="Send"
+              icon={
+                isRecording ? (
+                  <MdStop />
+                ) : isTranscribing ? (
+                  <Spinner />
+                ) : (
+                  <MdMic />
+                )
+              }
+              type="submit"
+              onClick={(e) => {
+                e.preventDefault();
+                if (isTranscribing) {
+                  cancelOperation();
+                  return;
+                }
+                toggleRecording(false, callbackAfterRecordingAudio);
+              }}
+            />
+          </InputLeftElement>
+          <AutoResizeTextarea
+            value={input}
+            maxRows={5}
+            marginRight={"56px"}
+            marginLeft={"56px"}
+            placeholder="Ask me about a patient..."
+            textColor={colorMode === "light" ? "black" : "white"}
+            borderColor={colorMode === "light" ? "gray.900" : "gray.100"}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage(input, noStream, callbackAfterInputtingText);
+              } else if (e.key === "Enter" && e.shiftKey) {
+                e.preventDefault();
+                setInput(input + "\n");
+              }
+            }}
+          ></AutoResizeTextarea>
+          <InputRightElement h="full">
+            <IconButton
+              colorScheme="blue"
+              rounded={"full"}
+              aria-label="Send"
+              icon={isLoading ? <Spinner /> : <ArrowUpIcon />}
+              type="submit"
+              onClick={(e) => {
+                e.preventDefault();
+                if (isLoading) {
+                  cancelOperation();
+                  return;
+                }
+                sendMessage(input, noStream, callbackAfterInputtingText);
+              }}
+            />
+          </InputRightElement>
+        </InputGroup>
+      </Box>
       <Footer colorMode={colorMode} />
     </Flex>
   );

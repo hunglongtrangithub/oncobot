@@ -3,11 +3,12 @@ import cv2
 import yaml
 import numpy as np
 import warnings
-from skimage import img_as_ubyte
+from skimage.util import img_as_ubyte
 import torch
 import torch.nn as nn
 import safetensors
 import safetensors.torch
+from optimum.quanto import quantize, freeze
 
 warnings.filterwarnings("ignore")
 
@@ -26,7 +27,7 @@ from sad_talker.src.utils.paste_pic import paste_pic
 from sad_talker.src.utils.videoio import save_video_with_watermark
 
 try:
-    import webui  # in webui
+    import webui  # type: ignore # in webui
 
     in_webui = True
 except:
@@ -35,7 +36,9 @@ except:
 
 class AnimateFromCoeff:
 
-    def __init__(self, sadtalker_path, device, dtype=None, dp_device_ids=None):
+    def __init__(
+        self, sadtalker_path, device, dtype=None, dp_device_ids=None, **quanto_config
+    ):
 
         with open(sadtalker_path["facerender_yaml"]) as f:
             config = yaml.safe_load(f)
@@ -73,10 +76,6 @@ class AnimateFromCoeff:
                 device_ids=dp_device_ids,
             )
 
-        generator.to(device)
-        kp_extractor.to(device)
-        he_estimator.to(device)
-        mapping.to(device)
         for param in generator.parameters():
             param.requires_grad = False
         for param in kp_extractor.parameters():
@@ -85,6 +84,10 @@ class AnimateFromCoeff:
             param.requires_grad = False
         for param in mapping.parameters():
             param.requires_grad = False
+
+        self.quanto_config = quanto_config
+        if self.quanto_config:
+            print("Quanto config:", quanto_config)
 
         if sadtalker_path is not None:
             if "checkpoint" in sadtalker_path:  # use safe tensor
@@ -121,7 +124,6 @@ class AnimateFromCoeff:
         self.mapping = mapping
 
         self.dtype = torch.float32 if dtype is None else dtype
-        print("Generating video using precision of", self.dtype)
 
         self.kp_extractor.type(self.dtype)
         self.generator.type(self.dtype)
@@ -132,6 +134,11 @@ class AnimateFromCoeff:
         self.generator.eval()
         self.he_estimator.eval()
         self.mapping.eval()
+
+        generator.to(device)
+        kp_extractor.to(device)
+        he_estimator.to(device)
+        mapping.to(device)
 
         self.device = device
 
@@ -148,6 +155,7 @@ class AnimateFromCoeff:
         print(
             f"MappingNet model size: {self.get_model_size(self.mapping, unit):.3f} {unit}"
         )
+        print("dtype:", self.dtype, "device:", self.device, "dp_device_ids:", dp_device_ids)
 
     def get_model_size(self, model, unit="mb"):
         param_size = 0
@@ -166,6 +174,12 @@ class AnimateFromCoeff:
         if isinstance(model, nn.DataParallel):
             state_dict = {f"module.{k}": v for k, v in state_dict.items()}
         model.load_state_dict(state_dict)
+        if self.quanto_config:
+            quantize(model, **self.quanto_config)
+            freeze(model)
+            print(f"Model quantized: {type(model)}")
+            # for name, weight in model.named_parameters():
+            #     print(f"{name} - {weight.type()}")
 
     def load_cpk_facevid2vid_safetensor(
         self,
@@ -173,7 +187,6 @@ class AnimateFromCoeff:
         generator=None,
         kp_detector=None,
         he_estimator=None,
-        device="cpu",
     ):
         print("Loading checkpoint from", checkpoint_path)
         checkpoint = safetensors.torch.load_file(checkpoint_path)
@@ -233,7 +246,7 @@ class AnimateFromCoeff:
                 optimizer_discriminator.load_state_dict(
                     checkpoint["optimizer_discriminator"]
                 )
-            except RuntimeError as e:
+            except RuntimeError:
                 print(
                     "No discriminator optimizer in the state-dict. Optimizer will be not initialized"
                 )

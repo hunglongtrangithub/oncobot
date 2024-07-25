@@ -10,6 +10,10 @@ LOG?=
 dev:
 	uvicorn main:app --reload --port $(PORT)
 
+# Start the local test server with uvicorn
+test:
+	uvicorn test:app --reload --port $(PORT)
+
 # Format the code using black and isort
 format:
 	black .

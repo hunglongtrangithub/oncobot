@@ -84,7 +84,7 @@ class NERProcessor:
         return total_text
 
 
-class DummyNERProcessor:
+class DummyNERProcessor(NERProcessor):
     def __init__(
         self,
         model_name: str = "dummy",

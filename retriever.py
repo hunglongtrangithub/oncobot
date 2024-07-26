@@ -1,7 +1,9 @@
 from pydantic import BaseModel
+from typing import List, Optional
+
 import meilisearch
 from meilisearch.errors import MeilisearchApiError
-from typing import List
+
 from logger_config import get_logger
 from _index import EMBEDDER_NAME, INDEX_NAME, SEARCH_API_KEY, MEILI_API_URL
 
@@ -9,6 +11,7 @@ logger = get_logger(__name__)
 
 
 class Document(BaseModel):
+    id: str
     page_content: str
     title: str
     source: str
@@ -85,6 +88,7 @@ class CustomRetriever:
         logger.info(f"Found {len(docs)} documents: {[doc['title'] for doc in docs]}")
         return [
             Document(
+                id=doc["id"],
                 page_content=doc["page_content"],
                 title=doc["title"],
                 source=doc["source"],
@@ -94,6 +98,19 @@ class CustomRetriever:
 
     async def aget_relevant_documents(self, query: str):
         return self.get_relevant_documents(query)
+
+    def get_document_by_id(self, doc_id: str) -> Optional[Document]:
+        try:
+            doc = self.index.get_document(doc_id)
+            return Document(
+                id=doc.id,
+                page_content=doc.page_content,
+                title=doc.title,
+                source=doc.source,
+            )
+        except MeilisearchApiError as e:
+            logger.error(f"Error retrieving document with id {doc_id}: {e}.")
+            return None
 
 
 if __name__ == "__main__":

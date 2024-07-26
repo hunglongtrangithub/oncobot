@@ -7,6 +7,7 @@ import os
 from typing import AsyncGenerator
 from fastapi import FastAPI, File, HTTPException, UploadFile, Form
 from fastapi.responses import FileResponse, StreamingResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.background import BackgroundTask
 
@@ -16,39 +17,50 @@ import json
 
 from logger_config import get_logger
 from retriever import CustomRetriever
-from custom_chat_model import CustomChatHuggingFace
-from ner import NERProcessor
+from custom_chat_model import CustomChatHuggingFace, DummyChat
+from ner import NERProcessor, DummyNERProcessor
 from rag_chain import ChatRequest, RAGChain
-from tts import XTTS
-from transcription import WhisperSTT
-from talking_face import CustomSadTalker
+from tts import XTTS, DummyTTS
+from transcription import WhisperSTT, DummyOpenAIWhisperSTT
+from talking_face import CustomSadTalker, DummyTalker
 from config import settings
 
 logger = get_logger(__name__)
 
-
-chat_model = CustomChatHuggingFace(
-    "meta-llama/Meta-Llama-3-8B-Instruct",
-    device="cuda:0",
-    max_chat_length=2048,
-)
-retriever = CustomRetriever(num_docs=5, semantic_ratio=0.1)
-ner = NERProcessor(device="cuda:0")
-chain = RAGChain(retriever, chat_model, ner)
-tts = XTTS(use_deepspeed=True)
-transcribe = WhisperSTT(device="cuda:1")
-# The comments below show a few options to configure the inference of the talker model.
-# The current settings works well on a 40GB NVIDIA A100 GPU.
-talker = CustomSadTalker(
-    # batch_size=75,
-    # device=[1, 2, 4],
-    # parallel_mode="dp",
-    torch_dtype="float16",
-    device="cuda:2",
-    batch_size=60,
-    # quanto_weights="int8",
-    # quanto_activations=None,
-)
+# Load dummy models if in test mode
+if os.environ.get("MODE") == "TEST":
+    logger.info("Running in test mode")
+    default_message = "Fake Patient 3 is diagnosed with stage 2 invasive ductal carcinoma of the right breast, metastatic to right axillary lymph nodes."
+    chat_model = DummyChat(default_message=default_message)
+    retriever = CustomRetriever(num_docs=5, semantic_ratio=0.1)
+    ner = DummyNERProcessor()
+    chain = RAGChain(retriever, chat_model, ner)
+    tts = DummyTTS()
+    transcribe = DummyOpenAIWhisperSTT()
+    talker = DummyTalker()
+else:
+    chat_model = CustomChatHuggingFace(
+        "meta-llama/Meta-Llama-3-8B-Instruct",
+        device="cuda:0",
+        max_chat_length=2048,
+    )
+    retriever = CustomRetriever(num_docs=5, semantic_ratio=0.1)
+    ner = NERProcessor(device="cuda:0")
+    chain = RAGChain(retriever, chat_model, ner)
+    tts = XTTS(use_deepspeed=True)
+    transcribe = WhisperSTT(device="cuda:1")
+    # The comments below show a few options to configure the inference of the talker model.
+    # The current settings works well on a 40GB NVIDIA A100 GPU.
+    talker = CustomSadTalker(
+        # batch_size=75,
+        # device=[1, 2, 4],
+        # parallel_mode="dp",
+        torch_dtype="float16",
+        device="cuda:2",
+        batch_size=60,
+        # quanto_weights="int8",
+        # quanto_activations=None,
+    )
 
 
 app = FastAPI()
@@ -65,6 +77,14 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
+
+
+# # TODO: Serve the docs by fetching from the database
+# app.mount(
+#     "/documents",  # cannot use docs as it is reserved for FastAPI
+#     StaticFiles(directory=Path(__file__).resolve().parent / "docs"),
+#     name="documents",
+# )
 
 
 def post_processing(op, path, chunk):

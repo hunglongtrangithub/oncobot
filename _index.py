@@ -97,7 +97,7 @@ def process_docs():
                         document = {
                             "id": str(ObjectId()),
                             "title": txt_file,
-                            "source": f"{docs_folder}/{patient_folder}/{txt_file}",
+                            "source": f"{patient_folder}/{txt_file}",
                             "page_content": page_content,
                         }
                         json_file.write(json.dumps(document) + "\n")
@@ -136,12 +136,9 @@ def index_docs_to_meili(docs):
         print("Error enabling vector search:", response.status_code)
         return
 
-    task = index.delete_all_documents()  # Clear the index before adding new documents
-    admin_client.wait_for_task(task.task_uid)
-    logger.info(f"Index {INDEX_NAME} cleared. Adding new documents...")
-    task = index.add_documents(docs)
-    admin_client.wait_for_task(task.task_uid)
-    logger.info(f"Documents added to index {INDEX_NAME}.")
+    # Clear the index before adding new documents
+    delete_task = index.delete_all_documents()
+    index_task = index.add_documents(docs)
 
     # add the embedder
     settings = {
@@ -157,19 +154,32 @@ def index_docs_to_meili(docs):
         "searchableAttributes": ["title", "source", "page_content"],
     }
 
-    tasks = [
-        index.update_embedders(settings["embedders"]),
-        index.update_filterable_attributes(settings["filterableAttributes"]),
-        index.update_sortable_attributes(settings["sortableAttributes"]),
-        index.update_searchable_attributes(settings["searchableAttributes"]),
-    ]
+    tasks = {
+        "delete_all_documents": delete_task,
+        "add_documents": index_task,
+        "update_embedders": index.update_embedders(settings["embedders"]),
+        "update_filterable_attributes": index.update_filterable_attributes(
+            settings["filterableAttributes"]
+        ),
+        "update_sortable_attributes": index.update_sortable_attributes(
+            settings["sortableAttributes"]
+        ),
+        "update_searchable_attributes": index.update_searchable_attributes(
+            settings["searchableAttributes"]
+        ),
+    }
 
-    logger.info(f"Update tasks status:{[task.status for task in tasks]}")
+    return tasks
 
 
 def index_docs():
     docs = process_docs()
-    index_docs_to_meili(docs)
+    tasks = index_docs_to_meili(docs)
+    if not tasks:
+        return
+
+    for task_name, task in tasks.items():
+        print(f"{task_name} task status: {task.status}")
 
 
 def test_search_meili():

@@ -132,7 +132,7 @@ export function ChatWindow(props: {
         console.log("audioChunks.length:", this.audioChunks.length);
         this.audioChunks.push(event.data);
       };
-      this.mediaRecorder.start(10); // HACK: This is a temporary fix to prevent the first chunk from being empty
+      this.mediaRecorder.start(0);
     },
 
     stop: async function (callback_action: null | "audio" | "video" = null) {
@@ -211,7 +211,6 @@ export function ChatWindow(props: {
       const sourceStepName = "FindDocs";
       let streamedResponse: Record<string, any> = {};
       if (noStream) {
-        // FIXME: resolve the error: AbortError: signal is aborted without reason
         await fetch(apiBaseUrl + "/chat/ainvoke_log", {
           method: "POST",
           headers: {
@@ -224,14 +223,12 @@ export function ChatWindow(props: {
           signal: controller.signal,
         })
           .then((response) => {
-            console.log(response);
             if (!response.ok) {
               throw new Error("Failed to fetch response from the server.");
             }
             return response.json();
           })
           .then((data) => {
-            console.log(data);
             accumulatedMessage = data.response;
             const parsedResult = marked.parse(data.response);
             setMessages((prevMessages) => {
@@ -349,11 +346,11 @@ export function ChatWindow(props: {
         toast.info("Fetching LLM response was canceled.");
       } else {
         toast.error(e.toString());
+        throw e;
       }
       setMessages((prevMessages) => prevMessages.slice(0, -1));
       setIsLoading(false);
       setInput(messageValue);
-      throw e;
     }
   };
 
@@ -679,8 +676,8 @@ export function ChatWindow(props: {
               {isLoading
                 ? "Getting reponse..."
                 : isSpeechLoading
-                ? "Generating speech..."
-                : ""}
+                  ? "Generating speech..."
+                  : ""}
             </Text>
           </HStack>
         </VStack>

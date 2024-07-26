@@ -1,3 +1,4 @@
+import time
 from typing import Dict, AsyncGenerator, Generator, Optional, Union, List
 from jinja2.exceptions import TemplateError
 from abc import ABC, abstractmethod
@@ -63,15 +64,14 @@ class DummyChat(BaseChat):
     ) -> Generator[str, None, None]:
         yield "DummyChat stream: " + self.default_message
 
-    async def ainvoke(self, current_conversation: List[Dict[str, str]]) -> str:
+    async def ainvoke(self, current_conversation: List[Dict[str, str]], sleep_time=3) -> str:
+        time.sleep(sleep_time)
         return "DummyChat ainvoke: " + self.default_message
 
     async def astream(
-        self, current_conversation: List[Dict[str, str]], stream: bool = False
+        self, current_conversation: List[Dict[str, str]], num_repeats=3, stream: bool = True
     ) -> AsyncGenerator[str, None]:
         import asyncio
-
-        num_repeats = 1
 
         async def async_generator():
             await asyncio.sleep(1)

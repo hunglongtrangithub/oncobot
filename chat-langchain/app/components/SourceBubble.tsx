@@ -1,6 +1,7 @@
 import "react-toastify/dist/ReactToastify.css";
 import { Card, CardBody, Heading } from "@chakra-ui/react";
 import { sendFeedback } from "../utils/sendFeedback";
+import { apiBaseUrl } from "../utils/constants";
 import { useColorModeValue } from "@chakra-ui/color-mode";
 import * as chroma from "chroma.ts";
 
@@ -34,7 +35,11 @@ export function SourceBubble({
   return (
     <Card
       onClick={async () => {
-        window.open(source.url, "_blank");
+        const sourceUrl = `${apiBaseUrl}/documents/${source.url}`;
+        console.log("sourceUrl", sourceUrl, "runId", runId);
+        window.open(sourceUrl, "_blank");
+
+        // NOTE: runId is currently undefined; sendFeedback is not called
         if (runId) {
           await sendFeedback({
             key: "user_click",

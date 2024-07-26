@@ -79,12 +79,12 @@ def read_root():
     return {"Hello": "World"}
 
 
-# # TODO: Serve the docs by fetching from the database
-# app.mount(
-#     "/documents",  # cannot use docs as it is reserved for FastAPI
-#     StaticFiles(directory=Path(__file__).resolve().parent / "docs"),
-#     name="documents",
-# )
+# TODO: Serve the docs by fetching from the database
+app.mount(
+    "/documents",  # cannot use docs as it is reserved for FastAPI
+    StaticFiles(directory=Path(__file__).resolve().parent / "docs"),
+    name="documents",
+)
 
 
 def post_processing(op, path, chunk):

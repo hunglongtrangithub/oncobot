@@ -47,8 +47,22 @@ def try_open_audio_file(file_path: Path) -> BinaryIO:
         raise
 
 
+# The async method in this class is just for demonstration purposes. It is not actually async.
 class XTTS:
     def __init__(self, use_deepspeed: bool = False):
+        """
+        Args:
+            use_deepspeed (bool): Whether to use DeepSpeed for inference. Defaults to False.
+                Here is how use_deepspeed is used in its GPT inference model:
+                >>> self.ds_engine = deepspeed.init_inference(
+                >>>         model=self.gpt_inference.half(),  # Transformers models
+                >>>         mp_size=1,  # Number of GPU
+                >>>         dtype=torch.float32,  # desired data type of output
+                >>>         replace_method="auto",  # Lets DS autmatically identify the layer to replace
+                >>>         replace_with_kernel_inject=True,  # replace the model with the kernel injector
+                >>>     )
+                >>> self.gpt_inference = self.ds_engine.module.eval()
+        """
         self.model_name = "tts_models/multilingual/multi-dataset/xtts_v2"
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.tts_api = TTS()

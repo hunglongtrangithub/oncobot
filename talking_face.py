@@ -11,6 +11,7 @@ from logger_config import get_logger
 logger = get_logger(__name__)
 
 
+# The async method in this class is just for demonstration purposes. It is not actually async.
 class DummyTalker:
     def __init__(self, dummy_video_file: str = "examples/chatbot1.mp4"):
         logger.info("DummyTalker initialized")

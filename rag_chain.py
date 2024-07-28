@@ -251,6 +251,7 @@ class RAGChain:
         self, request: ChatRequest, docs: List[Document]
     ) -> AsyncGenerator[str, None]:
         # docs = docs[:1]  # Only use the first document for now
+        # TODO: consider whether to include NER information in the document
         serialized_docs = "\n".join(
             [
                 f"<doc id='{i}'>"

@@ -21,6 +21,7 @@ def try_open_audio_file(file_path: Path) -> BinaryIO:
         raise
 
 
+# The async method in this class is just for demonstration purposes. It is not actually async.
 class WhisperSTT:
     def __init__(
         self, model_name: str = "openai/whisper-large-v3", device: Optional[str] = None

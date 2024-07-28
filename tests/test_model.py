@@ -83,7 +83,7 @@ def test_llama_model(stream=False):
     print("Stream with async:")
 
     async def stream_async():
-        async for token in model.astream(messages):
+        async for token in model.astream(messages): # type: ignore
             print(token, end="", flush=True)
         print()
 
@@ -120,7 +120,7 @@ def test_openai_model(stream=False):
     print("Stream with async:")
 
     async def stream_async():
-        async for token in model.astream(messages):
+        async for token in model.astream(messages): # type: ignore
             print(token, end="", flush=True)
         print()
 
@@ -157,7 +157,7 @@ def test_groq_model(stream=False):
     print("Stream with async:")
 
     async def stream_async():
-        async for token in model.astream(messages):
+        async for token in model.astream(messages): # type: ignore
             print(token, end="", flush=True)
         print()
 

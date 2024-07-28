@@ -79,7 +79,7 @@ def test_chat_pipeline():
             "content": "How many helicopters can a human eat in one sitting?",
         },
     ]
-    print(generator(messages, max_new_tokens=128)[0]["generated_text"])
+    print(generator(messages, max_new_tokens=128)[0]["generated_text"]) # type: ignore
 
 
 if __name__ == "__main__":

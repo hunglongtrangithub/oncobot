@@ -1,7 +1,5 @@
 import os
 import random
-from langchain_core.documents import Document
-from langchain_community.retrievers.bm25 import BM25Retriever
 from pathlib import Path
 import sys
 
@@ -22,16 +20,6 @@ def get_random_docs_from_patient_name(patient_name, frequency):
         with open(path, "r", encoding="utf-8") as file:
             contents.append(file.read())
     return contents
-
-
-def get_docs_from_patient_names(patient_names):
-    docs = []
-    for name, freq in patient_names:
-        docs += [
-            Document(page_content=content, metadata={"title": name})
-            for content in get_random_docs_from_patient_name(name, freq)
-        ]
-    return docs
 
 
 # patient_names = [("fake_patient1", 10), ("fake_patient2", 9), ("fake_patient3", 8)]

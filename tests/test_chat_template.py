@@ -55,7 +55,7 @@ def test_uncensored_llama2_chat_template():
     )
     print(chat)
     print(chat_with_default_template)
-    print(chat.strip() == chat_with_default_template.strip())
+    print(chat.strip() == chat_with_default_template.strip()) # type: ignore
     print(len(chat), len(chat_with_default_template))
 
 

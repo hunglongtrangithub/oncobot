@@ -23,16 +23,12 @@ RUN apt-get update && \
 
 RUN pip install ninja async-timeout
 
-RUN pip install poetry==1.7.1
-
-RUN poetry config virtualenvs.create false
-
-COPY ./pyproject.toml ./poetry.lock* ./
-
-RUN poetry install --no-interaction --no-ansi --no-root --no-directory
+RUN pip install --no-cache-dir poetry==1.7.1 && \
+  poetry config virtualenvs.create false && \
+  poetry install --no-interaction --no-ansi --no-root --no-directory
 
 WORKDIR /app
-
+COPY ./pyproject.toml ./poetry.lock* ./
 COPY ./*.py ./
 
 RUN poetry install --no-interaction --no-ansi

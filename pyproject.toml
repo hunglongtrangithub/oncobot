@@ -1,9 +1,10 @@
 [tool.poetry]
-name = "chat-langchain"
+name = "oncobot"
 version = "0.1.0"
-description = ""
-authors = ["SN <6432132+samnoyes@users.noreply.github.com>"]
+description = "A Self-Hosted Multimodal Chatbot for Enhanced Clinical Oncology Information Retrieval"
+authors = ["Hung Tran <hunglongtran2004@gmail.com>"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.10, <3.12"

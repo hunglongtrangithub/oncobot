@@ -15,9 +15,9 @@ import openai
 import replicate
 import groq
 
-from logger_config import get_logger
-from config import settings
-from chat_templates import CHAT_TEMPLATES
+from src.utils.logger_config import get_logger
+from src.utils.env_config import settings
+from .chat_templates import CHAT_TEMPLATES
 
 logger = get_logger(__name__)
 

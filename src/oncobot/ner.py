@@ -1,6 +1,7 @@
 from typing import List, Tuple, Optional
 from transformers import pipeline
-from logger_config import get_logger
+
+from src.utils.logger_config import get_logger
 
 logger = get_logger(__name__)
 

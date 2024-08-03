@@ -22,8 +22,8 @@ from transformers import AutoProcessor, BarkModel
 import torch
 import numpy as np
 
-from logger_config import get_logger
-from config import settings
+from src.utils.logger_config import get_logger
+from src.utils.env_config import settings
 
 logger = get_logger(__name__)
 

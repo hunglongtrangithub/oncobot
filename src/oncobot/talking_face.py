@@ -5,8 +5,8 @@ import shutil
 import torch
 from optimum import quanto
 
-from sad_talker import SadTalker
-from logger_config import get_logger
+from src.sad_talker import SadTalker
+from src.utils.logger_config import get_logger
 
 logger = get_logger(__name__)
 

@@ -15,15 +15,15 @@ from pathlib import Path
 import json
 
 
-from logger_config import get_logger
-from retriever import CustomRetriever
-from custom_chat_model import CustomChatHuggingFace, DummyChat
-from ner import NERProcessor, DummyNERProcessor
-from rag_chain import ChatRequest, RAGChain
-from tts import XTTS, DummyTTS
-from transcription import WhisperSTT, DummyOpenAIWhisperSTT
-from talking_face import CustomSadTalker, DummyTalker
-from config import settings
+from src.utils.logger_config import get_logger
+from src.utils.env_config import settings
+from src.oncobot.retriever import CustomRetriever
+from src.oncobot.custom_chat_model import CustomChatHuggingFace, DummyChat
+from src.oncobot.ner import NERProcessor, DummyNERProcessor
+from src.oncobot.rag_chain import ChatRequest, RAGChain
+from src.oncobot.tts import XTTS, DummyTTS
+from src.oncobot.transcription import WhisperSTT, DummyOpenAIWhisperSTT
+from src.oncobot.talking_face import CustomSadTalker, DummyTalker
 
 logger = get_logger(__name__)
 

@@ -1,12 +1,12 @@
 from jinja2 import Template
 from typing import List, Optional, Dict, Tuple, Union, Generator, AsyncGenerator
 from pydantic import BaseModel, Field
-
-from logger_config import get_logger
-from retriever import CustomRetriever, Document
-from custom_chat_model import BaseChat
-from ner import NERProcessor
 import logging
+
+from .retriever import CustomRetriever, Document
+from .custom_chat_model import BaseChat
+from .ner import NERProcessor
+from src.utils.logger_config import get_logger
 
 logger = get_logger(__name__)
 

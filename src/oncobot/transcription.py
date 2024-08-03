@@ -7,8 +7,8 @@ from openai import OpenAI, AsyncOpenAI
 from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
 import replicate
 
-from logger_config import get_logger
-from config import settings
+from src.utils.logger_config import get_logger
+from src.utils.env_config import settings
 
 logger = get_logger(__name__)
 

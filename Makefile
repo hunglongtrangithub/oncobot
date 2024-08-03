@@ -8,11 +8,11 @@ LOG?=
 
 # Start the local server using uvicorn
 dev:
-	uvicorn main:app --reload --port $(PORT)
+	uvicorn src.main:app --reload --port $(PORT)
 
 # Start the local test server with uvicorn
 test:
-	MODE=TEST uvicorn main:app --reload --port $(PORT)
+	MODE=TEST uvicorn src.main:app --reload --port $(PORT)
 
 # Format the code using black and isort
 format:

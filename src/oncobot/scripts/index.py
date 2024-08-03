@@ -6,8 +6,8 @@ from bson import ObjectId
 
 import meilisearch
 
-from config import settings
-from logger_config import get_logger
+from src.utils.env_config import settings
+from src.utils.logger_config import get_logger
 
 logger = get_logger(__name__)
 

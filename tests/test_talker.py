@@ -2,14 +2,12 @@ import torch
 import time
 import yaml
 import os
-import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).resolve().parent.parent))
-from talking_face import CustomSadTalker
-from sad_talker.src.utils.init_path import init_path
-from sad_talker.src.facerender.modules.mapping import MappingNet
-from sad_talker.src.facerender.modules.generator import OcclusionAwareSPADEGenerator
+from src.oncobot.talking_face import CustomSadTalker
+from src.sad_talker.src.utils.init_path import init_path
+from src.sad_talker.src.facerender.modules.mapping import MappingNet
+from src.sad_talker.src.facerender.modules.generator import OcclusionAwareSPADEGenerator
 
 image_size = 256
 image_preprocess = "crop"

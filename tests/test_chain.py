@@ -1,14 +1,9 @@
 from contextlib import contextmanager
 import asyncio
 import time
-import sys
-from pathlib import Path
-import os
 
-os.chdir(Path(__file__).parent.parent)
-sys.path.append(str(Path(__file__).resolve().parent.parent))
-from main import chain
-from rag_chain import ChatRequest
+from src.main import chain
+from src.oncobot.rag_chain import ChatRequest
 
 
 @contextmanager
@@ -78,12 +73,3 @@ def test_retriever():
 
     for doc in docs:
         print(json.dumps(doc, indent=4))
-
-
-if __name__ == "__main__":
-    # with timeit():
-    #     test_chain()
-    # with timeit():
-    #     test_chain_async()
-    test_retriever()
-    print("Done")

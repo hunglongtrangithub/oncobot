@@ -3,12 +3,12 @@ from pathlib import Path
 import torch
 from optimum import quanto
 
-sys.path.append("..")
-from sad_talker.src.utils.init_path import init_path
-from sad_talker.src.facerender.animate import AnimateFromCoeff
+from src.sad_talker.src.utils.init_path import init_path
+from src.sad_talker.src.facerender.animate import AnimateFromCoeff
 
 image_size = 256
 image_preprocess = "crop"
+# TODO: make sure this path thing works with Pytest
 checkpoint_path = Path(__file__).parent.parent / "sad_talker/checkpoints"
 config_path = Path(__file__).parent.parent / "sad_talker/src/config"
 sad_talker_paths = init_path(

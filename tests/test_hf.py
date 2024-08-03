@@ -10,8 +10,6 @@ from transformers import (
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).resolve().parent.parent))
-
 # checkpoint = "facebook/opt-125m"
 checkpoint = "meta-llama/Llama-2-7b-chat-hf"
 
@@ -58,7 +56,7 @@ def test_chat_template():
 
 
 def test_login():
-    from config import settings
+    from src.utils.env_config import settings
     from huggingface_hub import login
 
     token = settings.hf_token.get_secret_value()

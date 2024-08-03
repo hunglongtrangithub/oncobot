@@ -34,7 +34,7 @@ class Model(nn.Module):
         return output
 
 
-def test_parallel():
+def test_dp():
     import math
 
     num_frames = 521
@@ -209,6 +209,7 @@ class DDPDemo:
         return final_result
 
 
-if __name__ == "__main__":
+def test_ddp():
     demo = DDPDemo([4, 5], parallel_mode="dp")
     final_result = demo.run(10**6)
+    print("Final result shape:", final_result.size())

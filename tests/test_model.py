@@ -2,14 +2,13 @@ import sys
 from pathlib import Path
 import asyncio
 
-sys.path.append(str(Path(__file__).resolve().parent.parent))
-from custom_chat_model import (
+from src.oncobot.custom_chat_model import (
     CustomChatHuggingFace,
     CustomChatLlamaReplicate,
     CustomChatOpenAI,
     CustomChatGroq,
 )
-from transcription import WhisperSTT
+from src.oncobot.transcription import WhisperSTT
 
 # checkpoint = "facebook/opt-125m"
 # checkpoint = "meta-llama/Llama-2-7b-chat-hf"

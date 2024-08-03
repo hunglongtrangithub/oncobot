@@ -1,10 +1,8 @@
 import os
 import random
 from pathlib import Path
-import sys
 
-sys.path.append(str(Path(__file__).resolve().parent.parent))
-from retriever import CustomRetriever
+from src.oncobot.retriever import CustomRetriever
 
 
 def get_random_docs_from_patient_name(patient_name, frequency):

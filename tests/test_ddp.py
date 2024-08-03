@@ -151,12 +151,3 @@ def test_divide_batch():
     new_data = torch.cat([batch.flatten() for batch, _ in batches], dim=0)
     print(new_data)
     assert data == new_data, "Data not equal"
-
-
-if __name__ == "__main__":
-    test_ddp()
-    pause = 5
-    for i in range(pause):
-        print(f"Pausing for {pause - i} seconds")
-        time.sleep(1)
-    test_ddp()

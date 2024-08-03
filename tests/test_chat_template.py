@@ -1,10 +1,7 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM
-import sys
-from pathlib import Path
 from jinja2 import Template
 
-sys.path.append(str(Path(__file__).resolve().parent.parent))
-from chat_templates import CHAT_TEMPLATES
+from src.oncobot.chat_templates import CHAT_TEMPLATES
 
 
 messages = [
@@ -87,10 +84,3 @@ Unknown Role: {{ message.content -}}\n
     rendered = template.render(messages=messages)
     print(rendered.strip())
     print(len(rendered), len(rendered.strip()))
-
-
-if __name__ == "__main__":
-    test_llama2_chat_template()
-    # test_chat_template_string()
-    # test_uncensored_llama2_chat_template()
-    # test_llama3_instruct_template()

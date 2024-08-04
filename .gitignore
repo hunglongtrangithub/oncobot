@@ -165,4 +165,5 @@ gfpgan
 
 .vscode
 config.toml
-data.ms
+data.ms/
+dumps/

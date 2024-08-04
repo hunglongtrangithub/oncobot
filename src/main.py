@@ -82,7 +82,7 @@ def read_root():
 # TODO: Serve the docs by fetching from the database
 app.mount(
     "/documents",  # cannot use docs as it is reserved for FastAPI
-    StaticFiles(directory=Path(__file__).resolve().parent / "docs"),
+    StaticFiles(directory=Path(__file__).resolve().parent.parent / "docs"),
     name="documents",
 )
 

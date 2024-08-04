@@ -68,7 +68,7 @@ class CustomSadTalker(SadTalker):
             **quanto_config,
         )
         self.batch_size = batch_size
-        logger.info(f"CustomSadTalker initialized.")
+        logger.info("CustomSadTalker initialized.")
 
     def _check_arguments(self, torch_dtype, quanto_weights, quanto_activations):
         if torch_dtype:

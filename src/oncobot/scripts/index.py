@@ -48,7 +48,7 @@ def get_api_keys():
     if not search_key:
         logger.info("Creating search key...")
         search_uid = str(uuid4())
-        master_client.create_key(
+        search_key = master_client.create_key(
             options={
                 "uid": search_uid,
                 "description": "API key for the clinical docs search app",
@@ -57,12 +57,11 @@ def get_api_keys():
                 "expiresAt": None,
             }
         )
-        search_key = master_client.get_key(search_uid)
 
     if not admin_key:
         logger.info("Creating admin key...")
         admin_uid = str(uuid4())
-        master_client.create_key(
+        admin_key = master_client.create_key(
             options={
                 "uid": admin_uid,
                 "description": "API key for the clinical docs admin app",
@@ -71,7 +70,6 @@ def get_api_keys():
                 "expiresAt": None,
             }
         )
-        admin_key = master_client.get_key(admin_uid)
 
     return search_key.key, admin_key.key
 

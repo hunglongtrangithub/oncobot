@@ -57,8 +57,8 @@ class CustomSadTalker(SadTalker):
             quanto_activations=quanto_activations,
         )
         logger.info(f"quanto_config: {quanto_config}")
-        checkpoint_path = Path(__file__).parent / "sad_talker/checkpoints"
-        config_path = Path(__file__).parent / "sad_talker/src/config"
+        checkpoint_path = Path(__file__).parent.parent / "sad_talker/checkpoints"
+        config_path = Path(__file__).parent.parent / "sad_talker/src/config"
         super().__init__(
             checkpoint_path=str(checkpoint_path),
             config_path=str(config_path),
@@ -102,13 +102,14 @@ class CustomSadTalker(SadTalker):
     ):
         logger.info(f"Generating video at {video_path}")
         animation_tag = Path(video_path).stem
-        result_dir = str(Path(__file__).parent / "video")
+        result_dir = Path(__file__).parent / "video"
+        result_dir.mkdir(exist_ok=True)
         try:
             returned_video_path = super().test(
                 source_image=image_path,
                 driven_audio=audio_path,
                 batch_size=batch_size or self.batch_size,
-                result_dir=result_dir,
+                result_dir=str(result_dir),
                 tag=animation_tag,
             )
 

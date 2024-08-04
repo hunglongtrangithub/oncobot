@@ -32,13 +32,15 @@ def test_path():
 def test_talker():
     talker = CustomSadTalker(
         batch_size=60,
-        device="cuda:4",
+        device="cuda:2",
         torch_dtype="float16",
         # parallel_mode="dp",
         # quanto_weights="int8",
         # quanto_activations=None,
     )
-    video_path = str(Path(__file__).parent / "video/chatbot1__1.mp4")
+    video_folder = Path(__file__).parent / "video"
+    video_folder.mkdir(exist_ok=True)
+    video_path = str(video_folder / "chatbot__1.mp4")
     audio_path = str(Path(__file__).parent.parent / "examples/fake_patient3.wav")
     image_path = str(Path(__file__).parent.parent / "examples/chatbot1.jpg")
     start = time.time()

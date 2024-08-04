@@ -5733,6 +5733,27 @@ video = ["av (==9.2.0)", "decord (==0.6.0)"]
 vision = ["Pillow (>=10.0.1,<=15.0)"]
 
 [[package]]
+name = "trimesh"
+version = "4.4.3"
+description = "Import, export, process, analyze and view triangular meshes."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "trimesh-4.4.3-py3-none-any.whl", hash = "sha256:77dc3963ec3e4f560b37a66f8dd9132eee9f333d04837d2b0688ea12f05c099a"},
+    {file = "trimesh-4.4.3.tar.gz", hash = "sha256:a4110ad6832d23ccf4df32872a3804eeea216421352913d1514ed9dad2001d5e"},
+]
+
+[package.dependencies]
+numpy = ">=1.20"
+
+[package.extras]
+all = ["trimesh[deprecated,easy,recommend,test]"]
+deprecated = ["gmsh (==4.12.2)"]
+easy = ["chardet", "colorlog", "embreex", "httpx", "jsonschema", "lxml", "manifold3d (>=2.3.0)", "networkx", "pillow", "pycollada", "rtree", "scipy", "setuptools", "shapely", "svg.path", "vhacdx", "xatlas", "xxhash"]
+recommend = ["cascadio", "glooey", "mapbox-earcut", "meshio", "openctm", "psutil", "pyglet (<2)", "python-fcl", "scikit-image", "sympy"]
+test = ["coveralls", "ezdxf", "matplotlib", "pyinstrument", "pyright", "pytest", "pytest-beartype", "pytest-cov", "ruff"]
+
+[[package]]
 name = "triton"
 version = "3.0.0"
 description = "A language and compiler for custom Deep Learning operations"
@@ -6261,4 +6282,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10, <3.12"
-content-hash = "20d354605808a03d9efa9c6f53554d06138bb5cf7cc7e6ed61ca9ea63600a7f2"
+content-hash = "c7aebe0a547f38d524303282a11cb90d413946e756b396c77fd93d56607ac559"

@@ -1,0 +1,3 @@
+master_key = <YOUR_MASTER_KEY_VALUE>
+http_addr = "localhost:7700"
+no_analytics = true

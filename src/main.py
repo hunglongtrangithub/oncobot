@@ -221,7 +221,6 @@ async def text_to_speech(
         logger.info(f"/text_to_speech Total time taken: {time.time() - start}")
 
 
-# TODO: Change this to text to video. Call tts and talker in sequence, then return the video file
 @app.post("/text_to_video")
 async def text_to_video(
     bot_voice_file: UploadFile = File(...),

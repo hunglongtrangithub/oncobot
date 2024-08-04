@@ -5,7 +5,6 @@ import glob
 def init_path(
     checkpoint_dir, config_dir, size=512, old_version=False, preprocess="crop"
 ):
-
     if old_version:
         #### load all the checkpoint of `pth`
         sadtalker_paths = {
@@ -56,8 +55,8 @@ def init_path(
         config_dir, "auido2pose.yaml"
     )
     sadtalker_paths["audio2exp_yaml_path"] = os.path.join(config_dir, "auido2exp.yaml")
-    sadtalker_paths["use_safetensor"] = (
-        use_safetensor  # os.path.join(config_dir, 'auido2exp.yaml') # type: ignore
+    sadtalker_paths["use_safetensor"] = (  # type: ignore
+        use_safetensor  # os.path.join(config_dir, 'auido2exp.yaml')
     )
 
     if "full" in preprocess:

@@ -1,7 +1,7 @@
 import librosa
 import librosa.filters
 import numpy as np
-# import tensorflow as tf
+import soundfile as sf
 from scipy import signal
 from scipy.io import wavfile
 from .hparams import hparams as hp
@@ -15,7 +15,7 @@ def save_wav(wav, path, sr):
     wavfile.write(path, sr, wav.astype(np.int16))
 
 def save_wavenet_wav(wav, path, sr):
-    librosa.output.write_wav(path, wav, sr=sr)
+    sf.write(path, wav, sr)
 
 def preemphasis(wav, k, preemphasize=True):
     if preemphasize:
@@ -51,14 +51,17 @@ def melspectrogram(wav):
     return S
 
 def _lws_processor():
+    # NOTE: lws is currently not installed
     import lws
     return lws.lws(hp.n_fft, get_hop_size(), fftsize=hp.win_size, mode="speech")
 
 def _stft(y):
     if hp.use_lws:
-        return _lws_processor(hp).stft(y).T
-    else:
-        return librosa.stft(y=y, n_fft=hp.n_fft, hop_length=get_hop_size(), win_length=hp.win_size)
+        try:
+            return _lws_processor().stft(y).T
+        except:
+            pass
+    return librosa.stft(y=y, n_fft=hp.n_fft, hop_length=get_hop_size(), win_length=hp.win_size)
 
 ##########################################################
 #Those are only correct when using lws!!! (This was messing with Wavenet quality for a long time!)

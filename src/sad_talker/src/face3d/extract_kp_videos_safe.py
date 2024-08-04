@@ -88,7 +88,7 @@ class KeypointExtractor():
                         time.sleep(1)
                     else:
                         print(e)
-                        break    
+                        return
                 except TypeError:
                     print('No face detected in this image')
                     shape = [68, 2]

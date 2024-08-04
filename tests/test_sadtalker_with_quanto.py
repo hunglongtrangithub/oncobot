@@ -1,16 +1,15 @@
-import sys
 from pathlib import Path
+
 import torch
 from optimum import quanto
 
-from src.sad_talker.src.utils.init_path import init_path
 from src.sad_talker.src.facerender.animate import AnimateFromCoeff
+from src.sad_talker.src.utils.init_path import init_path
 
 image_size = 256
 image_preprocess = "crop"
-# TODO: make sure this path thing works with Pytest
-checkpoint_path = Path(__file__).parent.parent / "sad_talker/checkpoints"
-config_path = Path(__file__).parent.parent / "sad_talker/src/config"
+checkpoint_path = Path(__file__).parent.parent / "src/sad_talker/checkpoints"
+config_path = Path(__file__).parent.parent / "src/sad_talker/src/config"
 sad_talker_paths = init_path(
     str(checkpoint_path),
     str(config_path),
@@ -92,15 +91,10 @@ model = AnimateFromCoeff(sad_talker_paths, device="cuda:6").generator.first
 weights = quanto.qint8
 activations = None
 
-quanto.quantize(model, weights=weights, activations=activations)
-# print(model)
-# input = torch.randn(1, 3, 256, 256)
-# output = model(input)
-# print(output)
-# Make a dummy input
-input = torch.rand(50, 512, 64, 64).to("cuda:6")
-print(type(input))
-# Run the model
-input = torch.randn(1, 3, 256, 256)
-output = model(input)
-print(output)
+
+def test_compute():
+    quanto.quantize(model, weights=weights, activations=activations)
+    # Run the model
+    input = torch.randn(1, 3, 256, 256)
+    output = model(input)
+    print(output)

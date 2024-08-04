@@ -1,6 +1,6 @@
-from contextlib import contextmanager
 import asyncio
 import time
+from contextlib import contextmanager
 
 from src.main import chain
 from src.oncobot.rag_chain import ChatRequest
@@ -45,8 +45,9 @@ request = ChatRequest(**current_chat)
 
 
 def test_chain():
-    for chunk in chain.stream_log(request):
-        print(chunk, end="\n", flush=True)
+    with timeit():
+        for chunk in chain.stream_log(request):
+            print(chunk, end="\n", flush=True)
 
 
 def test_chain_async():
@@ -54,12 +55,14 @@ def test_chain_async():
         async for chunk in chain.astream_log(request):
             print(chunk, end="\n", flush=True)
 
-    asyncio.run(print_stream(request))
+    with timeit():
+        asyncio.run(print_stream(request))
 
 
 def test_retrieve_docs():
-    docs = chain.retrieve_documents(request)
-    docs = [doc.json() for doc in docs]
+    with timeit():
+        docs = chain.retrieve_documents(request)
+    docs = [doc.model_dump_json() for doc in docs]
     import json
 
     for doc in docs:
@@ -67,8 +70,9 @@ def test_retrieve_docs():
 
 
 def test_retriever():
-    docs = chain.retriever.get_relevant_documents(question)
-    docs = [doc.json() for doc in docs]
+    with timeit():
+        docs = chain.retriever.get_relevant_documents(question)
+    docs = [doc.model_dump_json() for doc in docs]
     import json
 
     for doc in docs:

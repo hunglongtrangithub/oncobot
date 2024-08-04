@@ -1,12 +1,11 @@
-import sys
-from pathlib import Path
 import asyncio
+from pathlib import Path
 
 from src.oncobot.custom_chat_model import (
+    CustomChatGroq,
     CustomChatHuggingFace,
     CustomChatLlamaReplicate,
     CustomChatOpenAI,
-    CustomChatGroq,
 )
 from src.oncobot.transcription import WhisperSTT
 
@@ -18,41 +17,41 @@ checkpoint = "meta-llama/Meta-Llama-3-8B-Instruct"
 def test_hf_model():
     model = CustomChatHuggingFace(checkpoint)
     messages = [
-        # {
-        #     "role": "system",
-        #     "content": "You are a friendly chatbot who always responds in the style of a pirate",
-        # },
+        {
+            "role": "system",
+            "content": "You are a friendly chatbot who always responds in the style of a pirate",
+        },
         {
             "role": "user",
             "content": "An increasing sequence from 1 to 10:",
         },
     ]
-    # print("Invoke:")
-    # print(model.invoke(messages))
+    print("Invoke:")
+    print(model.invoke(messages))
 
     print("Stream:")
     for token in model.stream(messages):
         print(token, end="", flush=True)
     print()
 
-    # print("Invoke with async:")
+    print("Invoke with async:")
 
-    # async def invoke_async():
-    #     print(await model.ainvoke(messages))
+    async def invoke_async():
+        print(await model.ainvoke(messages))
 
-    # asyncio.run(invoke_async())
+    asyncio.run(invoke_async())
 
-    # print("Stream with async:")
+    print("Stream with async:")
 
-    # async def stream_async():
-    #     async for token in model.astream(messages):
-    #         print(token, end="", flush=True)
-    #     print()
+    async def stream_async():
+        async for token in await model.astream(messages):
+            print(token, end="", flush=True)
+        print()
 
-    # asyncio.run(stream_async())
+    asyncio.run(stream_async())
 
 
-def test_llama_model(stream=False):
+def test_llama_model():
     model = CustomChatLlamaReplicate(checkpoint)
     messages = [
         {
@@ -82,14 +81,14 @@ def test_llama_model(stream=False):
     print("Stream with async:")
 
     async def stream_async():
-        async for token in model.astream(messages): # type: ignore
+        async for token in model.astream(messages):  # type: ignore
             print(token, end="", flush=True)
         print()
 
     asyncio.run(stream_async())
 
 
-def test_openai_model(stream=False):
+def test_openai_model():
     model = CustomChatOpenAI()
     messages = [
         {
@@ -119,14 +118,14 @@ def test_openai_model(stream=False):
     print("Stream with async:")
 
     async def stream_async():
-        async for token in model.astream(messages): # type: ignore
+        async for token in model.astream(messages):  # type: ignore
             print(token, end="", flush=True)
         print()
 
     asyncio.run(stream_async())
 
 
-def test_groq_model(stream=False):
+def test_groq_model():
     model = CustomChatGroq()
     messages = [
         {
@@ -156,7 +155,7 @@ def test_groq_model(stream=False):
     print("Stream with async:")
 
     async def stream_async():
-        async for token in model.astream(messages): # type: ignore
+        async for token in model.astream(messages):  # type: ignore
             print(token, end="", flush=True)
         print()
 
@@ -169,17 +168,3 @@ def test_transcription():
     print("Transcribing audio file")
     text = transcribe.run(str(audio_path))
     print(text)
-
-
-if __name__ == "__main__":
-    print("Testing Hugging Face model")
-    test_hf_model()
-    # print("Testing Llama model")
-    # test_llama_model()
-    # print("Testing OpenAI model")
-    # test_openai_model()
-    # print("Testing Groq model")
-    # test_groq_model()
-    # print("All tests passed")
-    # print("Testing transcription")
-    # test_transcription()

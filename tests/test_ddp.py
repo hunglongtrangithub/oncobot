@@ -1,9 +1,10 @@
+import os
+import time
+
 import torch
+import torch.distributed as dist
 import torch.multiprocessing as mp
 import torch.nn as nn
-import time
-import os
-import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
 
 
@@ -68,8 +69,8 @@ def process_batch(rank, world_size, models, batches, result_queue):
         # Concatenate all results only at rank 0
         print("Concatenating results. Number of results:", len(result_list))
         for i in range(world_size):
-            print(f"Result {i} shape:", result_list[i].shape) # type: ignore
-        final_result = torch.cat(result_list, dim=0) # type: ignore
+            print(f"Result {i} shape:", result_list[i].shape)  # type: ignore
+        final_result = torch.cat(result_list, dim=0)  # type: ignore
         print("Final result shape:", final_result.shape)
         final_result = final_result.cpu()
         print("Final result shape after moving to CPU:", final_result.shape)
@@ -78,7 +79,6 @@ def process_batch(rank, world_size, models, batches, result_queue):
 
 
 def test_ddp():
-
     # Create a large tensor
     data = torch.randn(10000, 10)
 
@@ -106,7 +106,7 @@ def test_ddp():
 
         start = time.time()
         # Spawn processes
-        mp.spawn( # type: ignore
+        mp.spawn(  # type: ignore
             process_batch,
             args=(world_size, models, batches, result_queue),
             nprocs=world_size,

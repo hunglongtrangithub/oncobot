@@ -1,11 +1,13 @@
 import os
 import time
+
 import torch
 import torch.distributed as dist
-import torch.nn as nn
 import torch.multiprocessing as mp
+import torch.nn as nn
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
 
 # Simulate a model that takes in a source image, driving keypoints, and source keypoints
 class Model(nn.Module):

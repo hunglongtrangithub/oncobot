@@ -1,25 +1,16 @@
 import asyncio
 import json
-import time
-from fastapi.responses import StreamingResponse
-from fastapi import FastAPI, HTTPException
+
 import uvicorn
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import StreamingResponse
 
 app = FastAPI()
-
-
-# async def stream_generator(queue: asyncio.Queue):
-#     while True:
-#         item = await queue.get()
-#         if item is None:  # Using `None` as a signal to stop.
-#             break
-#         yield item
 
 
 async def retrieve_docs():
     await asyncio.sleep(5)  # Simulate document retrieval delay
     formatted_docs = "<retrieved docs>"
-    # result = "add", "/logs/FindDocs/final_output", str({"output": formatted_docs})
     yield "add", "/logs", {}
     yield "add", "/logs/FindDocs", {}
     yield "add", "/logs/FindDocs/final_output", {"output": formatted_docs}
@@ -48,13 +39,6 @@ async def stream_log():
         yield result
 
 
-async def dummy_async_iterator(iterable):
-    for item in iterable:
-        await asyncio.sleep(0.1)  # Simulate an asynchronous operation
-        yield f"event: data\ndata: {item}\n\n"
-    yield "event: end\n"
-
-
 def post_processing(op, path, chunk):
     return json.dumps(
         {"ops": [{"op": op, "path": path, "value": chunk}]}, separators=(",", ":")
@@ -65,7 +49,7 @@ async def stream_generator(subscription):
     try:
         async for op, path, chunk in subscription:
             yield f"event: data\ndata: {post_processing(op, path, chunk)}\n\n"
-        yield f"event: end\n\n\n"
+        yield "event: end\n\n\n"
     except asyncio.TimeoutError:
         raise HTTPException(status_code=504, detail="Stream timed out")
     finally:

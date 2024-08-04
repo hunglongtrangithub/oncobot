@@ -1,18 +1,19 @@
-import torch
-import time
-import yaml
 import os
+import time
 from pathlib import Path
 
+import torch
+import yaml
+
 from src.oncobot.talking_face import CustomSadTalker
-from src.sad_talker.src.utils.init_path import init_path
-from src.sad_talker.src.facerender.modules.mapping import MappingNet
 from src.sad_talker.src.facerender.modules.generator import OcclusionAwareSPADEGenerator
+from src.sad_talker.src.facerender.modules.mapping import MappingNet
+from src.sad_talker.src.utils.init_path import init_path
 
 image_size = 256
 image_preprocess = "crop"
-checkpoint_path = Path(__file__).parent.parent / "sad_talker/checkpoints"
-config_path = Path(__file__).parent.parent / "sad_talker/src/config"
+checkpoint_path = Path(__file__).parent.parent / "src/sad_talker/checkpoints"
+config_path = Path(__file__).parent.parent / "src/sad_talker/src/config"
 sad_talker_paths = init_path(
     str(checkpoint_path),
     str(config_path),
@@ -22,6 +23,10 @@ sad_talker_paths = init_path(
 )
 with open(sad_talker_paths["facerender_yaml"]) as f:
     config = yaml.safe_load(f)
+
+
+def test_path():
+    print(sad_talker_paths)
 
 
 def test_talker():
@@ -80,14 +85,10 @@ def test_generator():
         torch.randn(batch_size, 3, 256, 256).type(torch.float32).to(device="cuda")
     )
     kp_source = {
-        "value": torch.randn(batch_size, 15, 3)
-        .type(torch.float32)
-        .to(device="cuda")
+        "value": torch.randn(batch_size, 15, 3).type(torch.float32).to(device="cuda")
     }
     kp_driving = {
-        "value": torch.randn(batch_size, 15, 3)
-        .type(torch.float32)
-        .to(device="cuda")
+        "value": torch.randn(batch_size, 15, 3).type(torch.float32).to(device="cuda")
     }
     print(f"source_image memory size: {size(source_image)/1024:.2f} KB")
     print(f"kp_source memory size: {size(kp_source['value'])/1024:.2f} KB")
@@ -96,9 +97,3 @@ def test_generator():
     print(output["prediction"].shape)
     assert output["prediction"].shape[0] == batch_size
     print("Test passed")
-
-
-if __name__ == "__main__":
-    test_talker()
-    # test_mapping_net()
-    # test_generator()

@@ -1,8 +1,7 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM
 from jinja2 import Template
+from transformers import AutoTokenizer
 
 from src.oncobot.chat_templates import CHAT_TEMPLATES
-
 
 messages = [
     {"role": "system", "content": "Welcome to the chat!"},
@@ -25,15 +24,22 @@ def test_llama2_chat_template():
         add_generation_prompt=False,
         chat_template=CHAT_TEMPLATES[model_id],
     )
-    print(chat)
-    # chat_with_default_template = tokenizer.apply_chat_template(
-    #     messages,
-    #     tokenize=False,
-    #     add_generation_prompt=True,
-    # )
-    # print(chat_with_default_template)
-    # print(chat.strip() == chat_with_default_template.strip())
-    # print(len(chat), len(chat_with_default_template))
+    chat_with_default_template = tokenizer.apply_chat_template(
+        messages,
+        tokenize=False,
+        add_generation_prompt=True,
+    )
+    print("compare chat with default template")
+    print(
+        "Are the two chat string equal?",
+        chat.strip() == chat_with_default_template.strip(),
+    )
+    print(
+        "length of chat:",
+        len(chat),
+        "length of chat_with_default_template:",
+        len(chat_with_default_template),
+    )
 
 
 def test_uncensored_llama2_chat_template():
@@ -50,10 +56,17 @@ def test_uncensored_llama2_chat_template():
         tokenize=False,
         add_generation_prompt=True,
     )
-    print(chat)
-    print(chat_with_default_template)
-    print(chat.strip() == chat_with_default_template.strip()) # type: ignore
-    print(len(chat), len(chat_with_default_template))
+    print("compare chat with default template")
+    print(
+        "Are the two chat string equal?",
+        chat.strip() == chat_with_default_template.strip(),
+    )
+    print(
+        "length of chat:",
+        len(chat),
+        "length of chat_with_default_template:",
+        len(chat_with_default_template),
+    )
 
 
 def test_llama3_instruct_template():
@@ -83,4 +96,3 @@ Unknown Role: {{ message.content -}}\n
     template = Template(CHAT_TEMPLATE_STRING)
     rendered = template.render(messages=messages)
     print(rendered.strip())
-    print(len(rendered), len(rendered.strip()))

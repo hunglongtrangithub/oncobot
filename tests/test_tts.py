@@ -1,8 +1,6 @@
-import asyncio
-import torch
 from pathlib import Path
 
-from src.oncobot.tts import XTTS, OpenAITTS, ReplicateTortoiseTTS, BarkSuno
+from src.oncobot.tts import XTTS, BarkSuno, OpenAITTS, ReplicateTortoiseTTS
 
 voice_path = str(Path(__file__).parent.parent / "examples" / "chatbot1.mp3")
 
@@ -63,25 +61,3 @@ async def test_replicate_tortoise_tts_arun():
     )
     assert Path(file_path).exists()
     print(f"ReplicateTortoiseTTS.arun test passed, saved to {file_path}")
-
-
-# Run tests
-if __name__ == "__main__":
-    print("Running TTS tests...")
-    print("Testing CoquiTTS...")
-    test_coqui_tts_run()
-    # print("Testing CoquiTTS async...")
-    # asyncio.run(test_coqui_tts_arun())
-    #
-    # print("Testing OpenAITTS...")
-    # test_openai_tts_run()
-    # print("Testing OpenAITTS async...")
-    # asyncio.run(test_openai_tts_arun())
-    #
-    # print("Testing ReplicateTortoiseTTS...")
-    # test_replicate_tortoise_tts_run()
-    # print("Testing ReplicateTortoiseTTS async...")
-    # asyncio.run(test_replicate_tortoise_tts_arun())
-    # print("Testing BarkSuno...")
-    # test_barksuno_run()
-    pass

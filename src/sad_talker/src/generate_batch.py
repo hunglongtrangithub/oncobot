@@ -5,7 +5,7 @@ import torch
 import numpy as np
 import random
 import scipy.io as scio
-import sad_talker.src.utils.audio as audio
+from .utils import audio
 
 
 def crop_pad_audio(wav, audio_length):

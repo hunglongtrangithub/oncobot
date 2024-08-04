@@ -3,10 +3,10 @@ from torch import nn
 import torch.nn.functional as F
 import torch
 
-from sad_talker.src.facerender.sync_batchnorm import (
+from ..sync_batchnorm import (
     SynchronizedBatchNorm2d as BatchNorm2d,
 )
-from sad_talker.src.facerender.sync_batchnorm import (
+from ..sync_batchnorm import (
     SynchronizedBatchNorm3d as BatchNorm3d,
 )
 

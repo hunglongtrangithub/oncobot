@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 import torch.nn.functional as F
-from sad_talker.src.facerender.modules.util import (
+from .util import (
     ResBlock2d,
     SameBlock2d,
     UpBlock2d,
@@ -9,7 +9,7 @@ from sad_talker.src.facerender.modules.util import (
     ResBlock3d,
     SPADEResnetBlock,
 )
-from sad_talker.src.facerender.modules.dense_motion import DenseMotionNetwork
+from .dense_motion import DenseMotionNetwork
 
 
 class OcclusionAwareGenerator(nn.Module):

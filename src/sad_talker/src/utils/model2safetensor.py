@@ -9,15 +9,15 @@ import sys
 
 sys.path.append('/apdcephfs/private_shadowcun/SadTalker')
 
-from sad_talker.src.face3d.models import networks
+from ..face3d.models import networks
 
-from sad_talker.src.facerender.modules.keypoint_detector import HEEstimator, KPDetector
-from sad_talker.src.facerender.modules.mapping import MappingNet
-from sad_talker.src.facerender.modules.generator import OcclusionAwareGenerator, OcclusionAwareSPADEGenerator
+from ..facerender.modules.keypoint_detector import HEEstimator, KPDetector
+from ..facerender.modules.mapping import MappingNet
+from ..facerender.modules.generator import OcclusionAwareGenerator, OcclusionAwareSPADEGenerator
 
-from sad_talker.src.audio2pose_models.audio2pose import Audio2Pose
-from sad_talker.src.audio2exp_models.networks import SimpleWrapperV2 
-from sad_talker.src.test_audio2coeff import load_cpk
+from .audio2pose import Audio2Pose
+from ..audio2exp_models.networks import SimpleWrapperV2 
+from ..test_audio2coeff import load_cpk
 
 size = 256
 ############ face vid2vid

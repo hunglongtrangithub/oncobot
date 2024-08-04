@@ -2,10 +2,10 @@ from torch import nn
 import torch
 import torch.nn.functional as F
 
-from sad_talker.src.facerender.sync_batchnorm import (
+from ..sync_batchnorm import (
     SynchronizedBatchNorm2d as BatchNorm2d,
 )
-from sad_talker.src.facerender.modules.util import (
+from .util import (
     KPHourglass,
     make_coordinate_grid,
     AntiAliasInterpolation2d,

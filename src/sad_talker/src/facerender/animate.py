@@ -17,14 +17,14 @@ import imageio
 import torch
 
 
-from sad_talker.src.facerender.modules.keypoint_detector import HEEstimator, KPDetector
-from sad_talker.src.facerender.modules.mapping import MappingNet
-from sad_talker.src.facerender.modules.generator import OcclusionAwareSPADEGenerator
-from sad_talker.src.facerender.modules.make_animation import make_animation
+from .modules.keypoint_detector import HEEstimator, KPDetector
+from .modules.mapping import MappingNet
+from .modules.generator import OcclusionAwareSPADEGenerator
+from .modules.make_animation import make_animation
 
 from pydub import AudioSegment
-from sad_talker.src.utils.paste_pic import paste_pic
-from sad_talker.src.utils.videoio import save_video_with_watermark
+from ..utils.paste_pic import paste_pic
+from ..utils.videoio import save_video_with_watermark
 
 try:
     import webui  # type: ignore # in webui

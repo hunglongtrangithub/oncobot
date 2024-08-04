@@ -1,13 +1,13 @@
 from torch import nn
 import torch.nn.functional as F
 import torch
-from sad_talker.src.facerender.modules.util import (
+from .util import (
     Hourglass,
     make_coordinate_grid,
     kp2gaussian,
 )
 
-from sad_talker.src.facerender.sync_batchnorm import (
+from ..sync_batchnorm import (
     SynchronizedBatchNorm3d as BatchNorm3d,
 )
 

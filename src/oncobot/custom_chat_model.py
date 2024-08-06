@@ -84,7 +84,7 @@ class DummyChat(BaseChat):
 
         return async_generator()
 
-# The async methods in this class are just to have the same method names as the other custom chat models. They are not actually async.
+# The async methods in this class are just to have the same async syntax as the other remotely called custom chat models. Not actually async.
 class CustomChatHuggingFace(BaseChat):
 
     default_generation_kwargs = {

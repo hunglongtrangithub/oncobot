@@ -1,3 +1,6 @@
+# Requirements
+- ffmpeg
+
 # SadTalker:
 ```sh
 cd src/sad_talker && chmod +x scripts/download_models.sh && ./scripts/download_models.sh

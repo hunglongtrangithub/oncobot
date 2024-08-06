@@ -18,6 +18,9 @@ def load_video_to_cv2(input_path):
     return full_frames
 
 def save_video_with_watermark(video, audio, save_path, watermark=False):
+    # check if ffmpeg is installed
+    if os.system("ffmpeg -version") != 0:
+        raise Exception("ffmpeg not installed. Please install ffmpeg to use this function")
     temp_file = str(uuid.uuid4())+'.mp4'
     cmd = r'ffmpeg -y -hide_banner -loglevel error -i "%s" -i "%s" -vcodec copy "%s"' % (video, audio, temp_file)
     os.system(cmd)

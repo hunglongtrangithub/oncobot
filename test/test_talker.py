@@ -1,10 +1,13 @@
 import os
 import time
 from pathlib import Path
+import cProfile
 
 import torch
 import yaml
-
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
 from src.oncobot.talking_face import CustomSadTalker
 from src.sad_talker.src.facerender.modules.generator import OcclusionAwareSPADEGenerator
 from src.sad_talker.src.facerender.modules.mapping import MappingNet
@@ -32,8 +35,8 @@ def test_path():
 def test_talker():
     talker = CustomSadTalker(
         batch_size=60,
-        device="cuda:2",
-        torch_dtype="float16",
+        device=[0,1],
+        # torch_dtype="float16",
         # parallel_mode="dp",
         # quanto_weights="int8",
         # quanto_activations=None,
@@ -99,3 +102,6 @@ def test_generator():
     print(output["prediction"].shape)
     assert output["prediction"].shape[0] == batch_size
     print("Test passed")
+
+if __name__ == "__main__":
+    cProfile.run("test_talker()")

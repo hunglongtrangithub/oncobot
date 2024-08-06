@@ -1,1 +1,1 @@
-from .src.sad_talker import SadTalker
+from .src.sadtalker import SadTalker

@@ -41,7 +41,7 @@ def normalize_kp(
 
 def headpose_pred_to_degree(pred):
     device = pred.device
-    idx_tensor = [idx for idx in range(66)]
+    idx_tensor = [idx for idx in range(pred.shape[1])]
     idx_tensor = torch.FloatTensor(idx_tensor).type_as(pred).to(device)
     pred = F.softmax(pred)
     degree = torch.sum(pred * idx_tensor, 1) * 3 - 99

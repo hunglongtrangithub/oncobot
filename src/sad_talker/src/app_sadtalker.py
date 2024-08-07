@@ -1,6 +1,7 @@
 import torch, uuid
 import os, shutil
 from .utils.preprocess import CropAndExtract
+from .utils.videoio import is_ffmpeg_installed
 from .test_audio2coeff import Audio2Coeff  
 from .facerender.animate import AnimateFromCoeff
 from .generate_batch import get_data
@@ -78,9 +79,8 @@ class SadTalker():
             assert use_ref_video == True and ref_info == 'all'
 
         if use_ref_video and ref_info == 'all': # full ref mode
-            # check if ffmpeg is installed
-            if os.system("ffmpeg -version") != 0:
-                raise Exception("ffmpeg not installed. Please install ffmpeg to use this function")
+            if not is_ffmpeg_installed():
+                raise Exception("ffmpeg is not installed or not on PATH. Please install ffmpeg first.")
             ref_video_videoname = os.path.basename(ref_video)
             audio_path = os.path.join(save_dir, ref_video_videoname+'.wav')
             print('new audiopath:',audio_path)

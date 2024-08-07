@@ -4,6 +4,18 @@ import uuid
 import os
 
 import cv2
+import subprocess
+
+def is_ffmpeg_installed():
+    try:
+        # Run the ffmpeg command to check if it is installed, suppressing output
+        result = subprocess.run(['ffmpeg', '-version'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if result.returncode == 0:
+            return True
+        else:
+            return False
+    except:
+        return False
 
 def load_video_to_cv2(input_path):
     video_stream = cv2.VideoCapture(input_path)
@@ -18,9 +30,9 @@ def load_video_to_cv2(input_path):
     return full_frames
 
 def save_video_with_watermark(video, audio, save_path, watermark=False):
-    # check if ffmpeg is installed
-    if os.system("ffmpeg -version") != 0:
-        raise Exception("ffmpeg not installed. Please install ffmpeg to use this function")
+    if not is_ffmpeg_installed():
+        raise Exception("ffmpeg is not installed or not on PATH. Please install ffmpeg first.")
+
     temp_file = str(uuid.uuid4())+'.mp4'
     cmd = r'ffmpeg -y -hide_banner -loglevel error -i "%s" -i "%s" -vcodec copy "%s"' % (video, audio, temp_file)
     os.system(cmd)

@@ -1,6 +1,5 @@
 from scipy.spatial import ConvexHull
 import torch
-import torch.nn.functional as F
 import numpy as np
 from tqdm import tqdm
 import time
@@ -43,7 +42,7 @@ def headpose_pred_to_degree(pred):
     device = pred.device
     idx_tensor = [idx for idx in range(pred.shape[1])]
     idx_tensor = torch.FloatTensor(idx_tensor).type_as(pred).to(device)
-    pred = F.softmax(pred)
+    pred = pred.softmax(1)
     degree = torch.sum(pred * idx_tensor, 1) * 3 - 99
     return degree
 

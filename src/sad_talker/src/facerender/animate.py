@@ -325,7 +325,7 @@ class AnimateFromCoeff:
 
         return predictions
 
-
+# @profile
 def save_data_to_video(
     video_name,
     audio_path,

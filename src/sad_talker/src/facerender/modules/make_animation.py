@@ -146,6 +146,7 @@ def keypoint_transformation(kp_canonical, he, wo_exp=False):
     return {"value": kp_transformed}
 
 
+# @profile
 def make_animation(
     source_image,
     source_semantics,

@@ -280,6 +280,7 @@ class SadTalker:
             final_result = result_queue.get()  # This will be the result from rank 0
             return final_result
 
+    # @profile
     def test(
         self,
         source_image,
@@ -298,14 +299,11 @@ class SadTalker:
             save_dir = os.path.join(result_dir, time_tag)
             os.makedirs(save_dir, exist_ok=True)
 
-            start_time = time.time()
             audio_path = self._prepare_audio(driven_audio)
             first_coeff_path, crop_pic_path, crop_info = self._preprocess_image(
                 source_image, save_dir
             )
-            print("Preprocess time:", time.time() - start_time)
 
-            start_time = time.time()
             batch = get_data(
                 first_coeff_path,
                 audio_path,
@@ -316,9 +314,7 @@ class SadTalker:
                 use_blink=use_blink,
             )
             coeff_path = self.audio_to_coeff.generate(batch, save_dir, pose_style)
-            print("Audio2Coeff time:", time.time() - start_time)
 
-            start_time = time.time()
             data_batches, video_name, audio_path, frame_num = (
                 self._prepare_facerender_data(
                     coeff_path,
@@ -331,9 +327,7 @@ class SadTalker:
                 )
             )
             video_data = self._get_generated_video_data(data_batches)
-            print("FaceRender time:", time.time() - start_time)
 
-            start_time = time.time()
             return_path = save_data_to_video(
                 video_name,
                 audio_path,
@@ -345,7 +339,6 @@ class SadTalker:
                 crop_pic_path,
                 save_dir,
             )
-            print("Save video time:", time.time() - start_time)
             return return_path
         except Exception as e:
             print(f"Error in test: {e}")

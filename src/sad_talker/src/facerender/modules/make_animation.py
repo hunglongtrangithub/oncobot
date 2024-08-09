@@ -38,12 +38,11 @@ def normalize_kp(
     return kp_new
 
 
-def headpose_pred_to_degree(pred):
-    device = pred.device
-    idx_tensor = [idx for idx in range(pred.shape[1])]
-    idx_tensor = torch.FloatTensor(idx_tensor).type_as(pred).to(device)
-    pred = pred.softmax(1)
-    degree = torch.sum(pred * idx_tensor, 1) * 3 - 99
+# @profile
+def headpose_pred_to_degree(pred, idx_tensor=None):  # slow
+    if idx_tensor is None:
+        idx_tensor = torch.arange(pred.shape[1]).type_as(pred).to(pred.device)
+    degree = torch.sum(pred.softmax(1) * idx_tensor, 1) * 3 - 99
     return degree
 
 
@@ -109,22 +108,28 @@ def get_rotation_matrix(yaw, pitch, roll):
     return rot_mat
 
 
-def keypoint_transformation(kp_canonical, he, wo_exp=False):
+# @profile
+def keypoint_transformation(
+    kp_canonical,
+    he,
+    idx_tensor=None,
+    wo_exp=False,
+):
     kp = kp_canonical["value"]  # (bs, k, 3)
     yaw, pitch, roll = he["yaw"], he["pitch"], he["roll"]
 
     if "yaw_in" in he:
         yaw = he["yaw_in"]
     else:
-        yaw = headpose_pred_to_degree(yaw)
+        yaw = headpose_pred_to_degree(yaw, idx_tensor)
     if "pitch_in" in he:
         pitch = he["pitch_in"]
     else:
-        pitch = headpose_pred_to_degree(pitch)
+        pitch = headpose_pred_to_degree(pitch, idx_tensor)
     if "roll_in" in he:
         roll = he["roll_in"]
     else:
-        roll = headpose_pred_to_degree(roll)
+        roll = headpose_pred_to_degree(roll, idx_tensor)
 
     rot_mat = get_rotation_matrix(yaw, pitch, roll)  # (bs, 3, 3)
 
@@ -168,10 +173,18 @@ def make_animation(
         predictions = []
         kp_canonical = kp_detector(source_image)
         he_source = mapping(source_semantics)
-        kp_source = keypoint_transformation(kp_canonical, he_source)
+        # all tensors in here are in the same device and have the same type
+        # yaw, pitch, and roll outputed from mapping model always have the same shape. Make idx_tensor once and use it for all frames.
+        idx_tensor = (
+            torch.arange(he_source["yaw"].shape[1])
+            .type_as(source_image)
+            .to(source_image.device)
+        )
+        kp_source = keypoint_transformation(kp_canonical, he_source, idx_tensor)
 
         for frame_idx in tqdm(range(target_semantics.shape[1]), "Face Renderer:"):
             target_semantics_frame = target_semantics[:, frame_idx]
+            # source_semantics and target_semantics_frame always have the same shape.
             he_driving = mapping(target_semantics_frame)
             if yaw_c_seq is not None:
                 he_driving["yaw_in"] = yaw_c_seq[:, frame_idx]
@@ -180,7 +193,7 @@ def make_animation(
             if roll_c_seq is not None:
                 he_driving["roll_in"] = roll_c_seq[:, frame_idx]
 
-            kp_driving = keypoint_transformation(kp_canonical, he_driving)
+            kp_driving = keypoint_transformation(kp_canonical, he_driving, idx_tensor)
 
             kp_norm = kp_driving
             # TEST: source_image shape is (batch_size, 3, 256, 256), kp_source['value'].shape is (batch_size, 15, 3), kp_norm['value'].shape is (batch_size, 15, 3)

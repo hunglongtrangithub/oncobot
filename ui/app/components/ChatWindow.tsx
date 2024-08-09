@@ -104,6 +104,14 @@ export function ChatWindow(props: {
     selectedChatbotRef.current = selectedChatbot;
   }, [selectedChatbot]);
 
+  // Scroll to the bottom of the message container when voice chat is toggled
+  useEffect(() => {
+    if (!isVoiceChatActive && messageContainerRef.current) {
+      const element = messageContainerRef.current;
+      element.scrollTop = element.scrollHeight;
+    }
+  }, [isVoiceChatActive]);
+
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const userVideoRef = useRef<HTMLVideoElement | null>(null);
 

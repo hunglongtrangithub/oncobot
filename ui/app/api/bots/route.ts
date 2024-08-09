@@ -44,4 +44,3 @@ export async function GET() {
   const bots = await getBots();
   return NextResponse.json({ bots });
 }
-

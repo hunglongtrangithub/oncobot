@@ -676,8 +676,8 @@ export function ChatWindow(props: {
               {isLoading
                 ? "Getting reponse..."
                 : isSpeechLoading
-                  ? "Generating speech..."
-                  : ""}
+                ? "Generating speech..."
+                : ""}
             </Text>
           </HStack>
         </VStack>

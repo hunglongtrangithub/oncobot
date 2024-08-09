@@ -155,7 +155,14 @@ class AnimateFromCoeff:
         print(
             f"MappingNet model size: {self.get_model_size(self.mapping, unit):.3f} {unit}"
         )
-        print("dtype:", self.dtype, "device:", self.device, "dp_device_ids:", dp_device_ids)
+        print(
+            "dtype:",
+            self.dtype,
+            "device:",
+            self.device,
+            "dp_device_ids:",
+            dp_device_ids,
+        )
 
     def get_model_size(self, model, unit="mb"):
         param_size = 0
@@ -325,6 +332,7 @@ class AnimateFromCoeff:
 
         return predictions
 
+
 # @profile
 def save_data_to_video(
     video_name,
@@ -337,11 +345,8 @@ def save_data_to_video(
     pic_path,
     video_save_dir,
 ):
-    video = []
-    for idx in range(predictions_video.shape[0]):
-        image = predictions_video[idx]
-        image = np.transpose(image.data.cpu().numpy(), [1, 2, 0]).astype(np.float32)
-        video.append(image)
+    predictions_video = predictions_video.cpu().numpy()
+    video = np.transpose(predictions_video, [0, 2, 3, 1]).astype(np.float32)
     result = img_as_ubyte(video)
 
     original_size = crop_info[0]

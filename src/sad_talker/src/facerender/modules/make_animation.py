@@ -108,7 +108,6 @@ def get_rotation_matrix(yaw, pitch, roll):
     return rot_mat
 
 
-# @profile
 def keypoint_transformation(
     kp_canonical,
     he,
@@ -169,7 +168,7 @@ def make_animation(
     use_half=False,
 ):
     with torch.no_grad():
-        start_time = time.time()
+        start_time = time.perf_counter()
         predictions = []
         kp_canonical = kp_detector(source_image)
         he_source = mapping(source_semantics)
@@ -204,7 +203,7 @@ def make_animation(
             predictions.append(out["prediction"])
             # print("out['prediction'].shape", out["prediction"].shape)
         predictions_ts = torch.stack(predictions, dim=1)
-        end_time = time.time()
+        end_time = time.perf_counter()
         print(
             f"Time taken to generate predictions: {(end_time - start_time):.2f} seconds"
         )

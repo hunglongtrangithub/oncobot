@@ -1,17 +1,21 @@
 import os
 import time
 from pathlib import Path
-import cProfile
 
 import torch
 import yaml
 import sys
 from pathlib import Path
+
 sys.path.append(str(Path(__file__).parent.parent))
 from src.oncobot.talking_face import CustomSadTalker
 from src.sad_talker.src.facerender.modules.generator import OcclusionAwareSPADEGenerator
 from src.sad_talker.src.facerender.modules.mapping import MappingNet
 from src.sad_talker.src.utils.init_path import init_path
+from src.sad_talker.src.facerender.modules.make_animation import (
+    headpose_pred_to_degree,
+    keypoint_transformation,
+)
 
 image_size = 256
 image_preprocess = "crop"
@@ -32,10 +36,29 @@ def test_path():
     print(sad_talker_paths)
 
 
+def test_headpose_pred_to_degree():
+    pred = torch.randn([30, 66])
+    degree = headpose_pred_to_degree(pred)
+
+
+def test_keypoint_transformation():
+    kp_canonical = {"value": torch.randn([30, 15, 3])}
+    he_source = {
+        "yaw": torch.randn([30, 66]),
+        "pitch": torch.randn([30, 66]),
+        "roll": torch.randn([30, 66]),
+        "t": torch.randn([30, 3]),
+        "exp": torch.randn([30, 45]),
+    }
+    kp_transformed = keypoint_transformation(kp_canonical, he_source)
+    print(kp_transformed["value"].shape)
+
+
+# @profile
 def test_talker():
     talker = CustomSadTalker(
-        batch_size=60,
-        device=[0,1],
+        batch_size=30,
+        device=[1],
         # torch_dtype="float16",
         # parallel_mode="dp",
         # quanto_weights="int8",
@@ -46,14 +69,14 @@ def test_talker():
     video_path = str(video_folder / "chatbot__1.mp4")
     audio_path = str(Path(__file__).parent.parent / "examples/fake_patient3.wav")
     image_path = str(Path(__file__).parent.parent / "examples/chatbot1.jpg")
-    start = time.time()
+    start = time.perf_counter()
     talker.run(
         video_path,
         audio_path,
         image_path,
-        delete_generated_files=True,
+        delete_generated_files=False,
     )
-    print(f"Total time taken: {time.time() - start:.2f} seconds")
+    print(f"Total time taken: {time.perf_counter() - start:.2f} seconds")
     assert os.path.exists(video_path)
     print("Test passed")
 
@@ -103,5 +126,9 @@ def test_generator():
     assert output["prediction"].shape[0] == batch_size
     print("Test passed")
 
+
 if __name__ == "__main__":
-    cProfile.run("test_talker()")
+    # test_headpose_pred_to_degree()
+    # test_keypoint_transformation()
+    test_talker()
+    pass

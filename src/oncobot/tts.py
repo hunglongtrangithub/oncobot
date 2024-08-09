@@ -135,7 +135,7 @@ class XTTS:
             sens = self.split_into_sentences(text, lang_iso)
         print(sens)
 
-        start = time.time()
+        start = time.perf_counter()
         wavs = []
         try:
             for sen in sens:
@@ -159,11 +159,11 @@ class XTTS:
             logger.error(f"Error in XTTS method: {e}", exc_info=True)
             raise
         # compute stats
-        process_time = time.time() - start
+        process_time = time.perf_counter() - start
         audio_time = len(wavs) / self.config.audio["sample_rate"]
         logger.info(f" > Processing time: {process_time}")
         logger.info(f" > Real-time factor: {process_time / audio_time}")
-        logger.info(f"XTTS run method took {time.time() - start:.2f} seconds.")
+        logger.info(f"XTTS run method took {time.perf_counter() - start:.2f} seconds.")
 
     async def arun(self, text: str, file_path: str, voice_path: str):
         try:

@@ -48,14 +48,14 @@ else:
     ner = NERProcessor(device="cuda:0")
     chain = RAGChain(retriever, chat_model, ner)
     tts = XTTS(use_deepspeed=True)
-    transcribe = WhisperSTT(device="cuda:1")
+    transcribe = WhisperSTT(device="cuda:0")
     # The comments below show a few options to configure the inference of the talker model.
     # The current settings works well on a 40GB NVIDIA A100 GPU.
     talker = CustomSadTalker(
         # batch_size=75,
         # device=[1, 2, 4],
         # parallel_mode="dp",
-        torch_dtype="float16",
+        # torch_dtype="float16",
         device="cuda:2",
         batch_size=60,
         # quanto_weights="int8",
@@ -184,7 +184,7 @@ async def text_to_speech(
     conversationId: str = Form(...),
     chatbot: str = Form(...),
 ):
-    start = time.time()
+    start = time.perf_counter()
     speech_file_name = f"{conversationId}.wav"
     speech_folder = Path(__file__).resolve().parent / "audio"
     speech_folder.mkdir(exist_ok=True)
@@ -218,7 +218,7 @@ async def text_to_speech(
             detail=error_message,
         )
     finally:
-        logger.info(f"/text_to_speech Total time taken: {time.time() - start}")
+        logger.info(f"/text_to_speech Total time taken: {time.perf_counter() - start}")
 
 
 @app.post("/text_to_video")
@@ -229,7 +229,7 @@ async def text_to_video(
     conversationId: str = Form(...),
     chatbot: str = Form(...),
 ):
-    start = time.time()
+    start = time.perf_counter()
     voice_folder = Path(__file__).resolve().parent / "voices"
     voice_folder.mkdir(exist_ok=True)
     voice_file_path = str(voice_folder / f"{chatbot}.mp3")
@@ -281,7 +281,7 @@ async def text_to_video(
             detail=error_message,
         )
     finally:
-        logger.info(f"/text_to_video Total time taken: {time.time() - start}")
+        logger.info(f"/text_to_video Total time taken: {time.perf_counter() - start}")
 
 
 if __name__ == "__main__":

@@ -22,10 +22,10 @@ class ToyModel(nn.Module):
 
 
 def process(tensor):
-    start = time.time()
+    start = time.perf_counter()
     model = ToyModel()
     result = model(tensor)
-    processing_time = time.time() - start
+    processing_time = time.perf_counter() - start
     print("Original Tensor shape:")
     print(tensor.shape)
     print("Processed Tensor:")
@@ -104,7 +104,7 @@ def test_ddp():
         result_queue = manager.Queue()
         world_size = 3
 
-        start = time.time()
+        start = time.perf_counter()
         # Spawn processes
         mp.spawn(  # type: ignore
             process_batch,
@@ -123,7 +123,7 @@ def test_ddp():
         print(data.shape)
         print("Processed Tensor:")
         print(result.shape)
-        print("Processing time:", time.time() - start)
+        print("Processing time:", time.perf_counter() - start)
 
 
 def test_divide_batch():

@@ -8,9 +8,9 @@ from src.oncobot.rag_chain import ChatRequest
 
 @contextmanager
 def timeit():
-    start = time.time()
+    start = time.perf_counter()
     yield
-    end = time.time()
+    end = time.perf_counter()
     print(f"Time taken: {end - start:.2f} seconds")
 
 

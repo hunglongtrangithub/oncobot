@@ -225,7 +225,9 @@ class SadTalker:
         try:
             self.setup(rank, world_size)
             device = self.devices[rank]
-            print(f"Time to spawn rank {rank}: {time.time() - spawn_start_time}")
+            print(
+                f"Time to spawn rank {rank}: {time.perf_counter() - spawn_start_time}"
+            )
             print(f"Rank {rank} using device: {device}")
 
             torch.cuda.set_device(device)
@@ -261,7 +263,7 @@ class SadTalker:
             world_size = len(self.devices)
             result_queue = manager.Queue()
             print("Spawning processes...")
-            start_time = time.time()
+            start_time = time.perf_counter()
             # Spawn processes
             mp.spawn(  # type: ignore
                 self._ddp_worker,
@@ -276,7 +278,7 @@ class SadTalker:
             )
 
             print("All processes finished.")
-            print("_get_generated_video_data:", time.time() - start_time)
+            print("_get_generated_video_data:", time.perf_counter() - start_time)
             final_result = result_queue.get()  # This will be the result from rank 0
             return final_result
 

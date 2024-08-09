@@ -136,7 +136,9 @@ class DDPDemo:
         try:
             self.setup(rank, world_size)
             device = self.devices[rank]
-            print(f"Time to spawn rank {rank}: {time.time() - spawn_start_time}")
+            print(
+                f"Time to spawn rank {rank}: {time.perf_counter() - spawn_start_time}"
+            )
             print(f"Rank {rank} using device: {device}")
 
             torch.cuda.set_device(device)
@@ -170,15 +172,15 @@ class DDPDemo:
 
     def _get_generated_video_data(self, data_batches):
         if self.parallel_mode != "ddp":
-            start_time = time.time()
+            start_time = time.perf_counter()
             result = self.animate_from_coeff[0].generate(data_batches[0])
-            print("_get_generated_video_data:", time.time() - start_time)
+            print("_get_generated_video_data:", time.perf_counter() - start_time)
             return result
 
         with mp.Manager() as manager:
             world_size = len(self.devices)
             result_queue = manager.Queue()
-            start_time = time.time()
+            start_time = time.perf_counter()
             # Spawn processes
             mp.spawn(  # type: ignore
                 self._ddp_worker,
@@ -193,7 +195,7 @@ class DDPDemo:
             )
 
             print("All processes finished.")
-            print("_get_generated_video_data:", time.time() - start_time)
+            print("_get_generated_video_data:", time.perf_counter() - start_time)
             final_result = result_queue.get()  # This will be the result from rank 0
             return final_result
 

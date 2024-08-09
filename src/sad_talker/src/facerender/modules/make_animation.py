@@ -113,16 +113,18 @@ def keypoint_transformation(kp_canonical, he, wo_exp=False):
     kp = kp_canonical["value"]  # (bs, k, 3)
     yaw, pitch, roll = he["yaw"], he["pitch"], he["roll"]
 
-    yaw = headpose_pred_to_degree(yaw)
-    pitch = headpose_pred_to_degree(pitch)
-    roll = headpose_pred_to_degree(roll)
-
     if "yaw_in" in he:
         yaw = he["yaw_in"]
+    else:
+        yaw = headpose_pred_to_degree(yaw)
     if "pitch_in" in he:
         pitch = he["pitch_in"]
+    else:
+        pitch = headpose_pred_to_degree(pitch)
     if "roll_in" in he:
         roll = he["roll_in"]
+    else:
+        roll = headpose_pred_to_degree(roll)
 
     rot_mat = get_rotation_matrix(yaw, pitch, roll)  # (bs, 3, 3)
 

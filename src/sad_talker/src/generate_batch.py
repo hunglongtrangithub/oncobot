@@ -71,6 +71,7 @@ def generate_blink_seq_randomly(num_frames):
     return ratio
 
 
+# @profile 
 def get_data(
     first_coeff_path,
     audio_path,
@@ -92,7 +93,7 @@ def get_data(
         num_frames = int(length_of_audio * 25)
         indiv_mels = np.zeros((num_frames, 80, 16))
     else:
-        wav = audio.load_wav(audio_path, 16000)
+        wav = audio.load_wav(audio_path, 16000) # slow: 0.99s (96.7%)
         wav_length, num_frames = parse_audio_length(len(wav), 16000, 25)
         wav = crop_pad_audio(wav, wav_length)
         orig_mel = audio.melspectrogram(wav).T

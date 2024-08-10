@@ -69,6 +69,7 @@ class CropAndExtract:
         self.lm3d_std = load_lm3d(sadtalker_path["dir_of_BFM_fitting"])
         self.device = device
 
+    # @profile 
     def generate(
         self,
         input_path,
@@ -113,7 +114,7 @@ class CropAndExtract:
         if (
             "crop" in crop_or_resize.lower() or "full" in crop_or_resize.lower()
         ):  # default crop
-            x_full_frames, crop, quad = self.propress.crop(
+            x_full_frames, crop, quad = self.propress.crop( # slow: 1.26s
                 x_full_frames,
                 still=True if "ext" in crop_or_resize.lower() else False,
                 xsize=512,

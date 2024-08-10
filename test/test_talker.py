@@ -54,11 +54,11 @@ def test_keypoint_transformation():
     print(kp_transformed["value"].shape)
 
 
-# @profile
+# # @profile 
 def test_talker():
     talker = CustomSadTalker(
-        batch_size=30,
-        device=[1],
+        batch_size=60,
+        device=[2],
         # torch_dtype="float16",
         # parallel_mode="dp",
         # quanto_weights="int8",

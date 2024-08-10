@@ -333,7 +333,7 @@ class AnimateFromCoeff:
         return predictions
 
 
-# @profile
+# @profile 
 def save_data_to_video(
     video_name,
     audio_path,
@@ -345,7 +345,7 @@ def save_data_to_video(
     pic_path,
     video_save_dir,
 ):
-    predictions_video = predictions_video.cpu().numpy()
+    predictions_video = predictions_video.cpu().numpy() # slow: 1.15s (59.5%)
     video = np.transpose(predictions_video, [0, 2, 3, 1]).astype(np.float32)
     result = img_as_ubyte(video)
 
@@ -362,7 +362,7 @@ def save_data_to_video(
     video_name = video_name + ".mp4"
     path = os.path.join(video_save_dir, "temp_" + video_name)
 
-    imageio.mimsave(path, result, fps=float(25))
+    imageio.mimsave(path, result, fps=float(25)) # slow: 0.41s (22.2%)
 
     av_path = os.path.join(video_save_dir, video_name)
     return_path = av_path

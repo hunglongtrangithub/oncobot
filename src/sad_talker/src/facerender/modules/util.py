@@ -55,10 +55,10 @@ def make_coordinate_grid_2d(spatial_size, type):
 
     return meshed
 
-
+# @profile 
 def make_coordinate_grid(spatial_size, type):
     d, h, w = spatial_size
-    x = torch.arange(w).type(type)
+    x = torch.arange(w).type(type) # slow: 3.55s (99.0%)
     y = torch.arange(h).type(type)
     z = torch.arange(d).type(type)
 
@@ -581,7 +581,7 @@ class SPADEResnetBlock(nn.Module):
 
     def shortcut(self, x, seg1):
         if self.learned_shortcut:
-            x_s = self.conv_s(self.norm_s(x, seg1))
+            x_s = self.conv_s(self.norm_s(x, seg1)) # slow: 0.97s (100%)
         else:
             x_s = x
         return x_s

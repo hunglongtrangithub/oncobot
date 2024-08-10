@@ -38,8 +38,8 @@ def normalize_kp(
     return kp_new
 
 
-# @profile
-def headpose_pred_to_degree(pred, idx_tensor=None):  # slow
+
+def headpose_pred_to_degree(pred, idx_tensor=None):
     if idx_tensor is None:
         idx_tensor = torch.arange(pred.shape[1]).type_as(pred).to(pred.device)
     degree = torch.sum(pred.softmax(1) * idx_tensor, 1) * 3 - 99
@@ -152,7 +152,7 @@ def keypoint_transformation(
     return {"value": kp_transformed}
 
 
-# @profile
+# @profile 
 def make_animation(
     source_image,
     source_semantics,
@@ -170,7 +170,7 @@ def make_animation(
     with torch.no_grad():
         start_time = time.perf_counter()
         predictions = []
-        kp_canonical = kp_detector(source_image)
+        kp_canonical = kp_detector(source_image) # slow: 1.6s (26.5%)
         he_source = mapping(source_semantics)
         # all tensors in here are in the same device and have the same type
         # yaw, pitch, and roll outputed from mapping model always have the same shape. Make idx_tensor once and use it for all frames.
@@ -199,7 +199,7 @@ def make_animation(
             # print("source_image.shape", source_image.shape)
             # print("kp_source['value'].shape", kp_source["value"].shape)
             # print("kp_norm['value'].shape", kp_norm["value"].shape)
-            out = generator(source_image, kp_source=kp_source, kp_driving=kp_norm)
+            out = generator(source_image, kp_source=kp_source, kp_driving=kp_norm) # slow: 4.4s (72.5%)
             predictions.append(out["prediction"])
             # print("out['prediction'].shape", out["prediction"].shape)
         predictions_ts = torch.stack(predictions, dim=1)

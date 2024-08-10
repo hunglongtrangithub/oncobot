@@ -19,20 +19,20 @@ from PIL import Image
 class Preprocesser:
     def __init__(self, device='cuda'):
         self.predictor = KeypointExtractor(device)
-
+    @profile
     def get_landmark(self, img_np):
         """get landmark with dlib
         :return: np.array shape=(68, 2)
         """
         with torch.no_grad():
-            dets = self.predictor.det_net.detect_faces(img_np, 0.97)
+            dets = self.predictor.det_net.detect_faces(img_np, 0.97) # slow: 0.87s (67.5%)
 
         if len(dets) == 0:
             return None
         det = dets[0]
 
         img = img_np[int(det[1]):int(det[3]), int(det[0]):int(det[2]), :]
-        lm = landmark_98_to_68(self.predictor.detector.get_landmarks(img)) # [0]
+        lm = landmark_98_to_68(self.predictor.detector.get_landmarks(img)) # [0] # slow: 0.42s (32.5%)
 
         #### keypoints to the original location
         lm[:,0] += int(det[0])
@@ -122,7 +122,7 @@ class Preprocesser:
 
         # Save aligned image.
         return rsize, crop, [lx, ly, rx, ry]
-    
+    @profile
     def crop(self, img_np_list, still=False, xsize=512):    # first frame for all video
         img_np = img_np_list[0]
         lm = self.get_landmark(img_np)

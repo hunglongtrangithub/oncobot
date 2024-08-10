@@ -19,7 +19,7 @@ from PIL import Image
 class Preprocesser:
     def __init__(self, device='cuda'):
         self.predictor = KeypointExtractor(device)
-    @profile
+    # @profile
     def get_landmark(self, img_np):
         """get landmark with dlib
         :return: np.array shape=(68, 2)
@@ -122,7 +122,7 @@ class Preprocesser:
 
         # Save aligned image.
         return rsize, crop, [lx, ly, rx, ry]
-    @profile
+    # @profile
     def crop(self, img_np_list, still=False, xsize=512):    # first frame for all video
         img_np = img_np_list[0]
         lm = self.get_landmark(img_np)

@@ -1,4 +1,4 @@
-from torch import nn
+from torch import nn, Tensor
 
 import torch.nn.functional as F
 import torch
@@ -13,13 +13,13 @@ from ..sync_batchnorm import (
 import torch.nn.utils.spectral_norm as spectral_norm
 
 
-def kp2gaussian(kp, spatial_size, kp_variance):
+def kp2gaussian(kp, spatial_size, kp_variance, idx_tensors=None):
     """
     Transform a keypoint into gaussian like representation
     """
     mean = kp["value"]
 
-    coordinate_grid = make_coordinate_grid(spatial_size, mean.type())
+    coordinate_grid = make_coordinate_grid(spatial_size, mean.type(), idx_tensors)
     number_of_leading_dimensions = len(mean.shape) - 1
     shape = (1,) * number_of_leading_dimensions + coordinate_grid.shape
     coordinate_grid = coordinate_grid.view(*shape)
@@ -55,12 +55,16 @@ def make_coordinate_grid_2d(spatial_size, type):
 
     return meshed
 
-# @profile 
-def make_coordinate_grid(spatial_size, type):
+
+# @profile
+def make_coordinate_grid(spatial_size, type, idx_tensors=None):
     d, h, w = spatial_size
-    x = torch.arange(w).type(type) # slow: 3.55s (99.0%)
-    y = torch.arange(h).type(type)
-    z = torch.arange(d).type(type)
+    if idx_tensors is None:
+        x = torch.arange(w).type(type)  # slow: 3.55s (99.0%)
+        y = torch.arange(h).type(type)
+        z = torch.arange(d).type(type)
+    else:
+        x, y, z = idx_tensors[::-1]  # to fit the order of spatial_size
 
     x = 2 * (x / (w - 1)) - 1
     y = 2 * (y / (h - 1)) - 1
@@ -573,7 +577,7 @@ class SPADEResnetBlock(nn.Module):
             self.norm_s = SPADE(fin, label_nc)
 
     def forward(self, x, seg1):
-        x_s = self.shortcut(x, seg1)
+        x_s = self.shortcut(x, seg1)  # slow
         dx = self.conv_0(self.actvn(self.norm_0(x, seg1)))
         dx = self.conv_1(self.actvn(self.norm_1(dx, seg1)))
         out = x_s + dx
@@ -581,7 +585,7 @@ class SPADEResnetBlock(nn.Module):
 
     def shortcut(self, x, seg1):
         if self.learned_shortcut:
-            x_s = self.conv_s(self.norm_s(x, seg1)) # slow: 0.97s (100%)
+            x_s = self.conv_s(self.norm_s(x, seg1))  # slow: 0.97s (100%)
         else:
             x_s = x
         return x_s

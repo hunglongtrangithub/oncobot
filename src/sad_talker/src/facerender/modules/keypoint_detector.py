@@ -82,6 +82,8 @@ class KPDetector(nn.Module):
         if self.scale_factor != 1:
             self.down = AntiAliasInterpolation2d(image_channel, self.scale_factor)
 
+        self.cache_idx_tensors = None
+
     def gaussian2kp(self, heatmap):
         """
         Extract the mean from a heatmap
@@ -89,11 +91,30 @@ class KPDetector(nn.Module):
         # print("heatmap.device", heatmap.device)
         shape = heatmap.shape
         heatmap = heatmap.unsqueeze(-1)
+        if self.cache_idx_tensors is None:
+            self.cache_idx_tensors = [
+                torch.arange(shape[2]).to(dtype=heatmap.dtype, device=heatmap.device),
+                torch.arange(shape[3]).to(dtype=heatmap.dtype, device=heatmap.device),
+                torch.arange(shape[4]).to(dtype=heatmap.dtype, device=heatmap.device),
+            ]
+        else:
+            if len(self.cache_idx_tensors[0]) != shape[2]:
+                self.cache_idx_tensors[0] = torch.arange(shape[2]).to(
+                    dtype=heatmap.dtype, device=heatmap.device
+                )
+            if len(self.cache_idx_tensors[1]) != shape[3]:
+                self.cache_idx_tensors[1] = torch.arange(shape[3]).to(
+                    dtype=heatmap.dtype, device=heatmap.device
+                )
+            if len(self.cache_idx_tensors[2]) != shape[4]:
+                self.cache_idx_tensors[2] = torch.arange(shape[4]).to(
+                    dtype=heatmap.dtype, device=heatmap.device
+                )
+        print([len(x) for x in self.cache_idx_tensors])
         grid = (
-            make_coordinate_grid(shape[2:], heatmap.type()) # slow: 0.93s (63.0%)
+            make_coordinate_grid(shape[2:], heatmap.type(), self.cache_idx_tensors)
             .unsqueeze_(0)
             .unsqueeze_(0)
-            .to(heatmap.device) # slow: 0.53s (36.6%)
         )
         value = (heatmap * grid).sum(dim=(2, 3, 4))
         kp = {"value": value}

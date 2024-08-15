@@ -91,6 +91,7 @@ class KPDetector(nn.Module):
         # print("heatmap.device", heatmap.device)
         shape = heatmap.shape
         heatmap = heatmap.unsqueeze(-1)
+
         if self.cache_idx_tensors is None:
             self.cache_idx_tensors = [
                 torch.arange(shape[2]).to(dtype=heatmap.dtype, device=heatmap.device),
@@ -110,11 +111,12 @@ class KPDetector(nn.Module):
                 self.cache_idx_tensors[2] = torch.arange(shape[4]).to(
                     dtype=heatmap.dtype, device=heatmap.device
                 )
-        print([len(x) for x in self.cache_idx_tensors])
+
         grid = (
             make_coordinate_grid(shape[2:], heatmap.type(), self.cache_idx_tensors)
             .unsqueeze_(0)
             .unsqueeze_(0)
+            .to(heatmap.device)
         )
         value = (heatmap * grid).sum(dim=(2, 3, 4))
         kp = {"value": value}

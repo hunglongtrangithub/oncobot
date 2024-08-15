@@ -54,13 +54,11 @@ class DenseMotionNetwork(nn.Module):
 
         self.num_kp = num_kp
 
-        self.cache_idx_tensors = None
-
-    def create_sparse_motions(self, feature, kp_driving, kp_source):
+    def create_sparse_motions(self, feature, kp_driving, kp_source, idx_tensors=None):
         bs, _, d, h, w = feature.shape
 
         identity_grid = make_coordinate_grid(
-            (d, h, w), kp_source["value"].type(), self.cache_idx_tensors
+            (d, h, w), kp_source["value"].type(), idx_tensors
         )
         identity_grid = identity_grid.view(1, 1, d, h, w, 3).to(
             kp_driving["value"].device
@@ -89,8 +87,6 @@ class DenseMotionNetwork(nn.Module):
             [identity_grid, driving_to_source], dim=1
         )  # bs num_kp+1 d h w 3
 
-        # sparse_motions = driving_to_source
-
         return sparse_motions
 
     def create_deformed_feature(self, feature, sparse_motions):
@@ -110,19 +106,21 @@ class DenseMotionNetwork(nn.Module):
         )  # (bs, num_kp+1, c, d, h, w)
         return sparse_deformed
 
-    def create_heatmap_representations(self, feature, kp_driving, kp_source):
+    def create_heatmap_representations(
+        self, feature, kp_driving, kp_source, idx_tensors=None
+    ):
         spatial_size = feature.shape[3:]
         gaussian_driving = kp2gaussian(
             kp_driving,
             spatial_size=spatial_size,
             kp_variance=0.01,
-            idx_tensors=self.cache_idx_tensors,
+            idx_tensors=idx_tensors,
         )
         gaussian_source = kp2gaussian(
             kp_source,
             spatial_size=spatial_size,
             kp_variance=0.01,
-            idx_tensors=self.cache_idx_tensors,
+            idx_tensors=idx_tensors,
         )
         heatmap = gaussian_driving - gaussian_source
 
@@ -138,33 +136,17 @@ class DenseMotionNetwork(nn.Module):
         heatmap = heatmap.unsqueeze(2)  # (bs, num_kp+1, 1, d, h, w)
         return heatmap
 
-    def forward(self, feature, kp_driving, kp_source):
+    def forward(self, feature, kp_driving, kp_source, idx_tensors=None):
         bs, _, d, h, w = feature.shape
-
-        if self.cache_idx_tensors is None:
-            self.cache_idx_tensors = [
-                torch.arange(d).type_as(kp_source["value"]),
-                torch.arange(h).type_as(kp_source["value"]),
-                torch.arange(w).type_as(kp_source["value"]),
-            ]
-        else:
-            if len(self.cache_idx_tensors[0]) != d:
-                self.cache_idx_tensors[0] = torch.arange(d).type_as(kp_source["value"])
-            if len(self.cache_idx_tensors[1]) != h:
-                self.cache_idx_tensors[1] = torch.arange(h).type_as(kp_source["value"])
-            if len(self.cache_idx_tensors[2]) != w:
-                self.cache_idx_tensors[2] = torch.arange(w).type_as(kp_source["value"])
-        if self.cache_idx_tensors[0].type() != kp_source["value"].type():
-            self.cache_idx_tensors = [
-                t.type_as(kp_source["value"]) for t in self.cache_idx_tensors
-            ]
 
         feature = self.compress(feature)
         feature = self.norm(feature)
         feature = F.relu(feature)
 
         out_dict = dict()
-        sparse_motion = self.create_sparse_motions(feature, kp_driving, kp_source)
+        sparse_motion = self.create_sparse_motions(
+            feature, kp_driving, kp_source, idx_tensors
+        )
         deformed_feature = self.create_deformed_feature(feature, sparse_motion)
 
         # TEST: All are on the same device
@@ -172,7 +154,7 @@ class DenseMotionNetwork(nn.Module):
         # print("kp_driving['value'].device", kp_driving["value"].device)
         # print("kp_source['value'].device", kp_source["value"].device)
         heatmap = self.create_heatmap_representations(
-            deformed_feature, kp_driving, kp_source
+            deformed_feature, kp_driving, kp_source, idx_tensors
         )
 
         input_ = torch.cat([heatmap, deformed_feature], dim=2)

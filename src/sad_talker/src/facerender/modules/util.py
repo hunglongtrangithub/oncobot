@@ -246,6 +246,7 @@ class UpBlock3d(nn.Module):
 class DownBlock2d(nn.Module):
     """
     Downsampling block for use in encoder.
+    Shape is divided by 2.
     """
 
     def __init__(self, in_features, out_features, kernel_size=3, padding=1, groups=1):
@@ -300,6 +301,7 @@ class DownBlock3d(nn.Module):
 class SameBlock2d(nn.Module):
     """
     Simple block, preserve spatial resolution.
+    Shape is preserved.
     """
 
     def __init__(
@@ -503,7 +505,7 @@ class AntiAliasInterpolation2d(nn.Module):
             kernel *= torch.exp(-((mgrid - mean) ** 2) / (2 * std**2))
 
         # Make sure sum of values in gaussian kernel equals 1.
-        kernel = kernel / torch.sum(kernel)
+        kernel = kernel / torch.sum(kernel)  # type: ignore
         # Reshape to depthwise convolutional weight
         kernel = kernel.view(1, 1, *kernel.size())
         kernel = kernel.repeat(channels, *[1] * (kernel.dim() - 1))

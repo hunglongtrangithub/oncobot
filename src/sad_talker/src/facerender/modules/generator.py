@@ -39,7 +39,7 @@ class OcclusionAwareGenerator(nn.Module):
                 num_kp=num_kp,
                 feature_channel=feature_channel,
                 estimate_occlusion_map=estimate_occlusion_map,
-                **dense_motion_params
+                **dense_motion_params,
             )
         else:
             self.dense_motion_network = None
@@ -190,6 +190,7 @@ class SPADEDecoder(nn.Module):
         self.conv_img = nn.Conv2d(oc, 3, 3, padding=1)
         self.up = nn.Upsample(scale_factor=2)
 
+    # @profile
     def forward(self, feature):
         seg = feature
         x = self.fc(feature)
@@ -212,7 +213,6 @@ class SPADEDecoder(nn.Module):
 
 
 class OcclusionAwareSPADEGenerator(nn.Module):
-
     def __init__(
         self,
         image_channel,
@@ -235,7 +235,7 @@ class OcclusionAwareSPADEGenerator(nn.Module):
                 num_kp=num_kp,
                 feature_channel=feature_channel,
                 estimate_occlusion_map=estimate_occlusion_map,
-                **dense_motion_params
+                **dense_motion_params,
             )
         else:
             self.dense_motion_network = None
@@ -244,6 +244,7 @@ class OcclusionAwareSPADEGenerator(nn.Module):
             image_channel, block_expansion, kernel_size=(3, 3), padding=(1, 1)
         )
 
+        out_features = block_expansion
         down_blocks = []
         for i in range(num_down_blocks):
             in_features = min(max_features, block_expansion * (2**i))
@@ -257,7 +258,7 @@ class OcclusionAwareSPADEGenerator(nn.Module):
 
         self.second = nn.Conv2d(
             in_channels=out_features, out_channels=max_features, kernel_size=1, stride=1
-        )
+        )  # preserves spatial resolution
 
         self.reshape_channel = reshape_channel
         self.reshape_depth = reshape_depth
@@ -290,8 +291,8 @@ class OcclusionAwareSPADEGenerator(nn.Module):
             deformation = deformation.permute(0, 2, 3, 4, 1)
         return F.grid_sample(inp, deformation)
 
-    @profile
-    def forward(self, source_image, kp_driving, kp_source):
+    # @profile
+    def forward(self, source_image, kp_driving, kp_source, idx_tensors=None):
         # Encoding (downsampling) part
         out = self.first(source_image)
         for i in range(len(self.down_blocks)):
@@ -310,7 +311,10 @@ class OcclusionAwareSPADEGenerator(nn.Module):
             # print("kp_driving['value'].device", kp_driving["value"].device)
             # print("kp_source['value'].device", kp_source["value"].device)
             dense_motion = self.dense_motion_network(  # slow: 3.1s (70.4%)
-                feature=feature_3d, kp_driving=kp_driving, kp_source=kp_source
+                feature=feature_3d,
+                kp_driving=kp_driving,
+                kp_source=kp_source,
+                idx_tensors=idx_tensors,
             )
             output_dict["mask"] = dense_motion["mask"]
 
@@ -342,6 +346,8 @@ class OcclusionAwareSPADEGenerator(nn.Module):
                 out = out * occlusion_map
 
         # Decoding part
+        # print("out.shape", out.shape)
+        # out.shape torch.Size([60, 256, 64, 64])
         out = self.decoder(out)  # slow: 1.26s (28.7%)
 
         output_dict["prediction"] = out

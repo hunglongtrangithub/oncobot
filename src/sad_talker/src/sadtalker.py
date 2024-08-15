@@ -282,7 +282,7 @@ class SadTalker:
             final_result = result_queue.get()  # This will be the result from rank 0
             return final_result
 
-    # @profile 
+    # @profile
     def test(
         self,
         source_image,

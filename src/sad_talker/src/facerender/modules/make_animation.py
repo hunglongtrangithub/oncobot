@@ -172,13 +172,30 @@ def make_animation(
         kp_canonical = kp_detector(source_image)  # slow: 1.6s (26.5%)
         he_source = mapping(source_semantics)
         # all tensors in here are in the same device and have the same type
-        # yaw, pitch, and roll outputed from mapping model always have the same shape. Make idx_tensor once and use it for all frames.
-        idx_tensor = (
+        # yaw, pitch, and roll outputed from mapping model always have the same shape. Make this index tensor once and use it for all frames.
+        keypoint_transformation_idx_tensor = (
             torch.arange(he_source["yaw"].shape[1])
             .type_as(source_image)
             .to(source_image.device)
         )
-        kp_source = keypoint_transformation(kp_canonical, he_source, idx_tensor)
+        generator_idx_tensors = [  # index tensors for generator.dense_motion_network
+            torch.arange(generator.reshape_depth)
+            .type_as(source_image)
+            .to(source_image.device),
+            torch.arange(source_image.shape[2] // (2 ** len(generator.down_blocks)))
+            .type_as(source_image)
+            .to(source_image.device),
+            torch.arange(source_image.shape[3] // (2 ** len(generator.down_blocks)))
+            .type_as(source_image)
+            .to(source_image.device),
+        ]
+        # keypoint_transformation_idx_tensor = None
+        # generator_idx_tensors = None
+        kp_source = keypoint_transformation(
+            kp_canonical,
+            he_source,
+            keypoint_transformation_idx_tensor,
+        )
 
         for frame_idx in tqdm(range(target_semantics.shape[1]), "Face Renderer:"):
             target_semantics_frame = target_semantics[:, frame_idx]
@@ -191,7 +208,11 @@ def make_animation(
             if roll_c_seq is not None:
                 he_driving["roll_in"] = roll_c_seq[:, frame_idx]
 
-            kp_driving = keypoint_transformation(kp_canonical, he_driving, idx_tensor)
+            kp_driving = keypoint_transformation(
+                kp_canonical,
+                he_driving,
+                keypoint_transformation_idx_tensor,
+            )
 
             kp_norm = kp_driving
             # TEST: source_image shape is (batch_size, 3, 256, 256), kp_source['value'].shape is (batch_size, 15, 3), kp_norm['value'].shape is (batch_size, 15, 3)
@@ -199,7 +220,10 @@ def make_animation(
             # print("kp_source['value'].shape", kp_source["value"].shape)
             # print("kp_norm['value'].shape", kp_norm["value"].shape)
             out = generator(
-                source_image, kp_source=kp_source, kp_driving=kp_norm
+                source_image,
+                kp_source=kp_source,
+                kp_driving=kp_norm,
+                idx_tensors=generator_idx_tensors,
             )  # slow: 4.4s (72.5%)
             predictions.append(out["prediction"])
             # print("out['prediction'].shape", out["prediction"].shape)

@@ -5,7 +5,6 @@ from pathlib import Path
 import torch
 import yaml
 import sys
-from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
 from src.oncobot.talking_face import CustomSadTalker
@@ -54,11 +53,11 @@ def test_keypoint_transformation():
     print(kp_transformed["value"].shape)
 
 
-# @profile
+# # @profile
 def test_talker():
     talker = CustomSadTalker(
-        batch_size=30,
-        device=[1],
+        batch_size=50,
+        device=[2],
         # torch_dtype="float16",
         # parallel_mode="dp",
         # quanto_weights="int8",

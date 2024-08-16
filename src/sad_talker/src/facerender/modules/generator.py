@@ -59,6 +59,7 @@ class OcclusionAwareGenerator(nn.Module):
             )
         self.down_blocks = nn.ModuleList(down_blocks)
 
+        out_features = block_expansion
         self.second = nn.Conv2d(
             in_channels=out_features, out_channels=max_features, kernel_size=1, stride=1
         )

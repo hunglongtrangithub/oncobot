@@ -170,7 +170,7 @@ class DenseMotionNetwork(nn.Module):
         out_dict["deformation"] = deformation
 
         if self.occlusion:
-            bs, c, d, h, w = prediction.shape
+            bs, _, d, h, w = prediction.shape
             prediction = prediction.view(bs, -1, h, w)
             occlusion_map = torch.sigmoid(self.occlusion(prediction))
             out_dict["occlusion_map"] = occlusion_map

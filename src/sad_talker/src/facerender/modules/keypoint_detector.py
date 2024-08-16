@@ -68,7 +68,7 @@ class KPDetector(nn.Module):
              [0 0 1]]
             """
             self.jacobian.weight.data.zero_()
-            self.jacobian.bias.data.copy_(
+            self.jacobian.bias.data.copy_(  # type: ignore
                 torch.tensor(
                     [1, 0, 0, 0, 1, 0, 0, 0, 1] * self.num_jacobian_maps,
                     dtype=torch.float,

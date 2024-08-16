@@ -1,4 +1,4 @@
-from torch import nn, Tensor
+from torch import nn
 
 import torch.nn.functional as F
 import torch
@@ -10,7 +10,8 @@ from ..sync_batchnorm import (
     SynchronizedBatchNorm3d as BatchNorm3d,
 )
 
-import torch.nn.utils.spectral_norm as spectral_norm
+from torch.nn.utils.spectral_norm import spectral_norm
+from torch.nn.common_types import _size_2_t, _size_3_t
 
 
 def kp2gaussian(kp, spatial_size, kp_variance, idx_tensors=None):
@@ -197,7 +198,14 @@ class UpBlock2d(nn.Module):
     Upsampling block for use in decoder.
     """
 
-    def __init__(self, in_features, out_features, kernel_size=3, padding=1, groups=1):
+    def __init__(
+        self,
+        in_features: int,
+        out_features: int,
+        kernel_size: _size_2_t = 3,
+        padding: _size_2_t = 1,
+        groups=1,
+    ):
         super(UpBlock2d, self).__init__()
 
         self.conv = nn.Conv2d(
@@ -222,7 +230,14 @@ class UpBlock3d(nn.Module):
     Upsampling block for use in decoder.
     """
 
-    def __init__(self, in_features, out_features, kernel_size=3, padding=1, groups=1):
+    def __init__(
+        self,
+        in_features: int,
+        out_features: int,
+        kernel_size: _size_3_t = 3,
+        padding: _size_3_t = 1,
+        groups: int = 1,
+    ):
         super(UpBlock3d, self).__init__()
 
         self.conv = nn.Conv3d(
@@ -249,7 +264,9 @@ class DownBlock2d(nn.Module):
     Shape is divided by 2.
     """
 
-    def __init__(self, in_features, out_features, kernel_size=3, padding=1, groups=1):
+    def __init__(
+        self, in_features, out_features, kernel_size=(3, 3), padding=(1, 1), groups=1
+    ):
         super(DownBlock2d, self).__init__()
         self.conv = nn.Conv2d(
             in_channels=in_features,
@@ -305,7 +322,13 @@ class SameBlock2d(nn.Module):
     """
 
     def __init__(
-        self, in_features, out_features, groups=1, kernel_size=3, padding=1, lrelu=False
+        self,
+        in_features,
+        out_features,
+        groups=1,
+        kernel_size=(3, 3),
+        padding=(1, 1),
+        lrelu=False,
     ):
         super(SameBlock2d, self).__init__()
         self.conv = nn.Conv2d(
@@ -435,6 +458,10 @@ class KPHourglass(nn.Module):
     ):
         super(KPHourglass, self).__init__()
 
+        assert num_blocks > 0, "num_blocks must be greater than 0"
+        assert (
+            reshape_features % reshape_depth == 0
+        ), "reshape_features must be divisible by reshape_depth"
         self.down_blocks = nn.Sequential()
         for i in range(num_blocks):
             self.down_blocks.add_module(
@@ -468,7 +495,7 @@ class KPHourglass(nn.Module):
             )
 
         self.reshape_depth = reshape_depth
-        self.out_filters = out_filters
+        self.out_filters = out_filters  # type: ignore
 
     def forward(self, x):
         out = self.down_blocks(x)
@@ -551,12 +578,18 @@ class SPADE(nn.Module):
 
 
 class SPADEResnetBlock(nn.Module):
-    def __init__(self, fin, fout, norm_G, label_nc, use_se=False, dilation=1):
+    def __init__(
+        self,
+        fin: int,
+        fout: int,
+        norm_G: str,
+        label_nc: int,
+        dilation: int = 1,
+    ):
         super().__init__()
         # Attributes
         self.learned_shortcut = fin != fout
         fmiddle = min(fin, fout)
-        self.use_se = use_se
         # create conv layers
         self.conv_0 = nn.Conv2d(
             fin, fmiddle, kernel_size=3, padding=dilation, dilation=dilation

@@ -5,7 +5,7 @@ import shutil
 import torch
 from optimum import quanto
 
-from src.sad_talker import SadTalker
+from src.sadtalker import SadTalker
 from src.utils.logger_config import get_logger
 
 logger = get_logger(__name__)
@@ -57,8 +57,8 @@ class CustomSadTalker(SadTalker):
             quanto_activations=quanto_activations,
         )
         logger.info(f"quanto_config: {quanto_config}")
-        checkpoint_path = Path(__file__).parent.parent / "sad_talker/checkpoints"
-        config_path = Path(__file__).parent.parent / "sad_talker/src/config"
+        checkpoint_path = Path(__file__).parent.parent / "sadtalker/checkpoints"
+        config_path = Path(__file__).parent.parent / "sadtalker/src/config"
         super().__init__(
             checkpoint_path=str(checkpoint_path),
             config_path=str(config_path),

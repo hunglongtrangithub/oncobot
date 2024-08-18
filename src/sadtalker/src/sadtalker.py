@@ -83,7 +83,7 @@ class SadTalker:
         )
 
     def initialize_all_models(self):
-        sad_talker_paths = init_path(
+        sadtalker_paths = init_path(
             self.checkpoint_path,
             self.config_path,
             self.image_size,
@@ -91,12 +91,12 @@ class SadTalker:
             self.image_preprocess,
         )
         print("Loading models...")
-        self.preprocess_model = CropAndExtract(sad_talker_paths, self.devices[0])
-        self.audio_to_coeff = Audio2Coeff(sad_talker_paths, self.devices[0])
+        self.preprocess_model = CropAndExtract(sadtalker_paths, self.devices[0])
+        self.audio_to_coeff = Audio2Coeff(sadtalker_paths, self.devices[0])
         if self.parallel_mode == "ddp":
             self.animate_from_coeff = [
                 AnimateFromCoeff(
-                    sad_talker_paths,
+                    sadtalker_paths,
                     device=device,
                     dtype=self.dtype,
                     **self.quanto_config,
@@ -106,7 +106,7 @@ class SadTalker:
         elif self.parallel_mode == "dp":
             self.animate_from_coeff = [
                 AnimateFromCoeff(
-                    sad_talker_paths,
+                    sadtalker_paths,
                     device=self.devices[0],
                     dtype=self.dtype,
                     dp_device_ids=self.devices,
@@ -116,7 +116,7 @@ class SadTalker:
         else:
             self.animate_from_coeff = [
                 AnimateFromCoeff(
-                    sad_talker_paths,
+                    sadtalker_paths,
                     device=self.devices[0],
                     dtype=self.dtype,
                     **self.quanto_config,

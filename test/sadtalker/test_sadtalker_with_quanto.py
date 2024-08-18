@@ -3,14 +3,14 @@ from pathlib import Path
 import torch
 from optimum import quanto
 
-from src.sad_talker.src.facerender.animate import AnimateFromCoeff
-from src.sad_talker.src.utils.init_path import init_path
+from src.sadtalker.src.facerender.animate import AnimateFromCoeff
+from src.sadtalker.src.utils.init_path import init_path
 
 image_size = 256
 image_preprocess = "crop"
-checkpoint_path = Path(__file__).parent.parent / "src/sad_talker/checkpoints"
-config_path = Path(__file__).parent.parent / "src/sad_talker/src/config"
-sad_talker_paths = init_path(
+checkpoint_path = Path(__file__).parent.parent / "src/sadtalker/checkpoints"
+config_path = Path(__file__).parent.parent / "src/sadtalker/src/config"
+sadtalker_paths = init_path(
     str(checkpoint_path),
     str(config_path),
     image_size,
@@ -86,7 +86,7 @@ class SimpleCNN(torch.nn.Module):
 
 
 # model = SimpleCNN()
-model = AnimateFromCoeff(sad_talker_paths, device="cuda:6").generator.first
+model = AnimateFromCoeff(sadtalker_paths, device="cuda:6").generator.first
 
 weights = quanto.qint8
 activations = None

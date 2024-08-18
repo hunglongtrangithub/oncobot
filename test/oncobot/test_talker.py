@@ -9,31 +9,31 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
 from src.oncobot.talking_face import CustomSadTalker
-from src.sad_talker.src.facerender.modules.generator import OcclusionAwareSPADEGenerator
-from src.sad_talker.src.facerender.modules.mapping import MappingNet
-from src.sad_talker.src.utils.init_path import init_path
-from src.sad_talker.src.facerender.modules.make_animation import (
+from src.sadtalker.src.facerender.modules.generator import OcclusionAwareSPADEGenerator
+from src.sadtalker.src.facerender.modules.mapping import MappingNet
+from src.sadtalker.src.utils.init_path import init_path
+from src.sadtalker.src.facerender.modules.make_animation import (
     headpose_pred_to_degree,
     keypoint_transformation,
 )
 
 image_size = 256
 image_preprocess = "crop"
-checkpoint_path = Path(__file__).parent.parent / "src/sad_talker/checkpoints"
-config_path = Path(__file__).parent.parent / "src/sad_talker/src/config"
-sad_talker_paths = init_path(
+checkpoint_path = Path(__file__).parent.parent / "src/sadtalker/checkpoints"
+config_path = Path(__file__).parent.parent / "src/sadtalker/src/config"
+sadtalker_paths = init_path(
     str(checkpoint_path),
     str(config_path),
     image_size,
     False,
     image_preprocess,
 )
-with open(sad_talker_paths["facerender_yaml"]) as f:
+with open(sadtalker_paths["facerender_yaml"]) as f:
     config = yaml.safe_load(f)
 
 
 def test_path():
-    print(sad_talker_paths)
+    print(sadtalker_paths)
 
 
 def test_headpose_pred_to_degree():

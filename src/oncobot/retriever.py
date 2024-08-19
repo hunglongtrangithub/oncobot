@@ -111,12 +111,3 @@ class CustomRetriever:
         except MeilisearchApiError as e:
             logger.error(f"Error retrieving document with id {doc_id}: {e}.")
             return None
-
-
-if __name__ == "__main__":
-    retriever = CustomRetriever(num_docs=5)
-    # query = "What is fake patient 1 diagnosed with?"
-    query = "fake patient 1"
-    docs = retriever.get_relevant_documents(query)
-    for doc in docs:
-        print(doc.title)

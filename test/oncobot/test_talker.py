@@ -1,12 +1,12 @@
 import os
 import time
 from pathlib import Path
-
+import pytest
 import torch
 import yaml
 import sys
 
-sys.path.append(str(Path(__file__).parent.parent))
+sys.path.append(str(Path(__file__).parents[2]))
 from src.oncobot.talking_face import CustomSadTalker
 from src.sadtalker.src.facerender.modules.generator import OcclusionAwareSPADEGenerator
 from src.sadtalker.src.facerender.modules.mapping import MappingNet
@@ -16,28 +16,30 @@ from src.sadtalker.src.facerender.modules.make_animation import (
     keypoint_transformation,
 )
 
-image_size = 256
-image_preprocess = "crop"
-checkpoint_path = Path(__file__).parent.parent / "src/sadtalker/checkpoints"
-config_path = Path(__file__).parent.parent / "src/sadtalker/src/config"
-sadtalker_paths = init_path(
-    str(checkpoint_path),
-    str(config_path),
-    image_size,
-    False,
-    image_preprocess,
-)
-with open(sadtalker_paths["facerender_yaml"]) as f:
-    config = yaml.safe_load(f)
 
-
-def test_path():
-    print(sadtalker_paths)
+@pytest.fixture(scope="module")
+def config():
+    image_size = 256
+    image_preprocess = "crop"
+    checkpoint_path = Path(__file__).parents[2] / "src/sadtalker/checkpoints"
+    config_path = Path(__file__).parents[2] / "src/sadtalker/src/config"
+    sadtalker_paths = init_path(
+        str(checkpoint_path),
+        str(config_path),
+        image_size,
+        False,
+        image_preprocess,
+    )
+    with open(sadtalker_paths["facerender_yaml"]) as f:
+        config = yaml.safe_load(f)
+    print("config loaded")
+    return config
 
 
 def test_headpose_pred_to_degree():
     pred = torch.randn([30, 66])
     degree = headpose_pred_to_degree(pred)
+    print(degree.shape)
 
 
 def test_keypoint_transformation():
@@ -77,10 +79,9 @@ def test_talker():
     )
     print(f"Total time taken: {time.perf_counter() - start:.2f} seconds")
     assert os.path.exists(video_path)
-    print("Test passed")
 
 
-def test_mapping_net():
+def test_mapping_net(config):
     mapping = MappingNet(**config["model_params"]["mapping_params"])
     mapping.eval()
     batch_size = 3
@@ -91,14 +92,13 @@ def test_mapping_net():
     for key in output:
         print(key, output[key].shape)
         assert output[key].shape[0] == batch_size
-    print("Test passed")
 
 
 def size(tensor):
     return tensor.element_size() * tensor.nelement()
 
 
-def test_generator():
+def test_generator(config):
     generator = OcclusionAwareSPADEGenerator(
         **config["model_params"]["generator_params"],
         **config["model_params"]["common_params"],
@@ -123,7 +123,6 @@ def test_generator():
     output = generator(source_image, kp_source=kp_source, kp_driving=kp_driving)
     print(output["prediction"].shape)
     assert output["prediction"].shape[0] == batch_size
-    print("Test passed")
 
 
 if __name__ == "__main__":

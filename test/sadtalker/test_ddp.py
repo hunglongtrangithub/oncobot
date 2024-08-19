@@ -123,6 +123,7 @@ def test_ddp():
         print(data.shape)
         print("Processed Tensor:")
         print(result.shape)
+        assert data.shape == result.shape, "Data shape not equal"
         print("Processing time:", time.perf_counter() - start)
 
 

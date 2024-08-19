@@ -44,13 +44,15 @@ def test_dp():
     target_semantics = torch.randn(
         batch_size, math.ceil(num_frames / batch_size), 70, 27
     ).to(device)
+    print("target_semantics", target_semantics.size())
 
     source_image = torch.randn(batch_size, 3, 256, 256).to(device)
     kp_source = {"value": torch.randn(batch_size, 15, 3).to(device)}
     kp_norm = {"value": torch.randn(batch_size, 15, 3).to(device)}
-    input_size = 3 * 256 * 256 + 15 * 3 + 15 * 3
+    input_size = (
+        source_image.numel() + kp_source["value"].numel() + kp_norm["value"].numel()
+    ) // batch_size
     output_size = 2
-    print("target_semantics", target_semantics.size())
     print("input_size", input_size)
     print("output_size", output_size)
 
@@ -88,6 +90,7 @@ class ToyModel(nn.Module):
         return result
 
 
+# Mocks the AnimaterFromCoeff model
 class ModelComposite:
     def __init__(self, device, device_ids=None):
         self.model = ToyModel()
@@ -103,6 +106,7 @@ class ModelComposite:
             return self.model(data)
 
 
+# Mocks the SadTalker model
 class DDPDemo:
     def __init__(self, devices, parallel_mode=None):
         self.parallel_mode = parallel_mode
@@ -208,6 +212,7 @@ class DDPDemo:
 
     def run(self, batch_size):
         data_batches = self._generate_batches(batch_size)
+        print("data batches:", [data.size() for data in data_batches])
         final_result = self._get_generated_video_data(data_batches)
         print("Finish run:", final_result.size())
         return final_result

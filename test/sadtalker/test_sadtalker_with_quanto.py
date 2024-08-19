@@ -8,8 +8,8 @@ from src.sadtalker.src.utils.init_path import init_path
 
 image_size = 256
 image_preprocess = "crop"
-checkpoint_path = Path(__file__).parent.parent / "src/sadtalker/checkpoints"
-config_path = Path(__file__).parent.parent / "src/sadtalker/src/config"
+checkpoint_path = Path(__file__).parents[2] / "src/sadtalker/checkpoints"
+config_path = Path(__file__).parents[2] / "src/sadtalker/src/config"
 sadtalker_paths = init_path(
     str(checkpoint_path),
     str(config_path),

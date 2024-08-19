@@ -32,4 +32,9 @@ cd ui && yarn install
 meilisearch --config-file-path="./config.toml"
 ```
 
-# Start the application:
+4. run the following command to index the data:
+
+```sh
+python -m src.oncobot.scripts.index
+```
+

@@ -58,9 +58,11 @@ class CustomSadTalker(SadTalker):
         )
         logger.info(f"quanto_config: {quanto_config}")
         checkpoint_path = Path(__file__).parent.parent / "sadtalker/checkpoints"
+        gfpgan_path = Path(__file__).parent.parent / "sadtalker/gfpgan/weights"
         config_path = Path(__file__).parent.parent / "sadtalker/src/config"
         super().__init__(
             checkpoint_path=str(checkpoint_path),
+            gfpgan_path=str(gfpgan_path),
             config_path=str(config_path),
             device=device,
             dtype=dtype,

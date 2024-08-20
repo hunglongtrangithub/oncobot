@@ -64,12 +64,17 @@ class DummyChat(BaseChat):
     ) -> Generator[str, None, None]:
         yield "DummyChat stream: " + self.default_message
 
-    async def ainvoke(self, current_conversation: List[Dict[str, str]], sleep_time=3) -> str:
+    async def ainvoke(
+        self, current_conversation: List[Dict[str, str]], sleep_time=3
+    ) -> str:
         time.sleep(sleep_time)
         return "DummyChat ainvoke: " + self.default_message
 
     async def astream(
-        self, current_conversation: List[Dict[str, str]], num_repeats=3, stream: bool = True
+        self,
+        current_conversation: List[Dict[str, str]],
+        num_repeats=3,
+        stream: bool = True,
     ) -> AsyncGenerator[str, None]:
         import asyncio
 
@@ -84,9 +89,9 @@ class DummyChat(BaseChat):
 
         return async_generator()
 
+
 # The async methods in this class are just to have the same async syntax as the other remotely called custom chat models. Not actually async.
 class CustomChatHuggingFace(BaseChat):
-
     default_generation_kwargs = {
         # "truncation": True,
         # "max_length": 512,
@@ -190,7 +195,8 @@ class CustomChatHuggingFace(BaseChat):
             raise
 
         tokenized_chat_history = self.tokenizer(
-            text=chat_history, return_tensors="pt"  # type: ignore
+            text=chat_history,
+            return_tensors="pt",  # type: ignore
         )
 
         # truncate chat history to max_chat_length before moving to device
@@ -227,7 +233,9 @@ class CustomChatHuggingFace(BaseChat):
         self, current_conversation: List[Dict[str, str]]
     ) -> Generator[str, None, None]:
         streamer = TextIteratorStreamer(
-            self.tokenizer, skip_prompt=True, skip_special_tokens=True  # type: ignore
+            self.tokenizer,
+            skip_prompt=True,
+            skip_special_tokens=True,  # type: ignore
         )
         chat_history = self.tokenizer.apply_chat_template(
             current_conversation,
@@ -237,7 +245,8 @@ class CustomChatHuggingFace(BaseChat):
         )
 
         tokenized_chat_history = self.tokenizer(
-            text=chat_history, return_tensors="pt"  # type: ignore
+            text=chat_history,
+            return_tensors="pt",  # type: ignore
         ).to(self.device)
 
         tokenized_chat_history["input_ids"] = tokenized_chat_history["input_ids"][  # type: ignore

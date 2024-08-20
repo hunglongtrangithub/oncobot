@@ -22,9 +22,11 @@ def config():
     image_size = 256
     image_preprocess = "crop"
     checkpoint_path = Path(__file__).parents[2] / "src/sadtalker/checkpoints"
+    gfpgan_path = Path(__file__).parents[2] / "src/sadtalker/gfpgan/weights"
     config_path = Path(__file__).parents[2] / "src/sadtalker/src/config"
     sadtalker_paths = init_path(
         str(checkpoint_path),
+        str(gfpgan_path),
         str(config_path),
         image_size,
         False,

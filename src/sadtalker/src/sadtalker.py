@@ -22,10 +22,10 @@ def mp3_to_wav(mp3_filename, wav_filename, frame_rate):
 
 
 class SadTalker:
-
     def __init__(
         self,
         checkpoint_path="checkpoints",
+        gfpgan_path="gfpgan/weights",
         config_path="src/config",
         image_size=256,
         image_preprocess="crop",
@@ -44,6 +44,7 @@ class SadTalker:
         print("SadTalker devices:", self.devices)
         os.environ["TORCH_HOME"] = checkpoint_path
         self.checkpoint_path = checkpoint_path
+        self.gfpgan_path = gfpgan_path
         self.config_path = config_path
         self.image_size = image_size
         self.image_preprocess = image_preprocess
@@ -85,12 +86,13 @@ class SadTalker:
     def initialize_all_models(self):
         sadtalker_paths = init_path(
             self.checkpoint_path,
+            self.gfpgan_path,
             self.config_path,
             self.image_size,
             False,
             self.image_preprocess,
         )
-        print("Loading models...")
+        print("Loading models for SadTalker...")
         self.preprocess_model = CropAndExtract(sadtalker_paths, self.devices[0])
         self.audio_to_coeff = Audio2Coeff(sadtalker_paths, self.devices[0])
         if self.parallel_mode == "ddp":

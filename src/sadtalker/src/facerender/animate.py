@@ -37,10 +37,10 @@ except:
 class AnimateFromCoeff:
 
     def __init__(
-        self, sadtalker_path, device, dtype=None, dp_device_ids=None, **quanto_config
+        self, sadtalker_paths, device, dtype=None, dp_device_ids=None, **quanto_config
     ):
 
-        with open(sadtalker_path["facerender_yaml"]) as f:
+        with open(sadtalker_paths["facerender_yaml"]) as f:
             config = yaml.safe_load(f)
 
         generator = OcclusionAwareSPADEGenerator(
@@ -89,17 +89,17 @@ class AnimateFromCoeff:
         if self.quanto_config:
             print("Quanto config:", quanto_config)
 
-        if sadtalker_path is not None:
-            if "checkpoint" in sadtalker_path:  # use safe tensor
+        if sadtalker_paths is not None:
+            if "checkpoint" in sadtalker_paths:  # use safe tensor
                 self.load_cpk_facevid2vid_safetensor(
-                    sadtalker_path["checkpoint"],
+                    sadtalker_paths["checkpoint"],
                     kp_detector=kp_extractor,
                     generator=generator,
                     he_estimator=None,
                 )
             else:
                 self.load_cpk_facevid2vid(
-                    sadtalker_path["free_view_checkpoint"],
+                    sadtalker_paths["free_view_checkpoint"],
                     kp_detector=kp_extractor,
                     generator=generator,
                     he_estimator=he_estimator,
@@ -109,9 +109,9 @@ class AnimateFromCoeff:
                 "Checkpoint should be specified for video head pose estimator."
             )
 
-        if sadtalker_path["mappingnet_checkpoint"] is not None:
+        if sadtalker_paths["mappingnet_checkpoint"] is not None:
             self.load_cpk_mapping(
-                sadtalker_path["mappingnet_checkpoint"], mapping=mapping
+                sadtalker_paths["mappingnet_checkpoint"], mapping=mapping
             )
         else:
             raise AttributeError(

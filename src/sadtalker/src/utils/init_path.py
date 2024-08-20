@@ -3,7 +3,12 @@ import glob
 
 
 def init_path(
-    checkpoint_dir, config_dir, size=512, old_version=False, preprocess="crop"
+    checkpoint_dir,
+    gfpgan_dir,
+    config_dir,
+    size=512,
+    old_version=False,
+    preprocess="crop",
 ):
     if old_version:
         #### load all the checkpoint of `pth`
@@ -50,6 +55,7 @@ def init_path(
             "path_of_net_recon_model": os.path.join(checkpoint_dir, "epoch_20.pth"),
         }
 
+    sadtalker_paths["gfpgan_dir"] = gfpgan_dir
     sadtalker_paths["dir_of_BFM_fitting"] = os.path.join(config_dir)  # , 'BFM_Fitting'
     sadtalker_paths["audio2pose_yaml_path"] = os.path.join(
         config_dir, "auido2pose.yaml"

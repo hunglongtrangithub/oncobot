@@ -174,11 +174,12 @@ def make_animation(
         he_source = mapping(source_semantics)
         # all tensors in here are in the same device and have the same type
         # yaw, pitch, and roll outputed from mapping model always have the same shape. Make idx_tensor once and use it for all frames.
-        idx_tensor = (
-            torch.arange(he_source["yaw"].shape[1])
-            .type_as(source_image)
-            .to(source_image.device)
-        )
+        # idx_tensor = (
+        #     torch.arange(he_source["yaw"].shape[1])
+        #     .type_as(source_image)
+        #     .to(source_image.device)
+        # )
+        idx_tensor = None
         kp_source = keypoint_transformation(kp_canonical, he_source, idx_tensor)
 
         for frame_idx in tqdm(range(target_semantics.shape[1]), "Face Renderer:"):
@@ -194,12 +195,11 @@ def make_animation(
 
             kp_driving = keypoint_transformation(kp_canonical, he_driving, idx_tensor)
 
-            kp_norm = kp_driving
             # TEST: source_image shape is (batch_size, 3, 256, 256), kp_source['value'].shape is (batch_size, 15, 3), kp_norm['value'].shape is (batch_size, 15, 3)
             # print("source_image.shape", source_image.shape)
             # print("kp_source['value'].shape", kp_source["value"].shape)
             # print("kp_norm['value'].shape", kp_norm["value"].shape)
-            out = generator(source_image, kp_source=kp_source, kp_driving=kp_norm)
+            out = generator(source_image, kp_source=kp_source, kp_driving=kp_driving)
             predictions.append(out["prediction"])
             # print("out['prediction'].shape", out["prediction"].shape)
         predictions_ts = torch.stack(predictions, dim=1)

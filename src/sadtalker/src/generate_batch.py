@@ -81,7 +81,6 @@ def get_data(
     length_of_audio=0,
     use_blink=True,
 ):
-
     syncnet_mel_step_size = 16
     fps = 25
 

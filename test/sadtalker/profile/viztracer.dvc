@@ -1,6 +1,6 @@
 outs:
-- md5: 23c639c0b5187d1e9377aa48abe0205e.dir
-  size: 283176969
+- md5: dae93f7a7fa135f3fe0c3369b010651c.dir
+  size: 283950369
   nfiles: 1
   hash: md5
   path: viztracer

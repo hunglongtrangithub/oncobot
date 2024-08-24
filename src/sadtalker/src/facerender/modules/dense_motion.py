@@ -56,9 +56,9 @@ class DenseMotionNetwork(nn.Module):
 
     def create_sparse_motions(self, feature, kp_driving, kp_source):
         bs, _, d, h, w = feature.shape
-        identity_grid = make_coordinate_grid((d, h, w), type=kp_source["value"].type())
+        identity_grid = make_coordinate_grid((d, h, w))
         identity_grid = identity_grid.view(1, 1, d, h, w, 3).to(
-            kp_driving["value"].device
+            kp_driving["value"].device, non_blocking=True
         )
         coordinate_grid = identity_grid - kp_driving["value"].view(
             bs, self.num_kp, 1, 1, 1, 3
@@ -121,7 +121,7 @@ class DenseMotionNetwork(nn.Module):
                 heatmap.shape[0], 1, spatial_size[0], spatial_size[1], spatial_size[2]
             )
             .type(heatmap.type())
-            .to(heatmap.device)
+            .to(heatmap.device, non_blocking=True)
         )
         heatmap = torch.cat([zeros, heatmap], dim=1)
         heatmap = heatmap.unsqueeze(2)  # (bs, num_kp+1, 1, d, h, w)

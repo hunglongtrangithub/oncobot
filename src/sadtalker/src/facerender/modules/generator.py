@@ -39,7 +39,7 @@ class OcclusionAwareGenerator(nn.Module):
                 num_kp=num_kp,
                 feature_channel=feature_channel,
                 estimate_occlusion_map=estimate_occlusion_map,
-                **dense_motion_params
+                **dense_motion_params,
             )
         else:
             self.dense_motion_network = None
@@ -213,7 +213,6 @@ class SPADEDecoder(nn.Module):
 
 
 class OcclusionAwareSPADEGenerator(nn.Module):
-
     def __init__(
         self,
         image_channel,
@@ -236,7 +235,7 @@ class OcclusionAwareSPADEGenerator(nn.Module):
                 num_kp=num_kp,
                 feature_channel=feature_channel,
                 estimate_occlusion_map=estimate_occlusion_map,
-                **dense_motion_params
+                **dense_motion_params,
             )
         else:
             self.dense_motion_network = None
@@ -245,6 +244,7 @@ class OcclusionAwareSPADEGenerator(nn.Module):
             image_channel, block_expansion, kernel_size=(3, 3), padding=(1, 1)
         )
 
+        out_features = block_expansion
         down_blocks = []
         for i in range(num_down_blocks):
             in_features = min(max_features, block_expansion * (2**i))

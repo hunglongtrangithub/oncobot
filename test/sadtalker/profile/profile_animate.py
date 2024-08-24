@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 import torch
+from torch.nn import DataParallel
 from torch.profiler import (
     profile,
     record_function,
@@ -38,20 +39,21 @@ def animate(
     source_image: torch.Tensor,
     source_semantics: torch.Tensor,
     target_semantics: torch.Tensor,
-    generator: OcclusionAwareSPADEGenerator,
-    kp_detector: KPDetector,
-    he_estimator: HEEstimator,
-    mapping: MappingNet,
+    generator: OcclusionAwareSPADEGenerator
+    | DataParallel[OcclusionAwareSPADEGenerator],
+    kp_detector: KPDetector | DataParallel[KPDetector],
+    he_estimator: HEEstimator | DataParallel[HEEstimator],
+    mapping: MappingNet | DataParallel[MappingNet],
 ):
     with torch.no_grad():
         predictions = []
         kp_canonical = kp_detector(source_image)
         he_source = mapping(source_semantics)
-        kp_source = keypoint_transformation(kp_canonical, he_source, None)
+        kp_source = keypoint_transformation(kp_canonical, he_source)
 
         for frame_idx in range(target_semantics.shape[1]):
             he_driving = mapping(target_semantics[:, frame_idx])
-            kp_driving = keypoint_transformation(kp_canonical, he_driving, None)
+            kp_driving = keypoint_transformation(kp_canonical, he_driving)
 
             out = generator(source_image, kp_source=kp_source, kp_driving=kp_driving)
             predictions.append(out["prediction"])

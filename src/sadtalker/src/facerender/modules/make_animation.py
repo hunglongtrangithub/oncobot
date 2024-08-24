@@ -39,9 +39,9 @@ def normalize_kp(
 
 
 # @profile
-def headpose_pred_to_degree(pred, idx_tensor=None):  # slow
-    if idx_tensor is None:
-        idx_tensor = torch.arange(pred.shape[1]).type_as(pred).to(pred.device)
+def headpose_pred_to_degree(pred):  # slow
+    idx_tensor = torch.arange(pred.shape[1]).to(pred.device, non_blocking=True)
+    # NOTE: doesn't require pred and idx_tensor to have the same dtype
     degree = torch.sum(pred.softmax(1) * idx_tensor, 1) * 3 - 99
     return degree
 
@@ -111,7 +111,6 @@ def get_rotation_matrix(yaw, pitch, roll):
 def keypoint_transformation(
     kp_canonical,
     he,
-    idx_tensor=None,
     wo_exp=False,
 ):
     kp = kp_canonical["value"]  # (bs, k, 3)
@@ -120,16 +119,17 @@ def keypoint_transformation(
     if "yaw_in" in he:
         yaw = he["yaw_in"]
     else:
-        yaw = headpose_pred_to_degree(yaw, idx_tensor)
+        yaw = headpose_pred_to_degree(yaw)
     if "pitch_in" in he:
         pitch = he["pitch_in"]
     else:
-        pitch = headpose_pred_to_degree(pitch, idx_tensor)
+        pitch = headpose_pred_to_degree(pitch)
     if "roll_in" in he:
         roll = he["roll_in"]
     else:
-        roll = headpose_pred_to_degree(roll, idx_tensor)
-
+        roll = headpose_pred_to_degree(roll)
+    # synchronize?
+    # torch.cuda.synchronize()
     rot_mat = get_rotation_matrix(yaw, pitch, roll)  # (bs, 3, 3)
 
     t, exp = he["t"], he["exp"]
@@ -179,9 +179,7 @@ def make_animation(
         #     .type_as(source_image)
         #     .to(source_image.device)
         # )
-        idx_tensor = None
-        kp_source = keypoint_transformation(kp_canonical, he_source, idx_tensor)
-
+        kp_source = keypoint_transformation(kp_canonical, he_source)
         for frame_idx in tqdm(range(target_semantics.shape[1]), "Face Renderer:"):
             target_semantics_frame = target_semantics[:, frame_idx]
             # source_semantics and target_semantics_frame always have the same shape.
@@ -193,7 +191,7 @@ def make_animation(
             if roll_c_seq is not None:
                 he_driving["roll_in"] = roll_c_seq[:, frame_idx]
 
-            kp_driving = keypoint_transformation(kp_canonical, he_driving, idx_tensor)
+            kp_driving = keypoint_transformation(kp_canonical, he_driving)
 
             # TEST: source_image shape is (batch_size, 3, 256, 256), kp_source['value'].shape is (batch_size, 15, 3), kp_norm['value'].shape is (batch_size, 15, 3)
             # print("source_image.shape", source_image.shape)

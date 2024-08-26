@@ -27,9 +27,9 @@ exp torch.Size([batch_size, 45])
 `DenseMotionNetwork` input tensors:
 
 ```python
-feature.shape torch.Size([50, 4, 16, 64, 64])
-kp_driving['value'].shape torch.Size([50, 15, 3])
-kp_source['value'].shape torch.Size([50, 15, 3])
+feature.shape torch.Size([batch_size, 32, 16, 64, 64])
+kp_driving['value'].shape torch.Size([batch_size, 15, 3])
+kp_source['value'].shape torch.Size([batch_size, 15, 3])
 ```
 
 `keypoint_transformation` output tensor:

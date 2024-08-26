@@ -20,8 +20,7 @@ def kp2gaussian(kp, spatial_size, kp_variance):
     """
     mean = kp["value"]
     # TEST: spatial_size torch.Size([16, 64, 64])
-    # print("spatial_size", spatial_size)
-    coordinate_grid = make_coordinate_grid(spatial_size)
+    coordinate_grid = make_coordinate_grid(spatial_size, device=mean.device)
     number_of_leading_dimensions = len(mean.shape) - 1
     shape = (1,) * number_of_leading_dimensions + coordinate_grid.shape
     coordinate_grid = coordinate_grid.view(*shape)
@@ -31,7 +30,7 @@ def kp2gaussian(kp, spatial_size, kp_variance):
     # Preprocess kp shape
     shape = mean.shape[:number_of_leading_dimensions] + (1, 1, 1, 3)
     mean = mean.view(*shape)
-    coordinate_grid = coordinate_grid.to(mean.device, non_blocking=True)  # slow
+    # TEST: coordinate_grid.shape torch.Size([batch_size, 15, 16, 64, 64, 3])
     mean_sub = coordinate_grid - mean
 
     out = torch.exp(-0.5 * (mean_sub**2).sum(-1) / kp_variance)
@@ -39,13 +38,13 @@ def kp2gaussian(kp, spatial_size, kp_variance):
     return out
 
 
-def make_coordinate_grid_2d(spatial_size, type):
+def make_coordinate_grid_2d(spatial_size, device=None):
     """
     Create a meshgrid [-1,1] x [-1,1] of given spatial_size.
     """
     h, w = spatial_size
-    x = torch.arange(w).type(type)
-    y = torch.arange(h).type(type)
+    x = torch.arange(w, device=device)
+    y = torch.arange(h, device=device)
 
     x = 2 * (x / (w - 1)) - 1
     y = 2 * (y / (h - 1)) - 1
@@ -58,11 +57,11 @@ def make_coordinate_grid_2d(spatial_size, type):
     return meshed
 
 
-def make_coordinate_grid(spatial_size):
+def make_coordinate_grid(spatial_size, device=None):
     d, h, w = spatial_size
-    x = torch.arange(w)
-    y = torch.arange(h)
-    z = torch.arange(d)
+    x = torch.arange(w, device=device)
+    y = torch.arange(h, device=device)
+    z = torch.arange(d, device=device)
 
     x = 2 * (x / (w - 1)) - 1
     y = 2 * (y / (h - 1)) - 1

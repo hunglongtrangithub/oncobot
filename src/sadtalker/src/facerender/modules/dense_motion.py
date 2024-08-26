@@ -116,12 +116,15 @@ class DenseMotionNetwork(nn.Module):
         heatmap = gaussian_driving - gaussian_source
 
         # adding background feature
-        zeros = (
-            torch.zeros(
-                heatmap.shape[0], 1, spatial_size[0], spatial_size[1], spatial_size[2]
-            )
-            .type(heatmap.type())
-            .to(heatmap.device, non_blocking=True)
+        zeros = torch.zeros(
+            (
+                heatmap.shape[0],
+                1,
+                spatial_size[0],
+                spatial_size[1],
+                spatial_size[2],
+            ),
+            device=heatmap.device,
         )
         heatmap = torch.cat([zeros, heatmap], dim=1)
         heatmap = heatmap.unsqueeze(2)  # (bs, num_kp+1, 1, d, h, w)
@@ -139,9 +142,6 @@ class DenseMotionNetwork(nn.Module):
         deformed_feature = self.create_deformed_feature(feature, sparse_motion)
 
         # TEST: All are on the same device
-        # print("deformed_feature.device", deformed_feature.device)
-        # print("kp_driving['value'].device", kp_driving["value"].device)
-        # print("kp_source['value'].device", kp_source["value"].device)
         heatmap = self.create_heatmap_representations(
             deformed_feature, kp_driving, kp_source
         )

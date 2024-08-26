@@ -306,9 +306,6 @@ class OcclusionAwareSPADEGenerator(nn.Module):
         output_dict = {}
         if self.dense_motion_network is not None:
             # TEST: All are in the same device already
-            # print("feature_3d.device", feature_3d.device)
-            # print("kp_driving['value'].device", kp_driving["value"].device)
-            # print("kp_source['value'].device", kp_source["value"].device)
             dense_motion = self.dense_motion_network(
                 feature=feature_3d, kp_driving=kp_driving, kp_source=kp_source
             )

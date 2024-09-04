@@ -41,7 +41,12 @@ class DenseMotionNetwork(nn.Module):
             self.hourglass.out_filters, num_kp + 1, kernel_size=7, padding=3
         )
 
-        self.compress = nn.Conv3d(feature_channel, compress, kernel_size=1)
+        self.compress = nn.Conv3d(
+            feature_channel,
+            compress,
+            kernel_size=1,
+            # bias=False
+        )
         self.norm = BatchNorm3d(compress, affine=True)
 
         if estimate_occlusion_map:
@@ -56,10 +61,10 @@ class DenseMotionNetwork(nn.Module):
 
     def create_sparse_motions(self, feature, kp_driving, kp_source):
         bs, _, d, h, w = feature.shape
-        identity_grid = make_coordinate_grid((d, h, w))
-        identity_grid = identity_grid.view(1, 1, d, h, w, 3).to(
-            kp_driving["value"].device, non_blocking=True
+        identity_grid = make_coordinate_grid(
+            (d, h, w), device=kp_driving["value"].device
         )
+        identity_grid = identity_grid.view(1, 1, d, h, w, 3)
         coordinate_grid = identity_grid - kp_driving["value"].view(
             bs, self.num_kp, 1, 1, 1, 3
         )
@@ -151,7 +156,7 @@ class DenseMotionNetwork(nn.Module):
 
         # input = deformed_feature.view(bs, -1, d, h, w)      # (bs, num_kp+1 * c, d, h, w)
 
-        prediction = self.hourglass(input_)
+        prediction = self.hourglass(input_)  # slow
 
         mask = self.mask(prediction)
         mask = F.softmax(mask, dim=1)

@@ -269,6 +269,7 @@ class DownBlock2d(nn.Module):
             kernel_size=kernel_size,
             padding=padding,
             groups=groups,
+            # bias=False,
         )
         self.norm = BatchNorm2d(out_features, affine=True)
         self.pool = nn.AvgPool2d(kernel_size=(2, 2))
@@ -331,6 +332,7 @@ class SameBlock2d(nn.Module):
             kernel_size=kernel_size,
             padding=padding,
             groups=groups,
+            # bias=False,
         )
         self.norm = BatchNorm2d(out_features, affine=True)
         if lrelu:
@@ -643,7 +645,7 @@ class audio2image(nn.Module):
     def headpose_pred_to_degree(self, pred):
         device = pred.device
         idx_tensor = [idx for idx in range(66)]
-        idx_tensor = torch.FloatTensor(idx_tensor).to(device)
+        idx_tensor = torch.FloatTensor(idx_tensor, device=device)
         pred = F.softmax(pred)
         degree = torch.sum(pred * idx_tensor, 1) * 3 - 99
 

@@ -10,7 +10,9 @@ import torch.multiprocessing as mp
 
 from .utils.preprocess import CropAndExtract
 from .test_audio2coeff import Audio2Coeff
-from .facerender.animate import AnimateFromCoeff, save_data_to_video
+from .facerender.animate import AnimateFromCoeff
+
+from .utils.videoio import save_data_to_video
 from .generate_batch import get_data
 from .generate_facerender_batch import get_facerender_data
 from .utils.init_path import init_path
@@ -216,7 +218,7 @@ class SadTalker:
 
         # initialize the process group
         # NOTE: use "gloo", otherwise the resultant tensor cannot be released from GPU memory to the main process
-        dist.init_process_group("gloo", rank=rank, world_size=world_size)
+        dist.init_process_group("nccl", rank=rank, world_size=world_size)
 
     def cleanup(self):
         dist.destroy_process_group()
@@ -293,7 +295,6 @@ class SadTalker:
         batch_size=1,
         pose_style=0,
         exp_scale=1.0,
-        length_of_audio=0,
         use_blink=True,
         result_dir="./results/",
         tag=None,
@@ -314,7 +315,6 @@ class SadTalker:
                 self.devices[0],
                 ref_eyeblink_coeff_path=None,
                 still=still_mode,
-                length_of_audio=length_of_audio,
                 use_blink=use_blink,
             )
             coeff_path = self.audio_to_coeff.generate(batch, save_dir, pose_style)

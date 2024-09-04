@@ -1,9 +1,5 @@
-import os
-import cv2
 import yaml
-import numpy as np
 import warnings
-from skimage.util import img_as_ubyte
 import torch
 import torch.nn as nn
 import safetensors
@@ -13,7 +9,6 @@ from optimum.quanto import quantize, freeze
 warnings.filterwarnings("ignore")
 
 
-import imageio
 import torch
 
 
@@ -22,9 +17,6 @@ from .modules.mapping import MappingNet
 from .modules.generator import OcclusionAwareSPADEGenerator
 from .modules.make_animation import make_animation
 
-from pydub import AudioSegment
-from ..utils.paste_pic import paste_pic
-from ..utils.videoio import save_video_with_watermark
 
 try:
     import webui  # type: ignore # in webui
@@ -331,72 +323,3 @@ class AnimateFromCoeff:
         predictions = predictions_video[:frame_num]
 
         return predictions
-
-
-# @profile
-def save_data_to_video(
-    video_name,
-    audio_path,
-    predictions_video,
-    crop_info,
-    img_size,
-    frame_num,
-    preprocess,
-    pic_path,
-    video_save_dir,
-):
-    predictions_video = predictions_video.cpu().numpy()
-    video = np.transpose(predictions_video, [0, 2, 3, 1]).astype(np.float32)
-    result = img_as_ubyte(video)
-
-    original_size = crop_info[0]
-    if original_size:
-        result = [
-            cv2.resize(
-                result_i,
-                (img_size, int(img_size * original_size[1] / original_size[0])),
-            )
-            for result_i in result
-        ]
-
-    video_name = video_name + ".mp4"
-    path = os.path.join(video_save_dir, "temp_" + video_name)
-
-    imageio.mimsave(path, result, fps=float(25))
-
-    av_path = os.path.join(video_save_dir, video_name)
-    return_path = av_path
-
-    audio_name = os.path.splitext(os.path.split(audio_path)[-1])[0]
-    new_audio_path = os.path.join(video_save_dir, audio_name + ".wav")
-    start_time = 0
-    sound = AudioSegment.from_file(audio_path)
-    frames = frame_num
-    end_time = start_time + frames * 1 / 25 * 1000
-    word1 = sound.set_frame_rate(16000)
-    word = word1[start_time:end_time]
-    word.export(new_audio_path, format="wav")
-
-    save_video_with_watermark(path, new_audio_path, av_path, watermark=False)
-    print(f"The generated video is named {video_save_dir}/{video_name}")
-
-    if "full" in preprocess.lower():
-        video_name_full = video_name + "_full.mp4"
-        full_video_path = os.path.join(video_save_dir, video_name_full)
-        return_path = full_video_path
-        paste_pic(
-            path,
-            pic_path,
-            crop_info,
-            new_audio_path,
-            full_video_path,
-            extended_crop=True if "ext" in preprocess.lower() else False,
-        )
-        print(f"The generated video is named {video_save_dir}/{video_name_full}")
-    else:
-        full_video_path = av_path
-
-    os.remove(path)
-    os.remove(new_audio_path)
-
-    return return_path

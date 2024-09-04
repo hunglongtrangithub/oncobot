@@ -60,8 +60,9 @@ def test_keypoint_transformation():
 # @profile
 def test_talker():
     talker = CustomSadTalker(
-        batch_size=50,
-        device=[2],
+        batch_size=100,
+        device=[1, 2, 3],
+        parallel_mode="dp",
         # torch_dtype="float16",
         # parallel_mode="dp",
         # quanto_weights="int8",

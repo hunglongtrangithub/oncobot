@@ -32,6 +32,12 @@ kp_driving['value'].shape torch.Size([batch_size, 15, 3])
 kp_source['value'].shape torch.Size([batch_size, 15, 3])
 ```
 
+`SPADEDecoder` input tensors:
+
+```python
+out.shape torch.Size([batch_size, 256, 64, 64])
+```
+
 `keypoint_transformation` output tensor:
 
 ```python

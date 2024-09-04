@@ -12,7 +12,11 @@ from torch.profiler import (
 sys.path.append(str(Path(__file__).parents[3]))
 from src.sadtalker.src.utils.init_path import init_path
 from src.sadtalker.src.facerender.animate import AnimateFromCoeff
-from src.sadtalker.src.facerender.modules.generator import OcclusionAwareSPADEGenerator
+from src.sadtalker.src.facerender.modules.generator import (
+    OcclusionAwareSPADEGenerator,
+    SPADEDecoder,
+)
+from src.sadtalker.src.facerender.modules.dense_motion import DenseMotionNetwork
 from src.sadtalker.src.facerender.modules.make_animation import keypoint_transformation
 
 image_size = 256
@@ -30,7 +34,7 @@ sadtalker_paths = init_path(
 )
 
 
-batch_size = 30
+batch_size = 60
 
 
 def generate(
@@ -43,7 +47,7 @@ def generate(
     device,
     dtype,
 ):
-    with torch.no_grad():
+    with torch.inference_mode():
         kp_canonical = {
             "value": torch.rand((batch_size, 15, 3), device=device, dtype=dtype)
         }
@@ -66,22 +70,34 @@ def generate(
         kp_driving = keypoint_transformation(kp_canonical, he_driving)
 
         out = generator(source_image, kp_source=kp_source, kp_driving=kp_driving)
-
+        # feature_3d = torch.rand(
+        #     (batch_size, 32, 16, 64, 64), device=device, dtype=dtype
+        # )
+        # out = generator.dense_motion_network(
+        #     feature_3d, kp_source=kp_source, kp_driving=kp_driving
+        # )
+        # feature = torch.randn((batch_size, 256, 64, 64), device=device, dtype=dtype)
+        # out = generator.decoder(feature)
         return out
 
 
-model = AnimateFromCoeff(
-    sadtalker_paths,
-    device="cuda:1",
-    dtype=torch.float32,
-)
 with profile(
     activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
     record_shapes=True,
     profile_memory=True,
     with_stack=True,
-    on_trace_ready=tensorboard_trace_handler("./log/generator"),
+    on_trace_ready=tensorboard_trace_handler(
+        "./log/generator", worker_name="pdgx0002_generator"
+    ),
 ) as prof:
+    with record_function("model_init"):
+        model = AnimateFromCoeff(
+            sadtalker_paths,
+            device="cuda:1",
+            dtype=torch.float32,
+        )
+        generator = model.generator
+        # generator = torch.compile(generator)
     with record_function("model_inference"):
         # mock a source image, source semantics, and target semantics
         source_image = torch.rand(batch_size, 3, 256, 256)
@@ -90,12 +106,12 @@ with profile(
         source_image = source_image.type(model.dtype).to(model.device)
         source_semantics = source_semantics.type(model.dtype).to(model.device)
         target_semantics = target_semantics.type(model.dtype).to(model.device)
-        for _ in range(1):
-            generate(
+        for _ in range(8):
+            out = generate(
                 source_image,
                 source_semantics,
                 target_semantics,
-                model.generator,
+                generator,
                 model.device,
                 model.dtype,
             )

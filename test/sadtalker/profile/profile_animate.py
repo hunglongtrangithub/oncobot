@@ -39,13 +39,14 @@ def animate(
     source_image: torch.Tensor,
     source_semantics: torch.Tensor,
     target_semantics: torch.Tensor,
-    generator: OcclusionAwareSPADEGenerator
-    | DataParallel[OcclusionAwareSPADEGenerator],
+    generator: (
+        OcclusionAwareSPADEGenerator | DataParallel[OcclusionAwareSPADEGenerator]
+    ),
     kp_detector: KPDetector | DataParallel[KPDetector],
     he_estimator: HEEstimator | DataParallel[HEEstimator],
     mapping: MappingNet | DataParallel[MappingNet],
 ):
-    with torch.no_grad():
+    with torch.inference_mode():
         predictions = []
         kp_canonical = kp_detector(source_image)
         he_source = mapping(source_semantics)
@@ -61,13 +62,15 @@ def animate(
         return torch.stack(predictions, dim=1)
 
 
-batch_size = 30
+batch_size = 60
 with profile(
     activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
     record_shapes=True,
     profile_memory=True,
     with_stack=True,
-    on_trace_ready=tensorboard_trace_handler("./log/animate"),
+    on_trace_ready=tensorboard_trace_handler(
+        "./log/animate", "pdgx0002_animate_inference_mode"
+    ),
 ) as prof:
     with record_function("model_init"):
         model = AnimateFromCoeff(

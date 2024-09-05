@@ -62,7 +62,7 @@ def test_talker():
     talker = CustomSadTalker(
         batch_size=100,
         device=[1, 2, 3],
-        parallel_mode="dp",
+        parallel_mode="ddp",
         # torch_dtype="float16",
         # parallel_mode="dp",
         # quanto_weights="int8",

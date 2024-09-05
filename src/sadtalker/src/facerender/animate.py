@@ -5,6 +5,7 @@ import torch.nn as nn
 import safetensors
 import safetensors.torch
 from optimum.quanto import quantize, freeze
+from optimum import quanto
 
 warnings.filterwarnings("ignore")
 
@@ -24,6 +25,22 @@ try:
     in_webui = True
 except:
     in_webui = False
+
+ACCEPTED_WEIGHTS = {
+    "float8": quanto.qfloat8,
+    "int8": quanto.qint8,
+    "int4": quanto.qint4,
+    "int2": quanto.qint2,
+}
+ACCEPTED_ACTIVATIONS = {
+    "none": None,
+    "int8": quanto.qint8,
+    "float8": quanto.qfloat8,
+}
+ACCEPTED_DTYPES = {
+    "float32": torch.float32,
+    "float16": torch.float16,
+}
 
 
 class AnimateFromCoeff:

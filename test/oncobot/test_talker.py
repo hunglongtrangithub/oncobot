@@ -61,9 +61,9 @@ def test_keypoint_transformation():
 def test_talker():
     talker = CustomSadTalker(
         batch_size=50,
-        device=[2],
+        device=[1, 2, 3],
         # torch_dtype="float16",
-        # parallel_mode="dp",
+        parallel_mode="ddp",
         # quanto_weights="int8",
         # quanto_activations=None,
     )
@@ -72,15 +72,16 @@ def test_talker():
     video_path = str(video_folder / "chatbot__1.mp4")
     audio_path = str(Path(__file__).parents[2] / "examples/fake_patient3.wav")
     image_path = str(Path(__file__).parents[2] / "examples/chatbot1.jpg")
-    start = time.perf_counter()
-    talker.run(
-        video_path,
-        audio_path,
-        image_path,
-        delete_generated_files=False,
-    )
-    print(f"Total time taken: {time.perf_counter() - start:.2f} seconds")
-    assert os.path.exists(video_path)
+    for _ in range(3):
+        start = time.perf_counter()
+        talker.run(
+            video_path,
+            audio_path,
+            image_path,
+            delete_generated_files=False,
+        )
+        print(f"Total time taken: {time.perf_counter() - start:.2f} seconds")
+        assert os.path.exists(video_path)
 
 
 def test_mapping_net(config):

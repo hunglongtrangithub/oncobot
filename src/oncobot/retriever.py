@@ -4,10 +4,8 @@ from typing import List, Optional
 import meilisearch
 from meilisearch.errors import MeilisearchApiError
 
-from src.utils.logger_config import get_logger
+from src.utils.logger_config import logger
 from .scripts.index import EMBEDDER_NAME, INDEX_NAME, SEARCH_API_KEY, MEILI_API_URL
-
-logger = get_logger(__name__)
 
 
 class Document(BaseModel):

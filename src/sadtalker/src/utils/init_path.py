@@ -1,5 +1,6 @@
 import os
 import glob
+from src.utils.logger_config import logger
 
 
 def init_path(
@@ -28,7 +29,7 @@ def init_path(
 
         use_safetensor = False
     elif len(glob.glob(os.path.join(checkpoint_dir, "*.safetensors"))):
-        print("using safetensor as default")
+        logger.info("using safetensor as default")
         sadtalker_paths = {
             "checkpoint": os.path.join(
                 checkpoint_dir, "SadTalker_V0.0.2_" + str(size) + ".safetensors"
@@ -36,8 +37,8 @@ def init_path(
         }
         use_safetensor = True
     else:
-        print(
-            "WARNING: The new version of the model will be updated by safetensor, you may need to download it mannully. We run the old version of the checkpoint this time!"
+        logger.warning(
+            "The new version of the model will be updated by safetensor, you may need to download it mannully. We run the old version of the checkpoint this time!"
         )
         use_safetensor = False
 

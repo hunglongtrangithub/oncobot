@@ -1,23 +1,21 @@
 import shutil
 import uuid
 import time
-import cv2, os
-import numpy as np
+import cv2
+import os
 from tqdm import tqdm
-import uuid
-import imageio
-import numpy as np
-from skimage import img_as_ubyte
-from pydub import AudioSegment
 
+import numpy as np
+import imageio
+from skimage.util import img_as_ubyte
+from pydub import AudioSegment
 import torch
 import torchvision
 from torchaudio.io import StreamWriter
-import os
-
-import cv2
 import subprocess
+
 from ..utils.hparams import hparams as hp
+from src.utils.logger_config import logger
 
 
 def is_ffmpeg_installed():
@@ -80,7 +78,6 @@ def paste_pic(
     full_video_path,
     extended_crop=False,
 ):
-
     if not os.path.isfile(pic_path):
         raise ValueError("pic_path must be a valid path to video/image file")
     elif pic_path.split(".")[-1] in ["jpg", "png", "jpeg"]:
@@ -109,7 +106,7 @@ def paste_pic(
         crop_frames.append(frame)
 
     if len(crop_info) != 3:
-        print("you didn't crop the image")
+        logger.info("You didn't crop the image. Skip the pasting.")
         return
     else:
         r_w, r_h = crop_info[0]
@@ -179,7 +176,7 @@ def write_video_gpu(video_path, video_data, audio_data, device, fps, width, heig
     writer.add_audio_stream(hp.sample_rate, 1)
     writer.add_video_stream(fps, width, height, **cuda_conf)
     with writer.open():
-        print(
+        logger.info(
             "Writing video... Audio shape:",
             audio_data.shape,
             "Video shape:",
@@ -195,7 +192,8 @@ def write_video(video_path, video_data, audio_data, device, fps, width, height):
     save_video_with_watermark(video_data, audio_data, video_path)
 
 
-def save_data_to_video(
+# NOTE: This function is not used in the current implementation
+def save_data_to_video_pytorch(
     video_name,
     audio_data,
     device,
@@ -212,7 +210,7 @@ def save_data_to_video(
     # Resize video
     start_time = time.time()
     video_data = resize_video(predictions_video, crop_info, img_size)
-    print(f"Resizing time: {time.time() - start_time:.2f}s")
+    logger.debug(f"Resizing time: {time.time() - start_time:.2f}s")
 
     start_time = time.time()
     write_video(
@@ -224,7 +222,7 @@ def save_data_to_video(
         video_data.shape[2],
         video_data.shape[1],
     )
-    print(f"Video saving time: {time.time() - start_time:.2f}s")
+    logger.debug(f"Video saving time: {time.time() - start_time:.2f}s")
 
     return final_video_path
 
@@ -273,11 +271,10 @@ def save_data_to_video(
     word.export(new_audio_path, format="wav")
 
     save_video_with_watermark(path, new_audio_path, av_path, watermark=False)
-    print(f"The generated video is named {video_save_dir}/{video_name}")
 
     if "full" in preprocess.lower():
-        video_name_full = video_name + "_full.mp4"
-        full_video_path = os.path.join(video_save_dir, video_name_full)
+        video_name += "_full.mp4"
+        full_video_path = os.path.join(video_save_dir, video_name)
         return_path = full_video_path
         paste_pic(
             path,
@@ -287,10 +284,10 @@ def save_data_to_video(
             full_video_path,
             extended_crop=True if "ext" in preprocess.lower() else False,
         )
-        print(f"The generated video is named {video_save_dir}/{video_name_full}")
     else:
         full_video_path = av_path
 
+    logger.info(f"The generated video is named {video_save_dir}/{video_name}")
     os.remove(path)
     os.remove(new_audio_path)
 

@@ -7,17 +7,13 @@ import safetensors.torch
 from optimum.quanto import quantize, freeze
 from optimum import quanto
 
-warnings.filterwarnings("ignore")
-
-
-import torch
-
-
+from src.utils.logger_config import logger
 from .modules.keypoint_detector import HEEstimator, KPDetector
 from .modules.mapping import MappingNet
 from .modules.generator import OcclusionAwareSPADEGenerator
 from .modules.make_animation import make_animation
 
+warnings.filterwarnings("ignore")
 
 try:
     import webui  # type: ignore # in webui
@@ -44,11 +40,9 @@ ACCEPTED_DTYPES = {
 
 
 class AnimateFromCoeff:
-
     def __init__(
         self, sadtalker_paths, device, dtype=None, dp_device_ids=None, **quanto_config
     ):
-
         with open(sadtalker_paths["facerender_yaml"]) as f:
             config = yaml.safe_load(f)
 
@@ -67,7 +61,7 @@ class AnimateFromCoeff:
         mapping = MappingNet(**config["model_params"]["mapping_params"])
 
         if dp_device_ids is not None:
-            print("Using DataParallel with device ids:", dp_device_ids)
+            logger.info("Using DataParallel with device ids:", dp_device_ids)
             generator = nn.DataParallel(
                 generator,
                 device_ids=dp_device_ids,
@@ -96,7 +90,7 @@ class AnimateFromCoeff:
 
         self.quanto_config = quanto_config
         if self.quanto_config:
-            print("Quanto config:", quanto_config)
+            logger.info("Quanto config:", quanto_config)
 
         if sadtalker_paths is not None:
             if "checkpoint" in sadtalker_paths:  # use safe tensor
@@ -152,19 +146,19 @@ class AnimateFromCoeff:
         self.device = device
 
         unit = "MB"
-        print(
+        logger.debug(
             f"OcclusionAwareSPADEGenerator model size: {self.get_model_size(self.generator, unit):.3f} {unit}"
         )
-        print(
+        logger.debug(
             f"KPDetector model size: {self.get_model_size(self.kp_extractor, unit):.3f} {unit}"
         )
-        print(
+        logger.debug(
             f"HEEstimator model size: {self.get_model_size(self.he_estimator, unit):.3f} {unit}"
         )
-        print(
+        logger.debug(
             f"MappingNet model size: {self.get_model_size(self.mapping, unit):.3f} {unit}"
         )
-        print(
+        logger.debug(
             "dtype:",
             self.dtype,
             "device:",
@@ -193,9 +187,9 @@ class AnimateFromCoeff:
         if self.quanto_config:
             quantize(model, **self.quanto_config)
             freeze(model)
-            print(f"Model quantized: {type(model)}")
+            logger.info(f"Model quantized: {type(model)}")
             # for name, weight in model.named_parameters():
-            #     print(f"{name} - {weight.type()}")
+            #     logger.info(f"{name} - {weight.type()}")
 
     def load_cpk_facevid2vid_safetensor(
         self,
@@ -204,7 +198,7 @@ class AnimateFromCoeff:
         kp_detector=None,
         he_estimator=None,
     ):
-        print("Loading checkpoint from", checkpoint_path)
+        logger.info("Loading checkpoint from", checkpoint_path)
         checkpoint = safetensors.torch.load_file(checkpoint_path)
 
         if generator is not None:
@@ -252,7 +246,7 @@ class AnimateFromCoeff:
             try:
                 discriminator.load_state_dict(checkpoint["discriminator"])
             except:
-                print(
+                logger.warning(
                     "No discriminator in the state-dict. Dicriminator will be randomly initialized"
                 )
         if optimizer_generator is not None:
@@ -263,7 +257,7 @@ class AnimateFromCoeff:
                     checkpoint["optimizer_discriminator"]
                 )
             except RuntimeError:
-                print(
+                logger.warning(
                     "No discriminator optimizer in the state-dict. Optimizer will be not initialized"
                 )
         if optimizer_kp_detector is not None:
@@ -297,7 +291,6 @@ class AnimateFromCoeff:
         return checkpoint["epoch"]
 
     def generate(self, x):
-
         source_image = x["source_image"].type(self.dtype)
         source_semantics = x["source_semantics"].type(self.dtype)
         target_semantics = x["target_semantics_list"].type(self.dtype)

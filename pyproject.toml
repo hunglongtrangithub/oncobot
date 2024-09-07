@@ -45,6 +45,7 @@ deepspeed = "^0.14.4"
 bson = "^0.5.10"
 optimum-quanto = "^0.2.2"
 trimesh = "^4.4.3"
+loguru = "^0.7.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.9.1"

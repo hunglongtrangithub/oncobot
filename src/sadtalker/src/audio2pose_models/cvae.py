@@ -5,7 +5,6 @@ from .res_unet import ResUnet
 
 
 def class2onehot(idx, class_num):
-
     assert torch.max(idx).item() < class_num
     onehot = torch.zeros(idx.size(0), class_num, device=idx.device)
     onehot.scatter_(1, idx, 1)
@@ -106,7 +105,7 @@ class ENCODER(nn.Module):
         pose_emb = pose_emb.reshape(bs, -1)  # bs seq_len*6
 
         # audio mapping
-        print(audio_in.shape)
+        # print(audio_in.shape)
         audio_out = self.linear_audio(audio_in)  # bs seq_len audio_emb_out_size
         audio_out = audio_out.reshape(bs, -1)
 
@@ -158,7 +157,6 @@ class DECODER(nn.Module):
         self.classbias = nn.Parameter(torch.randn(self.num_classes, latent_size))
 
     def forward(self, batch):
-
         z = batch["z"]  # bs latent_size
         bs = z.shape[0]
         class_id = batch["class"]

@@ -7,9 +7,8 @@ from bson import ObjectId
 import meilisearch
 
 from src.utils.env_config import settings
-from src.utils.logger_config import get_logger
+from src.utils.logger_config import logger
 
-logger = get_logger(__name__)
 
 EMBEDDER_NAME = "default"
 INDEX_NAME = "clinical_docs"
@@ -129,9 +128,9 @@ def index_docs_to_meili(docs):
         data=json.dumps(data),
     )
     if response.status_code == 200:
-        print("Vector search enabled successfully!")
+        logger.info("Vector search enabled successfully!")
     else:
-        print("Error enabling vector search:", response.status_code)
+        logger.error("Error enabling vector search:", response.status_code)
         return
 
     # Clear the index before adding new documents
@@ -177,7 +176,7 @@ def index_docs():
         return
 
     for task_name, task in tasks.items():
-        print(f"{task_name} task status: {task.status}")
+        logger.info(f"{task_name} task status: {task.status}")
 
 
 def test_search_meili():
@@ -205,6 +204,7 @@ def test_search_meili():
         print(f"ID: {doc['id']}")
         print(f"Title: {doc['title']}")
         print(f"Source: {doc['source']}")
+
         print("-" * 40)
 
 

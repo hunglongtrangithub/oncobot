@@ -86,7 +86,6 @@ class KPDetector(nn.Module):
         """
         Extract the mean from a heatmap
         """
-        # print("heatmap.device", heatmap.device)
         shape = heatmap.shape
         heatmap = heatmap.unsqueeze(-1)
         grid = (

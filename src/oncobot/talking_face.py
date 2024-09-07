@@ -3,14 +3,12 @@ from pathlib import Path
 import shutil
 
 from src.sadtalker import SadTalker
-from src.utils.logger_config import get_logger
+from src.utils.logger_config import logger
 from src.sadtalker.src.facerender.animate import (
     ACCEPTED_WEIGHTS,
     ACCEPTED_ACTIVATIONS,
     ACCEPTED_DTYPES,
 )
-
-logger = get_logger(__name__)
 
 
 # The async method in this class is just for demonstration purposes. It is not actually async.
@@ -42,7 +40,7 @@ class CustomSadTalker(SadTalker):
             quanto_weights=quanto_weights,
             quanto_activations=quanto_activations,
         )
-        logger.info(f"quanto_config: {quanto_config}")
+        logger.debug(f"quanto_config: {quanto_config}")
         checkpoint_path = Path(__file__).parent.parent / "sadtalker/checkpoints"
         gfpgan_path = Path(__file__).parent.parent / "sadtalker/gfpgan/weights"
         config_path = Path(__file__).parent.parent / "sadtalker/src/config"

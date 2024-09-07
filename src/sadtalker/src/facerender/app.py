@@ -1,9 +1,3 @@
-from .animate import (
-    AnimateFromCoeff,
-    ACCEPTED_DTYPES,
-    ACCEPTED_WEIGHTS,
-    ACCEPTED_ACTIVATIONS,
-)
 from pathlib import Path
 import subprocess
 from typing import Optional
@@ -15,6 +9,14 @@ import requests
 from requests.exceptions import ConnectionError
 import atexit
 
+
+from .animate import (
+    AnimateFromCoeff,
+    ACCEPTED_DTYPES,
+    ACCEPTED_WEIGHTS,
+    ACCEPTED_ACTIVATIONS,
+)
+from src.utils.logger_config import logger
 
 app = FastAPI()
 
@@ -100,7 +102,7 @@ def wait_for_server_ready(url, timeout=10):
 
     while time.time() - start_time < timeout:
         try:
-            # print("Checking server status at {}".format(url))
+            logger.info("Checking server status at {}".format(url))
             response = requests.get(url)
             if response.status_code == 200:
                 return True  # Server is ready
@@ -112,6 +114,7 @@ def wait_for_server_ready(url, timeout=10):
 
 
 def terminate_process(process):
+    logger.info("Terminating the server process")
     if process.poll() is None:  # Check if the process is still running
         process.terminate()
         try:

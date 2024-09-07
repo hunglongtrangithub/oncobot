@@ -13,6 +13,7 @@ from .utils.videoio import save_data_to_video
 from .generate_batch import get_data
 from .generate_facerender_batch import get_facerender_data
 from .utils.init_path import init_path
+from src.utils.logger_config import logger
 
 
 def mp3_to_wav(mp3_filename, wav_filename, frame_rate):
@@ -40,7 +41,7 @@ class SadTalker:
                 "Parallel mode is enabled but only one device is detected. Please provide more devices."
             )
 
-        print("SadTalker devices:", animate_devices)
+        logger.info(f"SadTalker devices: {animate_devices}")
         os.environ["TORCH_HOME"] = checkpoint_path
         self.device = torch.device(animate_devices[0])
         self.checkpoint_path = checkpoint_path
@@ -86,7 +87,7 @@ class SadTalker:
             False,
             self.image_preprocess,
         )
-        print("Loading models for SadTalker...")
+        logger.info("Loading models for SadTalker...")
         self.preprocess_model = CropAndExtract(sadtalker_paths, self.device)
         self.audio_to_coeff = Audio2Coeff(sadtalker_paths, self.device)
         self.animate_from_coeff = CustomAnimateFromCoeff(
@@ -96,7 +97,7 @@ class SadTalker:
             self.quanto_config,
             self.parallel_mode,
         )
-        print("Models loaded.")
+        logger.info("Models loaded.")
 
     def _prepare_audio(self, driven_audio):
         if not os.path.isfile(driven_audio):
@@ -181,18 +182,19 @@ class SadTalker:
             )
             return return_path
         except Exception as e:
-            print(f"Error in test: {e}")
+            logger.error(f"Error in test: {e}")
             raise
         finally:
             self.clean()
 
     def clean(self, delete_models=False):
-        print("Cleaning up...")
         if delete_models:
+            logger.info("Deleting models...")
             del self.preprocess_model
             del self.audio_to_coeff
             del self.animate_from_coeff
 
+        logger.info("Cleaning up memory...")
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
             torch.cuda.synchronize()

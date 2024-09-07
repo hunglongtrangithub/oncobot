@@ -1,7 +1,11 @@
+import os
+
 import numpy as np
-import cv2, os, sys, torch
+import cv2
+import torch
 from tqdm import tqdm
 from PIL import Image
+from scipy.io import savemat
 
 # 3dmm extraction
 import safetensors
@@ -9,10 +13,8 @@ import safetensors.torch
 from ..face3d.util.preprocess import align_img
 from ..face3d.util.load_mats import load_lm3d
 from ..face3d.models import networks
-
-from scipy.io import loadmat, savemat
 from .cropper import Preprocesser
-
+from src.utils.logger_config import logger
 
 import warnings
 
@@ -58,7 +60,6 @@ class CropAndExtract:
                 load_x_from_safetensor(checkpoint, "face_3drecon")
             )
         else:
-            print("Loading from normal checkpoint")
             checkpoint = torch.load(
                 sadtalker_paths["path_of_net_recon_model"],
                 map_location=torch.device(device),
@@ -147,7 +148,7 @@ class CropAndExtract:
             for frame in x_full_frames
         ]
         if len(frames_pil) == 0:
-            print("No face is detected in the input file")
+            logger.error("No face is detected in the input file")
             return None, None, None
 
         # save crop info
@@ -158,7 +159,7 @@ class CropAndExtract:
         if not os.path.isfile(landmarks_path):
             lm = self.propress.predictor.extract_keypoint(frames_pil, landmarks_path)
         else:
-            print(" Using saved landmarks.")
+            logger.info("Using saved landmarks...")
             lm = np.loadtxt(landmarks_path).astype(np.float32)
             lm = lm.reshape([len(x_full_frames), -1, 2])
 

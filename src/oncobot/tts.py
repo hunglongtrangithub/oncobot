@@ -22,10 +22,8 @@ from transformers import AutoProcessor, BarkModel
 import torch
 import numpy as np
 
-from src.utils.logger_config import get_logger
+from src.utils.logger_config import logger
 from src.utils.env_config import settings
-
-logger = get_logger(__name__)
 
 
 def try_create_directory(path: Path):
@@ -88,7 +86,7 @@ class XTTS:
             try:
                 segmenter = pysbd.Segmenter(language=lang)
             except Exception:
-                logger.info(
+                logger.debug(
                     f"Failed to load pysbd segmenter for language {lang}. Defaulting to 'en'."
                 )
                 segmenter = pysbd.Segmenter(language="en")
@@ -97,8 +95,8 @@ class XTTS:
         logger.info(
             f"{self.model_name} initialized on device {self.device}. Using DeepSpeed: {use_deepspeed}."
         )
-        logger.info(f"Model size: {self.get_model_size(self.model, 'GB'):.3f} GB.")
-        logger.info(f"Using output sample rate of {self.output_sample_rate} Hz.")
+        logger.debug(f"Model size: {self.get_model_size(self.model, 'GB'):.3f} GB.")
+        logger.debug(f"Using output sample rate of {self.output_sample_rate} Hz.")
 
     def get_model_size(self, model, unit="mb"):
         param_size = 0
@@ -131,9 +129,8 @@ class XTTS:
 
         sens = [text]
         if split_sentences:
-            print(" > Text splitted to sentences.")
             sens = self.split_into_sentences(text, lang_iso)
-        print(sens)
+        logger.info(f" > Text splitted to sentences.\n{sens}")
 
         start = time.perf_counter()
         wavs = []
@@ -161,9 +158,9 @@ class XTTS:
         # compute stats
         process_time = time.perf_counter() - start
         audio_time = len(wavs) / self.config.audio["sample_rate"]
-        logger.info(f" > Processing time: {process_time}")
-        logger.info(f" > Real-time factor: {process_time / audio_time}")
-        logger.info(f"XTTS run method took {time.perf_counter() - start:.2f} seconds.")
+        logger.debug(f" > Processing time: {process_time}")
+        logger.debug(f" > Real-time factor: {process_time / audio_time}")
+        logger.debug(f"XTTS run method took {time.perf_counter() - start:.2f} seconds.")
 
     async def arun(self, text: str, file_path: str, voice_path: str):
         try:

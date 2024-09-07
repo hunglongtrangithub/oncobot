@@ -4,6 +4,7 @@ import torch
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from .app import run
 from src.utils.env_config import settings
+from src.utils.logger_config import logger
 
 
 class CustomAnimateFromCoeff:
@@ -18,7 +19,7 @@ class CustomAnimateFromCoeff:
         run_devices = devices if parallel_mode == "ddp" else [devices[0]]
 
         # start server
-        print("Starting server...")
+        logger.info("Starting server...")
         timeout = 10
         urls = []
         for i in range(1, len(run_devices) + 1):
@@ -40,7 +41,7 @@ class CustomAnimateFromCoeff:
             response = requests.post(url + "/setup", json=setup_payload)
             if response.status_code != 200:
                 raise Exception(f"Failed to set up server on port {url.split(':')[-1]}")
-        print("Server started successfully.")
+        logger.info("Server started successfully.")
         self.urls = urls
         self.run_devices = run_devices
 
@@ -89,19 +90,19 @@ class CustomAnimateFromCoeff:
 
     def generate(self, data: dict[str, torch.Tensor], frame_num: int):
         batches = self.get_batches(data, frame_num)
-        print("Sending requests to servers...")
+        logger.info("Sending requests to servers...")
 
         # List to store the predictions
         predictions = []
 
         # Function to send a request to a single server
         def send_request(batch, url):
-            print(f"Turning tensors to lists for {url}...")
+            logger.debug(f"Turning tensors to lists for {url}...")
             batch = {
                 k: v.tolist() if isinstance(v, torch.Tensor) else v
                 for k, v in batch.items()
             }
-            print(f"Sending request to {url}...")
+            logger.info(f"Sending request to {url}...")
             response = requests.post(url + "/predict", json={"x": batch})
             if response.status_code != 200:
                 raise Exception(f"Failed to get prediction from {url}")
@@ -122,6 +123,6 @@ class CustomAnimateFromCoeff:
                 predictions.append(pred)
 
         # Concatenate all predictions into a single tensor
-        print("Combining predictions...")
+        logger.info("All prediction tensors received.")
         predictions = torch.cat(predictions, dim=0)
         return predictions

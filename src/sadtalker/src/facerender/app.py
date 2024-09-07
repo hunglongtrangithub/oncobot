@@ -13,6 +13,7 @@ import torch
 import time
 import requests
 from requests.exceptions import ConnectionError
+import atexit
 
 
 app = FastAPI()
@@ -110,6 +111,15 @@ def wait_for_server_ready(url, timeout=10):
     return False  # Server did not become ready within the timeout period
 
 
+def terminate_process(process):
+    if process.poll() is None:  # Check if the process is still running
+        process.terminate()
+        try:
+            process.wait(timeout=5)  # Wait for the process to terminate
+        except subprocess.TimeoutExpired:
+            process.kill()  # Force kill if it doesn't terminate in time
+
+
 def run(port: int, host: str = "0.0.0.0", timeout: int = 10):
     # Start the server in a separate process
     cwd = Path(__file__).parents[4]
@@ -119,6 +129,8 @@ def run(port: int, host: str = "0.0.0.0", timeout: int = 10):
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     )
+    # Register the cleanup function to terminate the subprocess on exit
+    atexit.register(terminate_process, process)
 
     url = "http://{}:{}".format(host, port)
     if not wait_for_server_ready(url, timeout):

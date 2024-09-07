@@ -1,9 +1,7 @@
 from typing import List, Tuple, Optional
 from transformers import pipeline
 
-from src.utils.logger_config import get_logger
-
-logger = get_logger(__name__)
+from src.utils.logger_config import logger
 
 
 class NERProcessor:

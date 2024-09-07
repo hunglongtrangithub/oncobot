@@ -1,30 +1,19 @@
-import os
-import cv2
 import yaml
-import numpy as np
 import warnings
-from skimage.util import img_as_ubyte
 import torch
 import torch.nn as nn
 import safetensors
 import safetensors.torch
 from optimum.quanto import quantize, freeze
+from optimum import quanto
 
-warnings.filterwarnings("ignore")
-
-
-import imageio
-import torch
-
-
+from src.utils.logger_config import logger
 from .modules.keypoint_detector import HEEstimator, KPDetector
 from .modules.mapping import MappingNet
 from .modules.generator import OcclusionAwareSPADEGenerator
 from .modules.make_animation import make_animation
 
-from pydub import AudioSegment
-from ..utils.paste_pic import paste_pic
-from ..utils.videoio import save_video_with_watermark
+warnings.filterwarnings("ignore")
 
 try:
     import webui  # type: ignore # in webui
@@ -33,13 +22,27 @@ try:
 except:
     in_webui = False
 
+ACCEPTED_WEIGHTS = {
+    "float8": quanto.qfloat8,
+    "int8": quanto.qint8,
+    "int4": quanto.qint4,
+    "int2": quanto.qint2,
+}
+ACCEPTED_ACTIVATIONS = {
+    "none": None,
+    "int8": quanto.qint8,
+    "float8": quanto.qfloat8,
+}
+ACCEPTED_DTYPES = {
+    "float32": torch.float32,
+    "float16": torch.float16,
+}
+
 
 class AnimateFromCoeff:
-
     def __init__(
         self, sadtalker_paths, device, dtype=None, dp_device_ids=None, **quanto_config
     ):
-
         with open(sadtalker_paths["facerender_yaml"]) as f:
             config = yaml.safe_load(f)
 
@@ -58,7 +61,7 @@ class AnimateFromCoeff:
         mapping = MappingNet(**config["model_params"]["mapping_params"])
 
         if dp_device_ids is not None:
-            print("Using DataParallel with device ids:", dp_device_ids)
+            logger.info("Using DataParallel with device ids:", dp_device_ids)
             generator = nn.DataParallel(
                 generator,
                 device_ids=dp_device_ids,
@@ -87,7 +90,7 @@ class AnimateFromCoeff:
 
         self.quanto_config = quanto_config
         if self.quanto_config:
-            print("Quanto config:", quanto_config)
+            logger.info("Quanto config:", quanto_config)
 
         if sadtalker_paths is not None:
             if "checkpoint" in sadtalker_paths:  # use safe tensor
@@ -143,19 +146,19 @@ class AnimateFromCoeff:
         self.device = device
 
         unit = "MB"
-        print(
+        logger.debug(
             f"OcclusionAwareSPADEGenerator model size: {self.get_model_size(self.generator, unit):.3f} {unit}"
         )
-        print(
+        logger.debug(
             f"KPDetector model size: {self.get_model_size(self.kp_extractor, unit):.3f} {unit}"
         )
-        print(
+        logger.debug(
             f"HEEstimator model size: {self.get_model_size(self.he_estimator, unit):.3f} {unit}"
         )
-        print(
+        logger.debug(
             f"MappingNet model size: {self.get_model_size(self.mapping, unit):.3f} {unit}"
         )
-        print(
+        logger.debug(
             "dtype:",
             self.dtype,
             "device:",
@@ -184,9 +187,9 @@ class AnimateFromCoeff:
         if self.quanto_config:
             quantize(model, **self.quanto_config)
             freeze(model)
-            print(f"Model quantized: {type(model)}")
+            logger.info(f"Model quantized: {type(model)}")
             # for name, weight in model.named_parameters():
-            #     print(f"{name} - {weight.type()}")
+            #     logger.info(f"{name} - {weight.type()}")
 
     def load_cpk_facevid2vid_safetensor(
         self,
@@ -195,7 +198,7 @@ class AnimateFromCoeff:
         kp_detector=None,
         he_estimator=None,
     ):
-        print("Loading checkpoint from", checkpoint_path)
+        logger.info("Loading checkpoint from", checkpoint_path)
         checkpoint = safetensors.torch.load_file(checkpoint_path)
 
         if generator is not None:
@@ -243,7 +246,7 @@ class AnimateFromCoeff:
             try:
                 discriminator.load_state_dict(checkpoint["discriminator"])
             except:
-                print(
+                logger.warning(
                     "No discriminator in the state-dict. Dicriminator will be randomly initialized"
                 )
         if optimizer_generator is not None:
@@ -254,7 +257,7 @@ class AnimateFromCoeff:
                     checkpoint["optimizer_discriminator"]
                 )
             except RuntimeError:
-                print(
+                logger.warning(
                     "No discriminator optimizer in the state-dict. Optimizer will be not initialized"
                 )
         if optimizer_kp_detector is not None:
@@ -288,7 +291,6 @@ class AnimateFromCoeff:
         return checkpoint["epoch"]
 
     def generate(self, x):
-
         source_image = x["source_image"].type(self.dtype)
         source_semantics = x["source_semantics"].type(self.dtype)
         target_semantics = x["target_semantics_list"].type(self.dtype)
@@ -331,72 +333,3 @@ class AnimateFromCoeff:
         predictions = predictions_video[:frame_num]
 
         return predictions
-
-
-# @profile
-def save_data_to_video(
-    video_name,
-    audio_path,
-    predictions_video,
-    crop_info,
-    img_size,
-    frame_num,
-    preprocess,
-    pic_path,
-    video_save_dir,
-):
-    predictions_video = predictions_video.cpu().numpy()
-    video = np.transpose(predictions_video, [0, 2, 3, 1]).astype(np.float32)
-    result = img_as_ubyte(video)
-
-    original_size = crop_info[0]
-    if original_size:
-        result = [
-            cv2.resize(
-                result_i,
-                (img_size, int(img_size * original_size[1] / original_size[0])),
-            )
-            for result_i in result
-        ]
-
-    video_name = video_name + ".mp4"
-    path = os.path.join(video_save_dir, "temp_" + video_name)
-
-    imageio.mimsave(path, result, fps=float(25))
-
-    av_path = os.path.join(video_save_dir, video_name)
-    return_path = av_path
-
-    audio_name = os.path.splitext(os.path.split(audio_path)[-1])[0]
-    new_audio_path = os.path.join(video_save_dir, audio_name + ".wav")
-    start_time = 0
-    sound = AudioSegment.from_file(audio_path)
-    frames = frame_num
-    end_time = start_time + frames * 1 / 25 * 1000
-    word1 = sound.set_frame_rate(16000)
-    word = word1[start_time:end_time]
-    word.export(new_audio_path, format="wav")
-
-    save_video_with_watermark(path, new_audio_path, av_path, watermark=False)
-    print(f"The generated video is named {video_save_dir}/{video_name}")
-
-    if "full" in preprocess.lower():
-        video_name_full = video_name + "_full.mp4"
-        full_video_path = os.path.join(video_save_dir, video_name_full)
-        return_path = full_video_path
-        paste_pic(
-            path,
-            pic_path,
-            crop_info,
-            new_audio_path,
-            full_video_path,
-            extended_crop=True if "ext" in preprocess.lower() else False,
-        )
-        print(f"The generated video is named {video_save_dir}/{video_name_full}")
-    else:
-        full_video_path = av_path
-
-    os.remove(path)
-    os.remove(new_audio_path)
-
-    return return_path

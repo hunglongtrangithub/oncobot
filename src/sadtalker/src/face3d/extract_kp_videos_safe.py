@@ -8,13 +8,14 @@ from PIL import Image
 import torch
 from tqdm import tqdm
 from itertools import cycle
-from torch.multiprocessing import Pool, Process, set_start_method
+from torch.multiprocessing import Pool, set_start_method
 
 from facexlib.alignment import landmark_98_to_68
 from facexlib.detection import init_detection_model
-
 from facexlib.utils import load_file_from_url
+
 from .util.my_awing_arch import FAN
+from src.utils.logger_config import logger
 
 
 def init_alignment_model(model_name, half=False, device="cuda", model_rootpath=None):
@@ -103,13 +104,13 @@ class KeypointExtractor:
                         break
                 except RuntimeError as e:
                     if str(e).startswith("CUDA"):
-                        print("Warning: out of memory, sleep for 1s")
+                        logger.warning("CUDA out of memory, sleep for 1s...")
                         time.sleep(1)
                     else:
-                        print(e)
+                        logger.error(e)
                         return
                 except TypeError:
-                    print("No face detected in this image")
+                    logger.error("No face detected in this image")
                     shape = [68, 2]
                     keypoints = -1.0 * np.ones(shape)
                     break

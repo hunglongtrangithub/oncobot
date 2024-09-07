@@ -1,14 +1,13 @@
 from jinja2 import Template
 from typing import List, Optional, Dict, Tuple, Union, Generator, AsyncGenerator
 from pydantic import BaseModel, Field
-import logging
+from pathlib import Path
+from loguru import logger as loguru_logger
 
 from .retriever import CustomRetriever, Document
 from .custom_chat_model import BaseChat
 from .ner import NERProcessor
-from src.utils.logger_config import get_logger
-
-logger = get_logger(__name__)
+from src.utils.logger_config import logger
 
 
 # System prompt for medical document
@@ -122,13 +121,14 @@ class RAGChain:
         self.chat_llm = chat_llm
         self.retriever = retriever
         self.ner = ner
-        self.chat_logger = logging.getLogger(__name__)
-        self.chat_logger.setLevel(logging.INFO)
-        handler = logging.FileHandler("chat_history.log")
-        handler.setFormatter(
-            logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+        log_path = Path("./log/rag_chain.log")
+        log_path.parent.mkdir(exist_ok=True)
+        logger.add(
+            log_path,
+            level="INFO",
+            filter=lambda record: record["extra"].get("name") == "rag_chain",
         )
-        self.chat_logger.addHandler(handler)
+        self.chat_logger = logger.bind(name="rag_chain")
 
     def format_chat_history(
         self, chat_history: Optional[List[Dict[str, str]]]
@@ -156,13 +156,13 @@ class RAGChain:
             template = Template(CHAT_TEMPLATE_STRING)
             serialized_chat_history = template.render(messages=chat_history).strip()
         except Exception as e:
-            logger.error("Error occurred while applying template to chat history.")
+            logger.error(f"Error occurred while applying template to chat history: {e}")
             serialized_chat_history = ""
 
         rephrase_question_prompt = REPHRASE_TEMPLATE.format(
             chat_history=serialized_chat_history, question=query_question
         )
-        # self.chat_logger.info(f"Rephrased question prompt: {rephrase_question_prompt}")
+        self.chat_logger.info(f"Rephrased question prompt: {rephrase_question_prompt}")
         try:
             rephrased_question = await self.chat_llm.ainvoke(
                 [
@@ -174,7 +174,7 @@ class RAGChain:
             self.chat_logger.info(f"Rephrased question: {query_question}")
         except Exception as e:
             logger.error(
-                "Error occurred while invoking chat model to rephrase question."
+                f"Error occurred while invoking chat model to rephrase question: {e}"
             )
         try:
             docs = await self.retriever.aget_relevant_documents(query_question)
@@ -192,7 +192,7 @@ class RAGChain:
             template = Template(CHAT_TEMPLATE_STRING)
             serialized_chat_history = template.render(messages=chat_history).strip()
         except Exception as e:
-            logger.error("Error occurred while applying template to chat history")
+            logger.error(f"Error occurred while applying template to chat history: {e}")
             serialized_chat_history = ""
 
         rephrase_question_prompt = REPHRASE_TEMPLATE.format(
@@ -209,7 +209,7 @@ class RAGChain:
             self.chat_logger.info(f"Rephrased question: {query_question}")
         except Exception as e:
             logger.error(
-                "Error occurred while invoking chat model to rephrase question",
+                f"Error occurred while invoking chat model to rephrase question: {e}",
             )
         try:
             docs = self.retriever.get_relevant_documents(query_question)
@@ -239,7 +239,7 @@ class RAGChain:
             *formatted_chat_history,
             {"role": "user", "content": request.question},
         ]
-        # self.chat_logger.info(f"System prompt:\n{system_prompt}")
+        self.chat_logger.info(f"System prompt:\n{system_prompt}")
         try:
             text_streamer = self.chat_llm.stream(current_conversation)
             return text_streamer  # type: ignore
@@ -268,7 +268,7 @@ class RAGChain:
             # *formatted_chat_history,
             {"role": "user", "content": request.question},
         ]
-        # self.chat_logger.info(f"System prompt:\n{system_prompt}")
+        self.chat_logger.info(f"System prompt:\n{system_prompt}")
         try:
             text_streamer = await self.chat_llm.astream(current_conversation)
             return text_streamer

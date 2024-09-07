@@ -36,7 +36,7 @@ def get_hop_size():
 
 def linearspectrogram(wav):
     D = _stft(preemphasis(wav, hp.preemphasis, hp.preemphasize))
-    S = _amp_to_db(np.abs(D)) - hp.ref_level_db
+    S = _amp_to_db(D) - hp.ref_level_db
     
     if hp.signal_normalization:
         return _normalize(S)
@@ -44,7 +44,7 @@ def linearspectrogram(wav):
 
 def melspectrogram(wav):
     D = _stft(preemphasis(wav, hp.preemphasis, hp.preemphasize))
-    S = _amp_to_db(_linear_to_mel(np.abs(D))) - hp.ref_level_db
+    S = _amp_to_db(_linear_to_mel(D)) - hp.ref_level_db
     
     if hp.signal_normalization:
         return _normalize(S)
@@ -61,7 +61,7 @@ def _stft(y):
             return _lws_processor().stft(y).T
         except:
             pass
-    return librosa.stft(y=y, n_fft=hp.n_fft, hop_length=get_hop_size(), win_length=hp.win_size)
+    return np.abs(librosa.stft(y=y, n_fft=hp.n_fft, hop_length=get_hop_size(), win_length=hp.win_size))
 
 ##########################################################
 #Those are only correct when using lws!!! (This was messing with Wavenet quality for a long time!)

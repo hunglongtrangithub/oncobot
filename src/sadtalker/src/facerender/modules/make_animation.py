@@ -40,7 +40,7 @@ def normalize_kp(
 
 # @profile
 def headpose_pred_to_degree(pred):  # slow
-    idx_tensor = torch.arange(pred.shape[1]).to(pred.device, non_blocking=True)
+    idx_tensor = torch.arange(pred.shape[1], device=pred.device)
     # NOTE: doesn't require pred and idx_tensor to have the same dtype
     degree = torch.sum(pred.softmax(1) * idx_tensor, 1) * 3 - 99
     return degree
@@ -168,17 +168,9 @@ def make_animation(
     use_half=False,
 ):
     with torch.no_grad():
-        start_time = time.perf_counter()
         predictions = []
         kp_canonical = kp_detector(source_image)
         he_source = mapping(source_semantics)
-        # all tensors in here are in the same device and have the same type
-        # yaw, pitch, and roll outputed from mapping model always have the same shape. Make idx_tensor once and use it for all frames.
-        # idx_tensor = (
-        #     torch.arange(he_source["yaw"].shape[1])
-        #     .type_as(source_image)
-        #     .to(source_image.device)
-        # )
         kp_source = keypoint_transformation(kp_canonical, he_source)
         for frame_idx in tqdm(range(target_semantics.shape[1]), "Face Renderer:"):
             target_semantics_frame = target_semantics[:, frame_idx]
@@ -192,17 +184,7 @@ def make_animation(
                 he_driving["roll_in"] = roll_c_seq[:, frame_idx]
 
             kp_driving = keypoint_transformation(kp_canonical, he_driving)
-
-            # TEST: source_image shape is (batch_size, 3, 256, 256), kp_source['value'].shape is (batch_size, 15, 3), kp_norm['value'].shape is (batch_size, 15, 3)
-            # print("source_image.shape", source_image.shape)
-            # print("kp_source['value'].shape", kp_source["value"].shape)
-            # print("kp_norm['value'].shape", kp_norm["value"].shape)
             out = generator(source_image, kp_source=kp_source, kp_driving=kp_driving)
             predictions.append(out["prediction"])
-            # print("out['prediction'].shape", out["prediction"].shape)
         predictions_ts = torch.stack(predictions, dim=1)
-        end_time = time.perf_counter()
-        print(
-            f"Time taken to generate predictions: {(end_time - start_time):.2f} seconds"
-        )
     return predictions_ts

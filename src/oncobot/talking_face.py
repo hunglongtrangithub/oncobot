@@ -2,13 +2,13 @@ import os
 from pathlib import Path
 import shutil
 
-import torch
-from optimum import quanto
-
 from src.sadtalker import SadTalker
-from src.utils.logger_config import get_logger
-
-logger = get_logger(__name__)
+from src.utils.logger_config import logger
+from src.sadtalker.src.facerender.animate import (
+    ACCEPTED_WEIGHTS,
+    ACCEPTED_ACTIVATIONS,
+    ACCEPTED_DTYPES,
+)
 
 
 # The async method in this class is just for demonstration purposes. It is not actually async.
@@ -26,22 +26,6 @@ class DummyTalker:
 
 
 class CustomSadTalker(SadTalker):
-    accepted_weights = {
-        "float8": quanto.qfloat8,
-        "int8": quanto.qint8,
-        "int4": quanto.qint4,
-        "int2": quanto.qint2,
-    }
-    accepted_activations = {
-        "none": None,
-        "int8": quanto.qint8,
-        "float8": quanto.qfloat8,
-    }
-    accepted_dtypes = {
-        "float32": torch.float32,
-        "float16": torch.float16,
-    }
-
     def __init__(
         self,
         batch_size=150,
@@ -56,7 +40,7 @@ class CustomSadTalker(SadTalker):
             quanto_weights=quanto_weights,
             quanto_activations=quanto_activations,
         )
-        logger.info(f"quanto_config: {quanto_config}")
+        logger.debug(f"quanto_config: {quanto_config}")
         checkpoint_path = Path(__file__).parent.parent / "sadtalker/checkpoints"
         gfpgan_path = Path(__file__).parent.parent / "sadtalker/gfpgan/weights"
         config_path = Path(__file__).parent.parent / "sadtalker/src/config"
@@ -67,29 +51,30 @@ class CustomSadTalker(SadTalker):
             device=device,
             dtype=dtype,
             parallel_mode=parallel_mode,
-            **quanto_config,
+            quanto_config=quanto_config,
         )
         self.batch_size = batch_size
         logger.info("CustomSadTalker initialized.")
 
     def _check_arguments(self, torch_dtype, quanto_weights, quanto_activations):
+        dtype = None
         if torch_dtype:
-            if torch_dtype not in self.accepted_dtypes:
+            if torch_dtype not in ACCEPTED_DTYPES:
                 raise ValueError(
-                    f"Only support dtypes in {self.accepted_dtypes.keys()} but found {torch_dtype}"
+                    f"Only support dtypes in {ACCEPTED_DTYPES.keys()} but found {torch_dtype}"
                 )
-        dtype = self.accepted_dtypes[torch_dtype] if torch_dtype else None
+            dtype = torch_dtype
         quanto_config = {}
         if quanto_weights:
-            if quanto_weights not in self.accepted_weights:
+            if quanto_weights not in ACCEPTED_WEIGHTS:
                 raise ValueError(
-                    f"Only support weights in {self.accepted_weights.keys()} but found {quanto_weights}"
+                    f"Only support weights in {ACCEPTED_WEIGHTS.keys()} but found {quanto_weights}"
                 )
-            quanto_config["weights"] = self.accepted_weights[quanto_weights]
+            quanto_config["weights"] = quanto_weights
         if quanto_activations:
-            if quanto_activations not in self.accepted_activations:
+            if quanto_activations not in ACCEPTED_ACTIVATIONS:
                 raise ValueError(
-                    f"Only support weights in {self.accepted_activations.keys()} but found {quanto_activations}"
+                    f"Only support weights in {ACCEPTED_ACTIVATIONS.keys()} but found {quanto_activations}"
                 )
             quanto_config["activations"] = quanto_activations
         return dtype, quanto_config

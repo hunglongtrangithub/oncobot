@@ -11,7 +11,6 @@ def get_facerender_data(
     coeff_path,
     pic_path,
     first_coeff_path,
-    audio_path,
     batch_size,
     input_yaw_list=None,
     input_pitch_list=None,
@@ -21,7 +20,6 @@ def get_facerender_data(
     preprocess="crop",
     size=256,
 ):
-
     semantic_radius = 13
     video_name = os.path.splitext(os.path.split(coeff_path)[-1])[0]
     txt_path = os.path.splitext(coeff_path)[0]
@@ -78,7 +76,9 @@ def get_facerender_data(
 
     target_semantics_list = []
     frame_num = generated_3dmm.shape[0]
-    data["frame_num"] = frame_num
+    if frame_num == 0:
+        raise ValueError("No frame in the generated 3dmm")
+
     for frame_idx in range(frame_num):
         target_semantics = transform_semantic_target(
             generated_3dmm, frame_idx, semantic_radius
@@ -88,7 +88,7 @@ def get_facerender_data(
     remainder = frame_num % batch_size
     if remainder != 0:
         for _ in range(batch_size - remainder):
-            target_semantics_list.append(target_semantics)
+            target_semantics_list.append(target_semantics)  # type: ignore
 
     target_semantics_np = np.array(
         target_semantics_list
@@ -97,8 +97,6 @@ def get_facerender_data(
         batch_size, -1, target_semantics_np.shape[-2], target_semantics_np.shape[-1]
     )
     data["target_semantics_list"] = torch.FloatTensor(target_semantics_np)
-    data["video_name"] = video_name
-    data["audio_path"] = audio_path
 
     if input_yaw_list is not None:
         yaw_c_seq = gen_camera_pose(input_yaw_list, frame_num, batch_size)
@@ -110,7 +108,7 @@ def get_facerender_data(
         roll_c_seq = gen_camera_pose(input_roll_list, frame_num, batch_size)
         data["roll_c_seq"] = torch.FloatTensor(roll_c_seq)
 
-    return data
+    return data, frame_num, video_name
 
 
 def transform_semantic_1(semantic, semantic_radius):
@@ -128,7 +126,6 @@ def transform_semantic_target(coeff_3dmm, frame_index, semantic_radius):
 
 
 def gen_camera_pose(camera_degree_list, frame_num, batch_size):
-
     new_degree_list = []
     if len(camera_degree_list) == 1:
         for _ in range(frame_num):

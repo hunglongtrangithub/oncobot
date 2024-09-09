@@ -2,7 +2,7 @@ from scipy.spatial import ConvexHull
 import torch
 import numpy as np
 from tqdm import tqdm
-import time
+from src.utils.logger_config import logger
 
 
 def normalize_kp(
@@ -136,9 +136,10 @@ def keypoint_transformation(
     if wo_exp:
         exp = exp * 0
 
+    logger.debug(f"t: {t.dtype}, exp: {exp.dtype}, kp: {kp.dtype}")
     # keypoint rotation
     kp_rotated = torch.einsum("bmp,bkp->bkm", rot_mat, kp)
-
+    logger.debug(f"kp_rotated: {kp_rotated.dtype}")
     # keypoint translation
     t[:, 0] = t[:, 0] * 0
     t[:, 2] = t[:, 2] * 0
@@ -169,8 +170,11 @@ def make_animation(
 ):
     with torch.no_grad():
         predictions = []
+        logger.info("Calculating kp_canonical")
         kp_canonical = kp_detector(source_image)
+        logger.info("Calculating he_source")
         he_source = mapping(source_semantics)
+        logger.info("Calculating kp_source")
         kp_source = keypoint_transformation(kp_canonical, he_source)
         for frame_idx in tqdm(range(target_semantics.shape[1]), "Face Renderer:"):
             target_semantics_frame = target_semantics[:, frame_idx]

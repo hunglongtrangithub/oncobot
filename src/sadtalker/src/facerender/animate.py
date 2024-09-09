@@ -337,7 +337,9 @@ class AnimateFromCoeff:
         else:
             roll_c_seq = None
         frame_num = x["frame_num"]
-
+        logger.debug(
+            f"source_image: {source_image.dtype}, source_semantics: {source_semantics.dtype}, target_semantics: {target_semantics.dtype}, frame_num: {frame_num}"
+        )
         predictions_video = make_animation(
             source_image,
             source_semantics,

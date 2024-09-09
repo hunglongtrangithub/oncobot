@@ -11,6 +11,8 @@ from ..sync_batchnorm import (
     SynchronizedBatchNorm3d as BatchNorm3d,
 )
 
+from src.utils.logger_config import logger
+
 
 class DenseMotionNetwork(nn.Module):
     """
@@ -62,7 +64,9 @@ class DenseMotionNetwork(nn.Module):
     def create_sparse_motions(self, feature, kp_driving, kp_source):
         bs, _, d, h, w = feature.shape
         identity_grid = make_coordinate_grid(
-            (d, h, w), device=kp_driving["value"].device
+            (d, h, w),
+            device=kp_driving["value"].device,
+            dtype=kp_driving["value"].dtype,
         )
         identity_grid = identity_grid.view(1, 1, d, h, w, 3)
         coordinate_grid = identity_grid - kp_driving["value"].view(
@@ -113,10 +117,16 @@ class DenseMotionNetwork(nn.Module):
     def create_heatmap_representations(self, feature, kp_driving, kp_source):
         spatial_size = feature.shape[3:]
         gaussian_driving = kp2gaussian(
-            kp_driving, spatial_size=spatial_size, kp_variance=0.01
+            kp_driving,
+            spatial_size=spatial_size,
+            kp_variance=0.01,
+            dtype=kp_driving["value"].dtype,
         )
         gaussian_source = kp2gaussian(
-            kp_source, spatial_size=spatial_size, kp_variance=0.01
+            kp_source,
+            spatial_size=spatial_size,
+            kp_variance=0.01,
+            dtype=kp_source["value"].dtype,
         )
         heatmap = gaussian_driving - gaussian_source
 
@@ -130,6 +140,7 @@ class DenseMotionNetwork(nn.Module):
                 spatial_size[2],
             ),
             device=heatmap.device,
+            dtype=heatmap.dtype,
         )
         heatmap = torch.cat([zeros, heatmap], dim=1)
         heatmap = heatmap.unsqueeze(2)  # (bs, num_kp+1, 1, d, h, w)
@@ -150,12 +161,14 @@ class DenseMotionNetwork(nn.Module):
         heatmap = self.create_heatmap_representations(
             deformed_feature, kp_driving, kp_source
         )
-
+        logger.debug(
+            f"heatmap {heatmap.dtype}, deformed_feature {deformed_feature.dtype}",
+        )
         input_ = torch.cat([heatmap, deformed_feature], dim=2)
         input_ = input_.view(bs, -1, d, h, w)
 
         # input = deformed_feature.view(bs, -1, d, h, w)      # (bs, num_kp+1 * c, d, h, w)
-
+        logger.debug(f"input_ {input_.dtype}")
         prediction = self.hourglass(input_)  # slow
 
         mask = self.mask(prediction)

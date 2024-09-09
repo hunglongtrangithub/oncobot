@@ -14,13 +14,15 @@ from torch.nn.utils.spectral_norm import spectral_norm
 from torch.nn.common_types import _size_2_t, _size_3_t
 
 
-def kp2gaussian(kp, spatial_size, kp_variance):
+def kp2gaussian(kp, spatial_size, kp_variance, dtype=torch.float32):
     """
     Transform a keypoint into gaussian like representation
     """
     mean = kp["value"]
     # TEST: spatial_size torch.Size([16, 64, 64])
-    coordinate_grid = make_coordinate_grid(spatial_size, device=mean.device)
+    coordinate_grid = make_coordinate_grid(
+        spatial_size, device=mean.device, dtype=dtype
+    )
     number_of_leading_dimensions = len(mean.shape) - 1
     shape = (1,) * number_of_leading_dimensions + coordinate_grid.shape
     coordinate_grid = coordinate_grid.view(*shape)
@@ -57,11 +59,11 @@ def make_coordinate_grid_2d(spatial_size, device=None):
     return meshed
 
 
-def make_coordinate_grid(spatial_size, device=None):
+def make_coordinate_grid(spatial_size, device=None, dtype=torch.float32):
     d, h, w = spatial_size
-    x = torch.arange(w, device=device)
-    y = torch.arange(h, device=device)
-    z = torch.arange(d, device=device)
+    x = torch.arange(w, device=device, dtype=dtype)
+    y = torch.arange(h, device=device, dtype=dtype)
+    z = torch.arange(d, device=device, dtype=dtype)
 
     x = 2 * (x / (w - 1)) - 1
     y = 2 * (y / (h - 1)) - 1

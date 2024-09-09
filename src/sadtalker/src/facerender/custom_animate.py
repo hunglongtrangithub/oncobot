@@ -92,8 +92,9 @@ class CustomAnimateFromCoeff:
         finally:
             self.cleanup()
 
-    def get_batches(self, data: dict[str, torch.Tensor], frame_num: int):
-        num_devices = len(self.devices)
+    def get_batches(
+        self, num_devices: int, data: dict[str, torch.Tensor], frame_num: int
+    ):
         num_batches = data["target_semantics_list"].shape[0]
         batches_per_device = (num_batches + num_devices - 1) // num_devices
         frames_per_device = (frame_num + num_devices - 1) // num_devices
@@ -136,7 +137,8 @@ class CustomAnimateFromCoeff:
         return batches
 
     def generate(self, data: dict[str, torch.Tensor], frame_num: int):
-        data_batches = self.get_batches(data, frame_num)
+        num_devices = len(self.devices) if self.parallel_mode == "ddp" else 1
+        data_batches = self.get_batches(num_devices, data, frame_num)
         logger.debug(f"Number of batches: {len(data_batches)}")
         if self.parallel_mode != "ddp":
             try:

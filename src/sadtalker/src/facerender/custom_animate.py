@@ -6,7 +6,7 @@ import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 
-from .animate import AnimateFromCoeff
+from .animate import AnimateFromCoeff, check_arguments
 from src.utils.logger_config import logger
 
 mp.set_start_method("spawn", force=True)
@@ -22,8 +22,7 @@ class CustomAnimateFromCoeff:
         parallel_mode: Optional[str] = None,
     ):
         self.devices = devices
-        self.dtype = dtype
-        self.quanto_config = quanto_config
+        self.dtype, self.quanto_config = check_arguments(dtype, quanto_config)
         self.parallel_mode = parallel_mode
         if self.parallel_mode == "ddp":
             self.animate_from_coeff = [
@@ -84,7 +83,7 @@ class CustomAnimateFromCoeff:
             if rank == 0:
                 # Concatenate all results only at rank 0
                 final_result = torch.cat(gathered_results, dim=0).cpu()
-                logger.debug("Final result shape:", final_result.shape)
+                logger.debug(f"Final result shape: {final_result.shape}")
                 result_queue.put(final_result)
 
         except Exception as e:
@@ -138,11 +137,12 @@ class CustomAnimateFromCoeff:
 
     def generate(self, data: dict[str, torch.Tensor], frame_num: int):
         data_batches = self.get_batches(data, frame_num)
+        logger.debug(f"Number of batches: {len(data_batches)}")
         if self.parallel_mode != "ddp":
             try:
                 return self.animate_from_coeff[0].generate(data_batches[0])
             except Exception as e:
-                logger.error("Error in single process:", e)
+                logger.error(f"Error in single process: {e}")
                 raise
 
         with mp.Manager() as manager:
@@ -165,5 +165,5 @@ class CustomAnimateFromCoeff:
 
             logger.info("All processes finished.")
             final_result = result_queue.get()  # This will be the result from rank 0
-            logger.debug("Generated final result shape:", final_result.shape)
+            logger.debug(f"Generated final result shape: {final_result.shape}")
             return final_result

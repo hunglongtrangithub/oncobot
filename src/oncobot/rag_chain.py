@@ -2,12 +2,13 @@ from jinja2 import Template
 from typing import List, Optional, Dict, Tuple, Union, Generator, AsyncGenerator
 from pydantic import BaseModel, Field
 from pathlib import Path
-from loguru import logger as loguru_logger
+import logging
+from logging.handlers import RotatingFileHandler
 
 from .retriever import CustomRetriever, Document
 from .custom_chat_model import BaseChat
 from .ner import NERProcessor
-from src.utils.logger_config import logger
+from ..utils.logger_config import logger
 
 
 # System prompt for medical document
@@ -121,14 +122,29 @@ class RAGChain:
         self.chat_llm = chat_llm
         self.retriever = retriever
         self.ner = ner
+
         log_path = Path("./log/rag_chain.log")
         log_path.parent.mkdir(exist_ok=True)
-        logger.add(
+
+        self.chat_logger = logging.getLogger("rag_chain")
+        self.chat_logger.setLevel(logging.INFO)
+
+        handler = RotatingFileHandler(
             log_path,
-            level="INFO",
-            filter=lambda record: record["extra"].get("name") == "rag_chain",
+            maxBytes=5 * 1024 * 1024,
+            backupCount=3,  # 5MB log file, 3 backups
         )
-        self.chat_logger = logger.bind(name="rag_chain")
+
+        formatter = logging.Formatter(
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        )
+        handler.setFormatter(formatter)
+
+        self.chat_logger.addHandler(handler)
+        # Disable console logging if needed (optional)
+        self.chat_logger.propagate = False
+
+        self.chat_logger.info("RAGChain initialized.")
 
     def format_chat_history(
         self, chat_history: Optional[List[Dict[str, str]]]
@@ -180,7 +196,7 @@ class RAGChain:
             docs = await self.retriever.aget_relevant_documents(query_question)
             self.chat_logger.info(f"Retrieved {len(docs)} documents.")
         except Exception as e:
-            logger.error("Error occurred while retrieving documents:", e)
+            logger.error(f"Error occurred while retrieving documents: {e}")
             docs = []
         return docs
 
@@ -215,7 +231,7 @@ class RAGChain:
             docs = self.retriever.get_relevant_documents(query_question)
             self.chat_logger.info(f"Retrieved {len(docs)} documents.")
         except Exception as e:
-            logger.error("Error occurred while retrieving documents:", e)
+            logger.error(f"Error occurred while retrieving documents: {e}")
             docs = []
         return docs
 
@@ -227,7 +243,8 @@ class RAGChain:
             [
                 f"<doc id='{i}'>"
                 # + self.ner.get_ner_inserted_text(doc.page_content.strip())
-                + doc.page_content.strip() + "</doc>"
+                + doc.page_content.strip()
+                + "</doc>"
                 for i, doc in enumerate(docs)
             ]
         )
@@ -244,7 +261,7 @@ class RAGChain:
             text_streamer = self.chat_llm.stream(current_conversation)
             return text_streamer  # type: ignore
         except Exception as e:
-            logger.error("Error occurred while streaming response", e)
+            logger.error(f"Error occurred while streaming response {e}")
             yield ""
 
     async def aget_response_streamer_with_docs(
@@ -256,7 +273,8 @@ class RAGChain:
             [
                 f"<doc id='{i}'>"
                 # + self.ner.get_ner_inserted_text(doc.page_content.strip())
-                + doc.page_content.strip() + "</doc>"
+                + doc.page_content.strip()
+                + "</doc>"
                 for i, doc in enumerate(docs)
             ]
         )
@@ -273,7 +291,7 @@ class RAGChain:
             text_streamer = await self.chat_llm.astream(current_conversation)
             return text_streamer
         except Exception as e:
-            logger.error("Error occurred while streaming response:", e)
+            logger.error(f"Error occurred while streaming response: {e}")
 
             async def empty_streamer():
                 yield ""

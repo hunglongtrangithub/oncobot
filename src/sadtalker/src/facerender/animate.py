@@ -39,6 +39,31 @@ ACCEPTED_DTYPES = {
 }
 
 
+def check_arguments(torch_dtype, quanto_config):
+    dtype = None
+    if torch_dtype:
+        if torch_dtype not in ACCEPTED_DTYPES:
+            raise ValueError(
+                f"Only support dtypes in {ACCEPTED_DTYPES.keys()} but found {torch_dtype}"
+            )
+        dtype = ACCEPTED_DTYPES[torch_dtype]
+    if "weights" in quanto_config:
+        if quanto_config["weights"] not in ACCEPTED_WEIGHTS:
+            raise ValueError(
+                f"Only support weights in {ACCEPTED_WEIGHTS.keys()} but found {quanto_config['weights']}"
+            )
+        quanto_config["weights"] = ACCEPTED_WEIGHTS[quanto_config["weights"]]
+    if "activations" in quanto_config:
+        if quanto_config["activations"] not in ACCEPTED_ACTIVATIONS:
+            raise ValueError(
+                f"Only support weights in {ACCEPTED_ACTIVATIONS.keys()} but found {quanto_config['activations']}"
+            )
+        quanto_config["activations"] = ACCEPTED_ACTIVATIONS[
+            quanto_config["activations"]
+        ]
+    return dtype, quanto_config
+
+
 class AnimateFromCoeff:
     def __init__(
         self, sadtalker_paths, device, dtype=None, dp_device_ids=None, **quanto_config
@@ -61,7 +86,7 @@ class AnimateFromCoeff:
         mapping = MappingNet(**config["model_params"]["mapping_params"])
 
         if dp_device_ids is not None:
-            logger.info("Using DataParallel with device ids:", dp_device_ids)
+            logger.info(f"Using DataParallel with device ids: {dp_device_ids}")
             generator = nn.DataParallel(
                 generator,
                 device_ids=dp_device_ids,
@@ -90,7 +115,7 @@ class AnimateFromCoeff:
 
         self.quanto_config = quanto_config
         if self.quanto_config:
-            logger.info("Quanto config:", quanto_config)
+            logger.info(f"Quanto config: {quanto_config}")
 
         if sadtalker_paths is not None:
             if "checkpoint" in sadtalker_paths:  # use safe tensor
@@ -198,7 +223,6 @@ class AnimateFromCoeff:
         kp_detector=None,
         he_estimator=None,
     ):
-        logger.info("Loading checkpoint from", checkpoint_path)
         checkpoint = safetensors.torch.load_file(checkpoint_path)
 
         if generator is not None:

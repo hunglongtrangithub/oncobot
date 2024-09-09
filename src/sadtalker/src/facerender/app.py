@@ -9,13 +9,7 @@ import requests
 from requests.exceptions import ConnectionError
 import atexit
 
-
-from .animate import (
-    AnimateFromCoeff,
-    ACCEPTED_DTYPES,
-    ACCEPTED_WEIGHTS,
-    ACCEPTED_ACTIVATIONS,
-)
+from .animate import check_arguments
 from src.utils.logger_config import logger
 
 app = FastAPI()
@@ -24,31 +18,6 @@ app = FastAPI()
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
-
-
-def check_arguments(torch_dtype, quanto_config):
-    dtype = None
-    if torch_dtype:
-        if torch_dtype not in ACCEPTED_DTYPES:
-            raise ValueError(
-                f"Only support dtypes in {ACCEPTED_DTYPES.keys()} but found {torch_dtype}"
-            )
-        dtype = ACCEPTED_DTYPES[torch_dtype]
-    if "weights" in quanto_config:
-        if quanto_config["weights"] not in ACCEPTED_WEIGHTS:
-            raise ValueError(
-                f"Only support weights in {ACCEPTED_WEIGHTS.keys()} but found {quanto_config['weights']}"
-            )
-        quanto_config["weights"] = ACCEPTED_WEIGHTS[quanto_config["weights"]]
-    if "activations" in quanto_config:
-        if quanto_config["activations"] not in ACCEPTED_ACTIVATIONS:
-            raise ValueError(
-                f"Only support weights in {ACCEPTED_ACTIVATIONS.keys()} but found {quanto_config['activations']}"
-            )
-        quanto_config["activations"] = ACCEPTED_ACTIVATIONS[
-            quanto_config["activations"]
-        ]
-    return dtype, quanto_config
 
 
 class SetUpRequest(BaseModel):

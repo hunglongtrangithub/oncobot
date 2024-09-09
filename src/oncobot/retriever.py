@@ -34,7 +34,7 @@ def longest_common_substring(s1, s2):
 
     # Extract the longest common substring using the ending index and max_length
     if max_length <= 0:
-        print("No common substring found")
+        logger.info("No common substring found")
         return "", 0
     longest_common_substring = s1[
         ending_index_s1 - max_length + 1 : ending_index_s1 + 1

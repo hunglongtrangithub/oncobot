@@ -7,7 +7,7 @@
 # SadTalker:
 
 ```sh
-cd src/sad_talker && chmod +x scripts/download_models.sh && ./scripts/download_models.sh
+cd src/sadtalker && chmod +x scripts/download_models.sh && ./scripts/download_models.sh
 ```
 
 # Install:
@@ -32,4 +32,9 @@ cd ui && yarn install
 meilisearch --config-file-path="./config.toml"
 ```
 
-# Start the application:
+4. run the following command to index the data:
+
+```sh
+python -m src.oncobot.scripts.index
+```
+

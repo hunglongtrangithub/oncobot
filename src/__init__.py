@@ -1,6 +1,7 @@
 import os
+from src.utils.logger_config import logger
 
-def enable_line_profiler():
+if os.getenv("MODE") == "profile":
     import builtins
     import line_profiler
     import atexit
@@ -8,7 +9,4 @@ def enable_line_profiler():
     profile = line_profiler.LineProfiler()
     atexit.register(profile.print_stats)
     builtins.__dict__["profile"] = profile
-
-if os.getenv("MODE") == "TEST":
-    enable_line_profiler()
-    print("Line profiler enabled")
+    logger.info("Line profiler enabled")

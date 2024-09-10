@@ -7,10 +7,8 @@ from openai import OpenAI, AsyncOpenAI
 from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
 import replicate
 
-from src.utils.logger_config import get_logger
+from src.utils.logger_config import logger
 from src.utils.env_config import settings
-
-logger = get_logger(__name__)
 
 
 def try_open_audio_file(file_path: Path) -> BinaryIO:
@@ -54,11 +52,10 @@ class WhisperSTT:
             device=self.device,
         )
 
-        logger.info(f"{self.model_name} initialized.")
-        logger.info("Initialized on device: {}".format(self.device))
+        logger.info(f"{self.model_name} initialized on device: {self.device}")
         if self.device == torch.device("cuda"):
-            logger.info("Number of GPUs: {}".format(torch.cuda.device_count()))
-        logger.info(
+            logger.debug("Number of GPUs: {}".format(torch.cuda.device_count()))
+        logger.debug(
             "Memory footprint: {:.2f}GB".format(
                 self.model.get_memory_footprint() / 1024**3
             )
@@ -69,7 +66,7 @@ class WhisperSTT:
             transcription = self.pipe(audio_path)
             return transcription["text"]  # type: ignore
         except Exception as e:
-            print(f"Error in loading {self.model_name}: {e}")
+            logger.error(f"Error in loading {self.model_name}: {e}")
             raise
 
     async def arun(self, audio_path: str) -> str:

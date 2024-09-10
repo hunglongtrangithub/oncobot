@@ -54,7 +54,7 @@ else:
         batch_size=75,
         device=[1, 2],
         parallel_mode="dp",
-        torch_dtype="float16",
+        # torch_dtype="float16",
         # device=2,
         # batch_size=60,
         # quanto_weights="int8",

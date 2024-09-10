@@ -1,13 +1,12 @@
 import os
 import time
 from pathlib import Path
-
+import pytest
 import torch
 import yaml
 import sys
-from pathlib import Path
 
-sys.path.append(str(Path(__file__).parent.parent))
+sys.path.append(str(Path(__file__).parents[2]))
 from src.oncobot.talking_face import CustomSadTalker
 from src.sadtalker.src.facerender.modules.generator import OcclusionAwareSPADEGenerator
 from src.sadtalker.src.facerender.modules.mapping import MappingNet
@@ -17,28 +16,32 @@ from src.sadtalker.src.facerender.modules.make_animation import (
     keypoint_transformation,
 )
 
-image_size = 256
-image_preprocess = "crop"
-checkpoint_path = Path(__file__).parent.parent / "src/sadtalker/checkpoints"
-config_path = Path(__file__).parent.parent / "src/sadtalker/src/config"
-sadtalker_paths = init_path(
-    str(checkpoint_path),
-    str(config_path),
-    image_size,
-    False,
-    image_preprocess,
-)
-with open(sadtalker_paths["facerender_yaml"]) as f:
-    config = yaml.safe_load(f)
 
-
-def test_path():
-    print(sadtalker_paths)
+@pytest.fixture(scope="module")
+def config():
+    image_size = 256
+    image_preprocess = "crop"
+    checkpoint_path = Path(__file__).parents[2] / "src/sadtalker/checkpoints"
+    gfpgan_path = Path(__file__).parents[2] / "src/sadtalker/gfpgan/weights"
+    config_path = Path(__file__).parents[2] / "src/sadtalker/src/config"
+    sadtalker_paths = init_path(
+        str(checkpoint_path),
+        str(gfpgan_path),
+        str(config_path),
+        image_size,
+        False,
+        image_preprocess,
+    )
+    with open(sadtalker_paths["facerender_yaml"]) as f:
+        config = yaml.safe_load(f)
+    print("config loaded")
+    return config
 
 
 def test_headpose_pred_to_degree():
     pred = torch.randn([30, 66])
     degree = headpose_pred_to_degree(pred)
+    print(degree.shape)
 
 
 def test_keypoint_transformation():
@@ -54,13 +57,13 @@ def test_keypoint_transformation():
     print(kp_transformed["value"].shape)
 
 
-# @profile
+# # @profile
 def test_talker():
     talker = CustomSadTalker(
-        batch_size=30,
-        device=[1],
-        # torch_dtype="float16",
-        # parallel_mode="dp",
+        batch_size=60,
+        device=[1, 2],
+        parallel_mode="dp",
+        torch_dtype="float16",
         # quanto_weights="int8",
         # quanto_activations=None,
     )
@@ -69,19 +72,19 @@ def test_talker():
     video_path = str(video_folder / "chatbot__1.mp4")
     audio_path = str(Path(__file__).parents[2] / "examples/fake_patient3.wav")
     image_path = str(Path(__file__).parents[2] / "examples/chatbot1.jpg")
-    start = time.perf_counter()
-    talker.run(
-        video_path,
-        audio_path,
-        image_path,
-        delete_generated_files=False,
-    )
-    print(f"Total time taken: {time.perf_counter() - start:.2f} seconds")
-    assert os.path.exists(video_path)
-    print("Test passed")
+    for _ in range(3):
+        start = time.perf_counter()
+        talker.run(
+            video_path,
+            audio_path,
+            image_path,
+            delete_generated_files=False,
+        )
+        print(f"Total time taken: {time.perf_counter() - start:.2f} seconds")
+        assert os.path.exists(video_path)
 
 
-def test_mapping_net():
+def test_mapping_net(config):
     mapping = MappingNet(**config["model_params"]["mapping_params"])
     mapping.eval()
     batch_size = 3
@@ -92,14 +95,13 @@ def test_mapping_net():
     for key in output:
         print(key, output[key].shape)
         assert output[key].shape[0] == batch_size
-    print("Test passed")
 
 
 def size(tensor):
     return tensor.element_size() * tensor.nelement()
 
 
-def test_generator():
+def test_generator(config):
     generator = OcclusionAwareSPADEGenerator(
         **config["model_params"]["generator_params"],
         **config["model_params"]["common_params"],
@@ -124,7 +126,6 @@ def test_generator():
     output = generator(source_image, kp_source=kp_source, kp_driving=kp_driving)
     print(output["prediction"].shape)
     assert output["prediction"].shape[0] == batch_size
-    print("Test passed")
 
 
 if __name__ == "__main__":

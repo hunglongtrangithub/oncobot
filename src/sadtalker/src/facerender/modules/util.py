@@ -14,13 +14,15 @@ from torch.nn.utils.spectral_norm import spectral_norm
 from torch.nn.common_types import _size_2_t, _size_3_t
 
 
-def kp2gaussian(kp, spatial_size, kp_variance):
+def kp2gaussian(kp, spatial_size, kp_variance, dtype=torch.float32):
     """
     Transform a keypoint into gaussian like representation
     """
     mean = kp["value"]
-
-    coordinate_grid = make_coordinate_grid(spatial_size, mean.type())
+    # TEST: spatial_size torch.Size([16, 64, 64])
+    coordinate_grid = make_coordinate_grid(
+        spatial_size, device=mean.device, dtype=dtype
+    )
     number_of_leading_dimensions = len(mean.shape) - 1
     shape = (1,) * number_of_leading_dimensions + coordinate_grid.shape
     coordinate_grid = coordinate_grid.view(*shape)
@@ -30,21 +32,21 @@ def kp2gaussian(kp, spatial_size, kp_variance):
     # Preprocess kp shape
     shape = mean.shape[:number_of_leading_dimensions] + (1, 1, 1, 3)
     mean = mean.view(*shape)
-
-    mean_sub = coordinate_grid.to(mean.device) - mean
+    # TEST: coordinate_grid.shape torch.Size([batch_size, 15, 16, 64, 64, 3])
+    mean_sub = coordinate_grid - mean
 
     out = torch.exp(-0.5 * (mean_sub**2).sum(-1) / kp_variance)
 
     return out
 
 
-def make_coordinate_grid_2d(spatial_size, type):
+def make_coordinate_grid_2d(spatial_size, device=None):
     """
     Create a meshgrid [-1,1] x [-1,1] of given spatial_size.
     """
     h, w = spatial_size
-    x = torch.arange(w).type(type)
-    y = torch.arange(h).type(type)
+    x = torch.arange(w, device=device)
+    y = torch.arange(h, device=device)
 
     x = 2 * (x / (w - 1)) - 1
     y = 2 * (y / (h - 1)) - 1
@@ -57,11 +59,11 @@ def make_coordinate_grid_2d(spatial_size, type):
     return meshed
 
 
-def make_coordinate_grid(spatial_size, type):
+def make_coordinate_grid(spatial_size, device=None, dtype=torch.float32):
     d, h, w = spatial_size
-    x = torch.arange(w).type(type)
-    y = torch.arange(h).type(type)
-    z = torch.arange(d).type(type)
+    x = torch.arange(w, device=device, dtype=dtype)
+    y = torch.arange(h, device=device, dtype=dtype)
+    z = torch.arange(d, device=device, dtype=dtype)
 
     x = 2 * (x / (w - 1)) - 1
     y = 2 * (y / (h - 1)) - 1
@@ -257,6 +259,7 @@ class UpBlock3d(nn.Module):
 class DownBlock2d(nn.Module):
     """
     Downsampling block for use in encoder.
+    Shape is divided by 2.
     """
 
     def __init__(
@@ -269,6 +272,7 @@ class DownBlock2d(nn.Module):
             kernel_size=kernel_size,
             padding=padding,
             groups=groups,
+            # bias=False,
         )
         self.norm = BatchNorm2d(out_features, affine=True)
         self.pool = nn.AvgPool2d(kernel_size=(2, 2))
@@ -313,6 +317,7 @@ class DownBlock3d(nn.Module):
 class SameBlock2d(nn.Module):
     """
     Simple block, preserve spatial resolution.
+    Shape is preserved.
     """
 
     def __init__(
@@ -331,6 +336,7 @@ class SameBlock2d(nn.Module):
             kernel_size=kernel_size,
             padding=padding,
             groups=groups,
+            # bias=False,
         )
         self.norm = BatchNorm2d(out_features, affine=True)
         if lrelu:
@@ -526,7 +532,7 @@ class AntiAliasInterpolation2d(nn.Module):
             kernel *= torch.exp(-((mgrid - mean) ** 2) / (2 * std**2))
 
         # Make sure sum of values in gaussian kernel equals 1.
-        kernel = kernel / torch.sum(kernel)
+        kernel = kernel / torch.sum(kernel)  # type: ignore
         # Reshape to depthwise convolutional weight
         kernel = kernel.view(1, 1, *kernel.size())
         kernel = kernel.repeat(channels, *[1] * (kernel.dim() - 1))
@@ -606,7 +612,7 @@ class SPADEResnetBlock(nn.Module):
             self.norm_s = SPADE(fin, label_nc)
 
     def forward(self, x, seg1):
-        x_s = self.shortcut(x, seg1)
+        x_s = self.shortcut(x, seg1)  # slow
         dx = self.conv_0(self.actvn(self.norm_0(x, seg1)))
         dx = self.conv_1(self.actvn(self.norm_1(dx, seg1)))
         out = x_s + dx
@@ -614,7 +620,7 @@ class SPADEResnetBlock(nn.Module):
 
     def shortcut(self, x, seg1):
         if self.learned_shortcut:
-            x_s = self.conv_s(self.norm_s(x, seg1))
+            x_s = self.conv_s(self.norm_s(x, seg1))  # slow: 0.97s (100%)
         else:
             x_s = x
         return x_s
@@ -643,7 +649,7 @@ class audio2image(nn.Module):
     def headpose_pred_to_degree(self, pred):
         device = pred.device
         idx_tensor = [idx for idx in range(66)]
-        idx_tensor = torch.FloatTensor(idx_tensor).to(device)
+        idx_tensor = torch.FloatTensor(idx_tensor, device=device)
         pred = F.softmax(pred)
         degree = torch.sum(pred * idx_tensor, 1) * 3 - 99
 

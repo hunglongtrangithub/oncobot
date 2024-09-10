@@ -1,9 +1,15 @@
 import os
 import glob
+from src.utils.logger_config import logger
 
 
 def init_path(
-    checkpoint_dir, config_dir, size=512, old_version=False, preprocess="crop"
+    checkpoint_dir,
+    gfpgan_dir,
+    config_dir,
+    size=512,
+    old_version=False,
+    preprocess="crop",
 ):
     if old_version:
         #### load all the checkpoint of `pth`
@@ -23,7 +29,7 @@ def init_path(
 
         use_safetensor = False
     elif len(glob.glob(os.path.join(checkpoint_dir, "*.safetensors"))):
-        print("using safetensor as default")
+        logger.info("using safetensor as default")
         sadtalker_paths = {
             "checkpoint": os.path.join(
                 checkpoint_dir, "SadTalker_V0.0.2_" + str(size) + ".safetensors"
@@ -31,8 +37,8 @@ def init_path(
         }
         use_safetensor = True
     else:
-        print(
-            "WARNING: The new version of the model will be updated by safetensor, you may need to download it mannully. We run the old version of the checkpoint this time!"
+        logger.warning(
+            "The new version of the model will be updated by safetensor, you may need to download it mannully. We run the old version of the checkpoint this time!"
         )
         use_safetensor = False
 
@@ -50,6 +56,7 @@ def init_path(
             "path_of_net_recon_model": os.path.join(checkpoint_dir, "epoch_20.pth"),
         }
 
+    sadtalker_paths["gfpgan_dir"] = gfpgan_dir
     sadtalker_paths["dir_of_BFM_fitting"] = os.path.join(config_dir)  # , 'BFM_Fitting'
     sadtalker_paths["audio2pose_yaml_path"] = os.path.join(
         config_dir, "auido2pose.yaml"

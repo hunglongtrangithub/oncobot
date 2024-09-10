@@ -1,11 +1,9 @@
 import asyncio
 import json
 
-import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
-
-app = FastAPI()
+from fastapi.testclient import TestClient
 
 
 async def retrieve_docs():
@@ -21,6 +19,7 @@ async def chat_response():
     response = ""
     yield "add", "/streamed_output", []
     for chunk in range(20):
+        chunk = f"|{chunk}|"
         yield "add", "/streamed_output/-", chunk
         response += str(chunk)
         await asyncio.sleep(0.1)  # Simulate delay between responses
@@ -56,13 +55,19 @@ async def stream_generator(subscription):
         pass
 
 
-@app.post("/")
-async def endpoint():
-    subscription = stream_log()
-    return StreamingResponse(
-        stream_generator(subscription), media_type="text/event-stream"
-    )
+def test_async():
+    app = FastAPI()
 
+    @app.post("/")
+    async def endpoint():
+        subscription = stream_log()
+        return StreamingResponse(
+            stream_generator(subscription), media_type="text/event-stream"
+        )
 
-if __name__ == "__main__":
-    uvicorn.run(app, host="localhost", port=8080)
+    client = TestClient(app)
+    response = client.post("/")  # Enable streaming
+
+    for line in response.iter_lines():
+        if line:
+            print(line)

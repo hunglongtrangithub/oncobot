@@ -1,7 +1,11 @@
+import os
+
 import numpy as np
-import cv2, os, sys, torch
+import cv2
+import torch
 from tqdm import tqdm
 from PIL import Image
+from scipy.io import savemat
 
 # 3dmm extraction
 import safetensors
@@ -9,10 +13,8 @@ import safetensors.torch
 from ..face3d.util.preprocess import align_img
 from ..face3d.util.load_mats import load_lm3d
 from ..face3d.models import networks
-
-from scipy.io import loadmat, savemat
 from .cropper import Preprocesser
-
+from src.utils.logger_config import logger
 
 import warnings
 
@@ -46,29 +48,29 @@ def split_coeff(coeffs):
 
 
 class CropAndExtract:
-    def __init__(self, sadtalker_path, device):
-
-        self.propress = Preprocesser(device)
+    def __init__(self, sadtalker_paths, device):
+        self.propress = Preprocesser(sadtalker_paths, device)
         self.net_recon = networks.define_net_recon(
             net_recon="resnet50", use_last_fc=False, init_path=""
         ).to(device)
 
-        if sadtalker_path["use_safetensor"]:
-            checkpoint = safetensors.torch.load_file(sadtalker_path["checkpoint"])
+        if sadtalker_paths["use_safetensor"]:
+            checkpoint = safetensors.torch.load_file(sadtalker_paths["checkpoint"])
             self.net_recon.load_state_dict(
                 load_x_from_safetensor(checkpoint, "face_3drecon")
             )
         else:
             checkpoint = torch.load(
-                sadtalker_path["path_of_net_recon_model"],
+                sadtalker_paths["path_of_net_recon_model"],
                 map_location=torch.device(device),
             )
             self.net_recon.load_state_dict(checkpoint["net_recon"])
 
         self.net_recon.eval()
-        self.lm3d_std = load_lm3d(sadtalker_path["dir_of_BFM_fitting"])
+        self.lm3d_std = load_lm3d(sadtalker_paths["dir_of_BFM_fitting"])
         self.device = device
 
+    # @profile 
     def generate(
         self,
         input_path,
@@ -77,7 +79,6 @@ class CropAndExtract:
         source_image_flag=False,
         pic_size=256,
     ):
-
         pic_name = os.path.splitext(os.path.split(input_path)[-1])[0]
 
         landmarks_path = os.path.join(save_dir, pic_name + "_landmarks.txt")
@@ -148,7 +149,7 @@ class CropAndExtract:
             for frame in x_full_frames
         ]
         if len(frames_pil) == 0:
-            print("No face is detected in the input file")
+            logger.error("No face is detected in the input file")
             return None, None, None
 
         # save crop info
@@ -159,7 +160,7 @@ class CropAndExtract:
         if not os.path.isfile(landmarks_path):
             lm = self.propress.predictor.extract_keypoint(frames_pil, landmarks_path)
         else:
-            print(" Using saved landmarks.")
+            logger.info("Using saved landmarks...")
             lm = np.loadtxt(landmarks_path).astype(np.float32)
             lm = lm.reshape([len(x_full_frames), -1, 2])
 

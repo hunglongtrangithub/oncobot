@@ -11,6 +11,8 @@ from ..sync_batchnorm import (
     SynchronizedBatchNorm3d as BatchNorm3d,
 )
 
+from src.utils.logger_config import logger
+
 
 class DenseMotionNetwork(nn.Module):
     """
@@ -41,7 +43,12 @@ class DenseMotionNetwork(nn.Module):
             self.hourglass.out_filters, num_kp + 1, kernel_size=7, padding=3
         )
 
-        self.compress = nn.Conv3d(feature_channel, compress, kernel_size=1)
+        self.compress = nn.Conv3d(
+            feature_channel,
+            compress,
+            kernel_size=1,
+            # bias=False
+        )
         self.norm = BatchNorm3d(compress, affine=True)
 
         if estimate_occlusion_map:
@@ -54,12 +61,14 @@ class DenseMotionNetwork(nn.Module):
 
         self.num_kp = num_kp
 
-    def create_sparse_motions(self, feature, kp_driving, kp_source):
+    def create_sparse_motions(self, feature, kp_driving, kp_source, idx_tensors=None):
         bs, _, d, h, w = feature.shape
-        identity_grid = make_coordinate_grid((d, h, w), type=kp_source["value"].type())
-        identity_grid = identity_grid.view(1, 1, d, h, w, 3).to(
-            kp_driving["value"].device
+        identity_grid = make_coordinate_grid(
+            (d, h, w),
+            device=kp_driving["value"].device,
+            dtype=kp_driving["value"].dtype,
         )
+        identity_grid = identity_grid.view(1, 1, d, h, w, 3)
         coordinate_grid = identity_grid - kp_driving["value"].view(
             bs, self.num_kp, 1, 1, 1, 3
         )
@@ -84,8 +93,6 @@ class DenseMotionNetwork(nn.Module):
             [identity_grid, driving_to_source], dim=1
         )  # bs num_kp+1 d h w 3
 
-        # sparse_motions = driving_to_source
-
         return sparse_motions
 
     def create_deformed_feature(self, feature, sparse_motions):
@@ -105,29 +112,41 @@ class DenseMotionNetwork(nn.Module):
         )  # (bs, num_kp+1, c, d, h, w)
         return sparse_deformed
 
-    def create_heatmap_representations(self, feature, kp_driving, kp_source):
+    def create_heatmap_representations(
+        self, feature, kp_driving, kp_source, idx_tensors=None
+    ):
         spatial_size = feature.shape[3:]
         gaussian_driving = kp2gaussian(
-            kp_driving, spatial_size=spatial_size, kp_variance=0.01
+            kp_driving,
+            spatial_size=spatial_size,
+            kp_variance=0.01,
+            dtype=kp_driving["value"].dtype,
         )
         gaussian_source = kp2gaussian(
-            kp_source, spatial_size=spatial_size, kp_variance=0.01
+            kp_source,
+            spatial_size=spatial_size,
+            kp_variance=0.01,
+            dtype=kp_source["value"].dtype,
         )
         heatmap = gaussian_driving - gaussian_source
 
         # adding background feature
-        zeros = (
-            torch.zeros(
-                heatmap.shape[0], 1, spatial_size[0], spatial_size[1], spatial_size[2]
-            )
-            .type(heatmap.type())
-            .to(heatmap.device)
+        zeros = torch.zeros(
+            (
+                heatmap.shape[0],
+                1,
+                spatial_size[0],
+                spatial_size[1],
+                spatial_size[2],
+            ),
+            device=heatmap.device,
+            dtype=heatmap.dtype,
         )
         heatmap = torch.cat([zeros, heatmap], dim=1)
         heatmap = heatmap.unsqueeze(2)  # (bs, num_kp+1, 1, d, h, w)
         return heatmap
 
-    def forward(self, feature, kp_driving, kp_source):
+    def forward(self, feature, kp_driving, kp_source, idx_tensors=None):
         bs, _, d, h, w = feature.shape
 
         feature = self.compress(feature)
@@ -135,23 +154,24 @@ class DenseMotionNetwork(nn.Module):
         feature = F.relu(feature)
 
         out_dict = dict()
-        sparse_motion = self.create_sparse_motions(feature, kp_driving, kp_source)
+        sparse_motion = self.create_sparse_motions(
+            feature, kp_driving, kp_source, idx_tensors
+        )
         deformed_feature = self.create_deformed_feature(feature, sparse_motion)
 
         # TEST: All are on the same device
-        # print("deformed_feature.device", deformed_feature.device)
-        # print("kp_driving['value'].device", kp_driving["value"].device)
-        # print("kp_source['value'].device", kp_source["value"].device)
         heatmap = self.create_heatmap_representations(
-            deformed_feature, kp_driving, kp_source
+            deformed_feature, kp_driving, kp_source, idx_tensors
         )
-
+        logger.debug(
+            f"heatmap {heatmap.dtype}, deformed_feature {deformed_feature.dtype}",
+        )
         input_ = torch.cat([heatmap, deformed_feature], dim=2)
         input_ = input_.view(bs, -1, d, h, w)
 
         # input = deformed_feature.view(bs, -1, d, h, w)      # (bs, num_kp+1 * c, d, h, w)
-
-        prediction = self.hourglass(input_)
+        logger.debug(f"input_ {input_.dtype}")
+        prediction = self.hourglass(input_)  # slow
 
         mask = self.mask(prediction)
         mask = F.softmax(mask, dim=1)

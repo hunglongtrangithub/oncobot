@@ -15,7 +15,7 @@ from pathlib import Path
 import json
 
 
-from src.utils.logger_config import get_logger
+from src.utils.logger_config import logger
 from src.utils.env_config import settings
 from src.oncobot.retriever import CustomRetriever
 from src.oncobot.custom_chat_model import CustomChatHuggingFace, DummyChat
@@ -25,7 +25,6 @@ from src.oncobot.tts import XTTS, DummyTTS
 from src.oncobot.transcription import WhisperSTT, DummyOpenAIWhisperSTT
 from src.oncobot.talking_face import CustomSadTalker, DummyTalker
 
-logger = get_logger(__name__)
 
 # Load dummy models if in test mode
 if os.environ.get("MODE") == "TEST":
@@ -52,12 +51,12 @@ else:
     # The comments below show a few options to configure the inference of the talker model.
     # The current settings works well on a 40GB NVIDIA A100 GPU.
     talker = CustomSadTalker(
-        # batch_size=75,
-        # device=[1, 2, 4],
-        # parallel_mode="dp",
+        batch_size=75,
+        device=[1, 2],
+        parallel_mode="dp",
         # torch_dtype="float16",
-        device="cuda:2",
-        batch_size=60,
+        # device=2,
+        # batch_size=60,
         # quanto_weights="int8",
         # quanto_activations=None,
     )
@@ -97,7 +96,7 @@ async def astream_generator(subscription: AsyncGenerator):
     try:
         async for op, path, chunk in subscription:
             if path == "/stream-output/-":
-                print(f"op: {op}, path: {path}, chunk: {chunk}")
+                logger.debug(f"op: {op}, path: {path}, chunk: {chunk}")
             yield f"event: data\ndata: {post_processing(op, path, chunk)}\n\n"
     except asyncio.TimeoutError:
         error_message = "Stream timed out"

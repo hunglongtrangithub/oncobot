@@ -4,10 +4,8 @@ from typing import List, Optional
 import meilisearch
 from meilisearch.errors import MeilisearchApiError
 
-from src.utils.logger_config import get_logger
+from src.utils.logger_config import logger
 from .scripts.index import EMBEDDER_NAME, INDEX_NAME, SEARCH_API_KEY, MEILI_API_URL
-
-logger = get_logger(__name__)
 
 
 class Document(BaseModel):
@@ -36,7 +34,7 @@ def longest_common_substring(s1, s2):
 
     # Extract the longest common substring using the ending index and max_length
     if max_length <= 0:
-        print("No common substring found")
+        logger.info("No common substring found")
         return "", 0
     longest_common_substring = s1[
         ending_index_s1 - max_length + 1 : ending_index_s1 + 1
@@ -111,12 +109,3 @@ class CustomRetriever:
         except MeilisearchApiError as e:
             logger.error(f"Error retrieving document with id {doc_id}: {e}.")
             return None
-
-
-if __name__ == "__main__":
-    retriever = CustomRetriever(num_docs=5)
-    # query = "What is fake patient 1 diagnosed with?"
-    query = "fake patient 1"
-    docs = retriever.get_relevant_documents(query)
-    for doc in docs:
-        print(doc.title)

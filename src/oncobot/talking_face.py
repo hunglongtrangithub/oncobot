@@ -1,4 +1,5 @@
 import os
+import time
 from pathlib import Path
 import shutil
 
@@ -19,6 +20,7 @@ class DummyTalker:
 
     def run(self, video_path: str, audio_path: str, image_path: str):
         shutil.copy(self.dummy_video_file, video_path)
+        time.sleep(5)
         logger.info(f"Created video {video_path}")
 
     async def arun(self, video_path: str, audio_path: str, image_path: str):

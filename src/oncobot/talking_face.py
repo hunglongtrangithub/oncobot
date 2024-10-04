@@ -2,6 +2,9 @@ import os
 import time
 from pathlib import Path
 import shutil
+import random
+
+from moviepy.editor import VideoFileClip, concatenate_videoclips, AudioFileClip
 
 from src.sadtalker import SadTalker
 from src.utils.logger_config import logger
@@ -22,6 +25,55 @@ class DummyTalker:
         shutil.copy(self.dummy_video_file, video_path)
         time.sleep(5)
         logger.info(f"Created video {video_path}")
+
+    async def arun(self, video_path: str, audio_path: str, image_path: str):
+        self.run(video_path, audio_path, image_path)
+
+
+class FakeTalker:
+
+    def __init__(
+        self,
+        sample_video_bank_full_path: str = str(Path(__file__).parents[2] / "examples"),
+    ):
+        self.sample_video_bank = sample_video_bank_full_path
+        logger.info(
+            f"FakeTalker initialized. Looking for sample videos in {self.sample_video_bank}"
+        )
+
+    def run(self, video_path: str, audio_path: str, image_path: str):
+        bot_name = Path(image_path).stem
+        sample_video_path = Path(self.sample_video_bank) / f"{bot_name}.mp4"
+
+        logger.info(f"Sample video path: {sample_video_path}")
+        if not sample_video_path.exists():
+            raise FileNotFoundError(f"Sample video not found at {sample_video_path}")
+
+        sample_video = VideoFileClip(str(sample_video_path))
+        audio_clip = AudioFileClip(str(audio_path))
+        audio_duration = audio_clip.duration
+
+        video_data = []
+        total_duration = 0
+
+        while total_duration < audio_duration:
+            n = random.uniform(1, min(10, sample_video.duration))
+            # Pick a random start time within the video
+            start_time = random.uniform(0, sample_video.duration - n)
+
+            video_segment = sample_video.subclip(start_time, start_time + n)
+            video_data.append(video_segment)
+            total_duration += n
+
+        final_video = concatenate_videoclips(video_data)
+        # Ensure the final video matches the audio duration
+        final_video = final_video.subclip(0, audio_duration)
+        # Set the audio to the final video
+        final_video = final_video.set_audio(audio_clip)
+        # Save the generated video to the specified path
+        final_video.write_videofile(str(video_path), codec="libx264", audio_codec="aac")
+
+        logger.info(f"Video saved to {video_path}")
 
     async def arun(self, video_path: str, audio_path: str, image_path: str):
         self.run(video_path, audio_path, image_path)

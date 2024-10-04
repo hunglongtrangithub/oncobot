@@ -1,0 +1,66 @@
+[tool.poetry]
+name = "oncobot"
+version = "0.1.0"
+description = "A Self-Hosted Multimodal Chatbot for Enhanced Clinical Oncology Information Retrieval"
+authors = ["Hung Tran <hunglongtran2004@gmail.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.10, <3.12"
+openai = "^1.10.0"
+fastapi = "^0.103.1"
+pydantic = "^2.3.0"
+uvicorn = "^0.23.2"
+tiktoken = "^0.5.2"
+python-dotenv = "^1.0.1"
+transformers = "^4.38.2, <4.43.4"
+torch = "^2.1.0"
+scipy = "^1.11.3"
+TTS = "^0.22.0"
+peft = "^0.8.2"
+langdetect = "^1.0.9"
+cutlet = "^0.3.0"
+mecab-python3 = "^1.0.8"
+unidic-lite = "^1.0.8"
+replicate = "^0.25.1"
+groq = "^0.4.2"
+pydantic-settings = "^2.2.1"
+sentence-transformers = "^2.7.0"
+meilisearch = "^0.31.1"
+face-alignment = "^1.4.1"
+imageio = "^2.34.1"
+imageio-ffmpeg = "^0.5.0"
+numba = "^0.59.1"
+resampy = "^0.4.3"
+pydub = "^0.25.1"
+kornia = "^0.7.2"
+yacs = "^0.1.8"
+pyyaml = "^6.0.1"
+facexlib = "^0.3.0"
+av = "^12.1.0"
+opencv-python = "^4.9.0.80"
+python-multipart = "^0.0.9"
+deepspeed = "^0.14.4"
+bson = "^0.5.10"
+optimum-quanto = "^0.2.2"
+trimesh = "^4.4.3"
+loguru = "^0.7.2"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.9.1"
+isort = "^5.12.0"
+pytest = "^8.3.2"
+line-profiler = "^4.1.3"
+torch-tb-profiler = "^0.4.3"
+viztracer = "^0.16.3"
+ipykernel = "^6.29.5"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["test"]
+addopts = ["--import-mode=importlib"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

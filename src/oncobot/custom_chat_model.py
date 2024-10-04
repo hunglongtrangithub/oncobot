@@ -202,7 +202,9 @@ class CustomChatHuggingFace(BaseChat):
         ]
         tokenized_chat_history["attention_mask"] = tokenized_chat_history[  # type: ignore
             "attention_mask"
-        ][:, -self.max_chat_length :]
+        ][
+            :, -self.max_chat_length :
+        ]
 
         tokenized_chat_history = tokenized_chat_history.to(self.device)
         prompt_size = tokenized_chat_history["input_ids"].shape[1]  # type: ignore
@@ -223,6 +225,9 @@ class CustomChatHuggingFace(BaseChat):
                 stack_info=True,
             )
             raise
+        finally:
+            torch.cuda.empty_cache()
+            torch.cuda.synchronize()
 
     def stream(
         self, current_conversation: List[Dict[str, str]]
@@ -249,7 +254,9 @@ class CustomChatHuggingFace(BaseChat):
         ]
         tokenized_chat_history["attention_mask"] = tokenized_chat_history[  # type: ignore
             "attention_mask"
-        ][:, -self.max_chat_length :]
+        ][
+            :, -self.max_chat_length :
+        ]
 
         # start the generation in a separate thread
         thread = Thread(
@@ -275,6 +282,8 @@ class CustomChatHuggingFace(BaseChat):
                 raise
             finally:
                 thread.join()
+                torch.cuda.empty_cache()
+                torch.cuda.synchronize()
 
         return generator()
 

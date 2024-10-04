@@ -1,17 +1,18 @@
+# this is for only server development with Docker Compose (not for version control, testing or profiling). The development happens inside the container.
 version: "3.8"
 
 services:
   frontend:
     build:
-      context: ./chat-langchain
+      context: ./ui
       dockerfile: Dockerfile
     container_name: chat-frontend
 
     working_dir: /app
-    command: yarn dev
+    command: yarn dev -H 0.0.0.0 -p 3000
     volumes:
-      - ./chat-langchain:/app
-      - /app/node_modules
+      - ./ui:/app
+      - /app/node_modules # exclude node_modules from the volume to use the container's node_modules
 
     ports:
       - 3000:3000
@@ -29,18 +30,13 @@ services:
     command: uvicorn main:app --host 0.0.0.0 --port 8080 --reload
 
     volumes:
-      - .:/app
-      - ./faiss_index:/app/faiss_index
-      - ./llm_llama:/app/llm_llama
-      - ./voices:/app/voices
+      - ./src:/app/src
+      - ./log:/app/log
+      - ./pyproject.toml:/app/pyproject.toml
+      - ./uv.lock:/app/uv.lock
 
     ports:
       - 8080:8080
-    environment:
-      - HF_TOKEN=${HF_TOKEN}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - REPLICATE_API_TOKEN=${REPLICATE_API_TOKEN}
-      - GROQ_API_KEY=${GROQ_API_KEY}
     env_file: .env
 
     deploy:
@@ -48,5 +44,17 @@ services:
         reservations:
           devices:
             - driver: nvidia
-              count: 4
+              count: all
               capabilities: [gpu]
+
+  db:
+    image: getmeili/meilisearch:v1.10
+    container_name: chat-db
+    ports:
+      - 7700:7700
+    volumes:
+      - ./meilisearch-data:/app/data.ms
+      - ./config.toml:/app/config.toml
+    working_dir: /app
+    command: meilisearch --config-file-path="./config.toml"
+    restart: unless-stopped # Automatically restart unless manually stopped

@@ -1,15 +1,10 @@
 FROM nvidia/cuda:12.3.0-devel-ubuntu22.04
 
-# Set environment variables for Python version
-ENV PYTHON_VERSION=3.11
-
-# Install Python and essential packages
-RUN apt-get update && \
-  apt-get install -y python${PYTHON_VERSION} python${PYTHON_VERSION}-dev python3-pip apt-utils curl
-# Set Python $PYTHON_VERSION as the default python version
-RUN update-alternatives --install /usr/bin/python python /usr/bin/python${PYTHON_VERSION} 1
-# Update pip to 23.2.1
-RUN pip install --upgrade pip==23.2.1
+# Install ffmpeg
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  ffmpeg \
+  curl \
+  && rm -rf /var/lib/apt/lists/*
 
 # Install Rust compiler
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
@@ -17,22 +12,15 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
 # Ensure the Rust compiler is in the PATH
 ENV PATH="/root/.cargo/bin:${PATH}"
 
-# Install necessary packages
-RUN apt-get update && \
-  apt-get -y install git build-essential ffmpeg
-
-RUN pip install ninja async-timeout
-
-RUN pip install --no-cache-dir poetry==1.7.1 && \
-  poetry config virtualenvs.create false && \
-  poetry install --no-interaction --no-ansi --no-root --no-directory
+COPY --from=ghcr.io/astral-sh/uv:0.4.1 /uv /bin/uv
 
 WORKDIR /app
-COPY ./pyproject.toml ./poetry.lock* ./
-COPY ./*.py ./
 
-RUN poetry install --no-interaction --no-ansi
+COPY ./pyproject.toml ./uv.lock ./
+RUN uv sync --frozen --no-cache
+RUN . .venv/bin/activate
 
-COPY .env ./
+COPY ./src/ ./src/
 
+EXPOSE 8080
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]

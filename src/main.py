@@ -23,7 +23,7 @@ from src.oncobot.ner import NERProcessor, DummyNERProcessor
 from src.oncobot.rag_chain import ChatRequest, RAGChain
 from src.oncobot.tts import XTTS, DummyTTS
 from src.oncobot.transcription import WhisperSTT, DummyOpenAIWhisperSTT
-from src.oncobot.talking_face import CustomSadTalker, DummyTalker
+from src.oncobot.talking_face import CustomSadTalker, DummyTalker, FakeTalker
 
 
 # Load dummy models if in test mode
@@ -40,26 +40,27 @@ if os.environ.get("MODE") == "TEST":
 else:
     chat_model = CustomChatHuggingFace(
         "meta-llama/Meta-Llama-3-8B-Instruct",
-        device="cuda:0",
-        max_chat_length=2048,
+        device="cuda",
+        max_chat_length=1024,
     )
     retriever = CustomRetriever(num_docs=5, semantic_ratio=0.1)
-    ner = NERProcessor(device="cuda:0")
+    ner = NERProcessor(device="cuda:1")
     chain = RAGChain(retriever, chat_model, ner)
     tts = XTTS(use_deepspeed=True)
-    transcribe = WhisperSTT(device="cuda:0")
+    transcribe = WhisperSTT(device="cuda:1")
     # The comments below show a few options to configure the inference of the talker model.
     # The current settings works well on a 40GB NVIDIA A100 GPU.
-    talker = CustomSadTalker(
-        batch_size=75,
-        device=[1, 2],
-        parallel_mode="dp",
-        # torch_dtype="float16",
-        # device=2,
-        # batch_size=60,
-        # quanto_weights="int8",
-        # quanto_activations=None,
-    )
+    # talker = CustomSadTalker(
+    #     batch_size=50,
+    #     device=[3, 4, 7],
+    #     parallel_mode="dp",
+    #     # torch_dtype="float16",
+    #     # device=2,
+    #     # batch_size=60,
+    #     # quanto_weights="int8",
+    #     # quanto_activations=None,
+    # )
+    talker = FakeTalker()
 
 
 app = FastAPI()
@@ -269,7 +270,7 @@ async def text_to_video(
                 speech_file_path,
                 voice_file_path,
                 face_file_path,
-                video_file_path,
+                # video_file_path,
             ),
         )
     except Exception as e:

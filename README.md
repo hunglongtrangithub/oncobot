@@ -15,7 +15,7 @@ cd src/sadtalker && chmod +x scripts/download_models.sh && ./scripts/download_mo
 ## Install:
 
 ```sh
-uv sync
+uv sync && source .venv/bin/activate
 cd ui && yarn install
 ```
 

@@ -31,7 +31,6 @@ class DummyTalker:
 
 
 class FakeTalker:
-
     def __init__(
         self,
         sample_video_bank_full_path: str = str(Path(__file__).parents[2] / "examples"),
@@ -57,7 +56,8 @@ class FakeTalker:
         total_duration = 0
 
         while total_duration < audio_duration:
-            n = random.uniform(1, min(10, sample_video.duration))
+            # n = random.uniform(1, min(10, sample_video.audio_duration))
+            n = min(sample_video.duration, audio_duration)
             # Pick a random start time within the video
             start_time = random.uniform(0, sample_video.duration - n)
 

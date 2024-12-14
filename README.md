@@ -1,7 +1,7 @@
 # Requirements
 
 - ffmpeg
-- poetry
+- uv
 - yarn
 
 # SadTalker:
@@ -13,7 +13,7 @@ cd src/sadtalker && chmod +x scripts/download_models.sh && ./scripts/download_mo
 # Install:
 
 ```sh
-poetry config virtualenvs.in-project true && poetry install # to set up virtual environment in project with the .venv folder
+uv sync
 cd ui && yarn install
 ```
 
@@ -37,4 +37,3 @@ meilisearch --config-file-path="./config.toml"
 ```sh
 python -m src.oncobot.scripts.index
 ```
-

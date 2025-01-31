@@ -2,6 +2,7 @@
 IMAGE_NAME=chat-frontend
 CONTAINER_NAME=chat-frontend
 PORT=3000
+WORKDIR=/usr/src/app
 LOG?=
 .PHONY: build dev stop remove rebuild
 
@@ -11,23 +12,27 @@ build:
 
 
 # Run the Docker container
+# --mount type=bind,source=$(shell realpath .),target=$(WORKDIR) \
+
 dev:
-	docker run --name $(CONTAINER_NAME) \
+	docker run --rm --name $(CONTAINER_NAME) \
 		-p $(PORT):$(PORT) \
-		--entrypoint "/bin/sh" \
-		--mount type=bind,source=$(shell pwd),target=/app \
+		--entrypoint "/bin/bash" \
+		-w $(WORKDIR) \
 		$(IMAGE_NAME) \
-		-c "yarn dev -p $(PORT)"
+		-c "bun run dev"
 
 
 # Interactive shell into the Docker CONTAINER_NAME
+# --mount type=bind,source=$(shell realpath .),target=$(WORKDIR) \
+
 shell:
-	docker run -it --name $(CONTAINER_NAME) \
+	docker run --rm -it --name $(CONTAINER_NAME) \
 		-p $(PORT):$(PORT) \
-		--entrypoint "/bin/sh" \
-		--mount type=bind,source=$(shell pwd),target=/app \
+		--entrypoint "/bin/bash" \
+		-w $(WORKDIR) \
 		$(IMAGE_NAME) \
-		-c "/bin/sh"
+		-c "/bin/bash"
 
 # Stop the Docker container
 stop:
@@ -42,6 +47,5 @@ remove:
 	docker rm $(CONTAINER_NAME)
 
 # Rebuild and restart the container
-rebuild: 
-	stop remove build run
+rebuild: stop remove build
 

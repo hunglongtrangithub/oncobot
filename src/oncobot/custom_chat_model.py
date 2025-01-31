@@ -192,7 +192,7 @@ class CustomChatHuggingFace(BaseChat):
             raise
 
         tokenized_chat_history = self.tokenizer(
-            text=chat_history,
+            text=chat_history,  # type: ignore
             return_tensors="pt",  # type: ignore
         )
 
@@ -233,7 +233,7 @@ class CustomChatHuggingFace(BaseChat):
         self, current_conversation: List[Dict[str, str]]
     ) -> Generator[str, None, None]:
         streamer = TextIteratorStreamer(
-            self.tokenizer,
+            self.tokenizer,  # type: ignore
             skip_prompt=True,
             skip_special_tokens=True,  # type: ignore
         )
@@ -245,7 +245,7 @@ class CustomChatHuggingFace(BaseChat):
         )
 
         tokenized_chat_history = self.tokenizer(
-            text=chat_history,
+            text=chat_history,  # type: ignore
             return_tensors="pt",  # type: ignore
         ).to(self.device)
 

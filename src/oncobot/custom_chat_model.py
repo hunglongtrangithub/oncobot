@@ -202,9 +202,7 @@ class CustomChatHuggingFace(BaseChat):
         ]
         tokenized_chat_history["attention_mask"] = tokenized_chat_history[  # type: ignore
             "attention_mask"
-        ][
-            :, -self.max_chat_length :
-        ]
+        ][:, -self.max_chat_length :]
 
         tokenized_chat_history = tokenized_chat_history.to(self.device)
         prompt_size = tokenized_chat_history["input_ids"].shape[1]  # type: ignore
@@ -254,9 +252,7 @@ class CustomChatHuggingFace(BaseChat):
         ]
         tokenized_chat_history["attention_mask"] = tokenized_chat_history[  # type: ignore
             "attention_mask"
-        ][
-            :, -self.max_chat_length :
-        ]
+        ][:, -self.max_chat_length :]
 
         # start the generation in a separate thread
         thread = Thread(
@@ -315,9 +311,9 @@ class CustomChatHuggingFace(BaseChat):
 
 
 class CustomChatOpenAI(BaseChat):
-    def __init__(self, model_name: str = "gpt-3.5-turbo"):
+    def __init__(self, model_name: str = "gpt-3.5-turbo", base_url: str | None = None):
         self.api_key = self._get_openai_api_key()
-        self.client = openai.OpenAI(api_key=self.api_key)
+        self.client = openai.OpenAI(api_key=self.api_key, base_url=base_url)
         self.async_client = openai.AsyncOpenAI(api_key=self.api_key)
         self.model_name = model_name
         logger.info("CustomChatOpenAI initialized.")

@@ -4,7 +4,7 @@
 
 - ffmpeg
 - uv
-- yarn
+- bun
 
 ## SadTalker:
 
@@ -21,13 +21,13 @@ cd ui && yarn install
 
 ## Prepare Environment Variables:
 
-1. Copy `.env.example` to `.env` and fill in the values
-2. Fill in your `config.toml` file with the Meilisearch environment variables in `.env` file
+1. Rename `.env.example` to `.env` and fill in your environment variables
+2. Rename `config.toml.example` to `config.toml` and fill in the Meilisearch environment variables in `.env` file
+3. Make sure your Meilisearch master key is more than 16 bytes
 
 ## Start Meilisearch locally:
 
 1. install Meilisearch
-2. set environment variables in appropriate places in `.env.example`
 3. run Meilisearch at project's root directory:
 
 ```sh
@@ -51,7 +51,7 @@ make dev
 ### Start the Next.js server:
 
 ```sh
-cd ui && yarn start
+cd ui && bun run dev
 ```
 
 ## TODO

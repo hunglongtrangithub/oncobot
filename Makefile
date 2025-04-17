@@ -4,7 +4,12 @@ CONTAINER_NAME=chat-backend
 PORT=8080
 NO_GPU?=
 LOG?=
-.PHONY: start format build run stop remove rebuild
+.PHONY: start format build run stop remove rebuild test
+
+# Start MeiliSearch
+meilisearch:
+	meilisearch --config-file-path="./config.toml"
+
 
 # Start the local server using uvicorn
 dev:

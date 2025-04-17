@@ -53,3 +53,9 @@ make dev
 ```sh
 cd ui && yarn start
 ```
+
+## TODO
+
+1. need a lightweight Ollama moddel to test integrating that model being served locally with Oncobot
+2. If 1 works, then try with vllm
+3. If 2 works without problems, try adding chat template and inference parameters to Vllm.

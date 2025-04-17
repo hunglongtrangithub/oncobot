@@ -4,7 +4,7 @@ export default function Footer(props: { colorMode: string }) {
   return (
     <footer className="flex justify-center relative py-4">
       <a
-        href="https://github.com/hunglongtrangithub/chat-langchain"
+        href="https://github.com/hunglongtrangithub/oncobot"
         target="_blank"
         className="flex items-center"
       >

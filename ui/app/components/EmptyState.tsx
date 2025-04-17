@@ -21,7 +21,6 @@ export function EmptyState(props: {
     <Card
       onMouseUp={handleClick}
       width={"48%"}
-      backgroundColor={bgColor}
       _hover={{ backgroundColor: hoverBgColor }}
       cursor={"pointer"}
       justifyContent={"center"}

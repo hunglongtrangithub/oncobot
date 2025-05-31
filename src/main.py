@@ -50,6 +50,16 @@ else:
     transcribe = WhisperSTT(device="cuda:1")
     # The comments below show a few options to configure the inference of the talker model.
     # The current settings works well on a 40GB NVIDIA A100 GPU.
+    # talker = CustomSadTalker(
+    #         batch_size=50,
+    #         device=[3, 4, 7],
+    #         parallel_mode="dp",
+    #         # torch_dtype="float16",
+    #         # device=2,
+    #         # batch_size=60,
+    #         # quanto_weights="int8",
+    #         # quanto_activations=None,
+    #     )
     talker = FakeTalker()
 
 

@@ -186,7 +186,7 @@ class DDPDemo:
             result_queue = manager.Queue()
             start_time = time.perf_counter()
             # Spawn processes
-            mp.spawn(  # type: ignore
+            mp.spawn(
                 self._ddp_worker,
                 args=(
                     world_size,

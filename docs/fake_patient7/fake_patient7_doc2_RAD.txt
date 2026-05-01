@@ -1,0 +1,21 @@
+===================================================================
+Report ID.....................2,doc2
+Patient ID....................pt357357357
+Patient Name..................Fake Patient7
+Principal Date................20100516 1045
+Record Type...................RAD
+Patient DOB...................03/01/1938
+
+CLINICAL HISTORY:
+Patient is a 72 year old female who returns for ultrasound guided core biopsy of the left breast mass and the abnormal left axillary lymph node found on mammogram. 
+PROCEDURE:
+U/S guided core biopsy of mass in 10 o’clock position of left breast with clip placement
+U/S guided core biopsy of mass in 11 o’clock position of left breast with clip placement
+U/S guided core biopsy of abnormal left axillary lymph node with clip placement
+ 
+TECHNIQUE:
+Sonography of the left breast mass at 10 o’clock was performed. The left breast was prepped in the usual sterile fashion. Under ultrasound guidance 2cc of 1% lidocaine was injected. A small skin incision was made. Under ultrasound guidance 2 passes were made with a 14 gauge needle. Clip was placed. Under ultrasound guidance 2 passes were made with a 14 gauge needle of the left breast mass at the 11 o’clock position. Clip was placed. 
+Sonography of the left axilla revealed 2 abnormal lymph nodes. One lymph node located in the superior axilla measuring 4 mm and another inferior axilla measuring 5 mm. A small incision in the skin was made. Core biopsy was performed using a 14 gauge needle. Two passes were made directly through the lesion. A clip was placed at the biopsy site.
+Post procedure digital mammography was obtained and shows the clips at the sites of the lesions.
+IMPRESSION:
+Successful core biopsies of the suspicious masses at 10 o’clock and 11 o’clock position of the left breast. Successful core biopsy of suspicious left axillary lymph node. The specimens were sent to pathology. 

@@ -106,7 +106,7 @@ def test_ddp():
 
         start = time.perf_counter()
         # Spawn processes
-        mp.spawn(  # type: ignore
+        mp.spawn(
             process_batch,
             args=(world_size, models, batches, result_queue),
             nprocs=world_size,

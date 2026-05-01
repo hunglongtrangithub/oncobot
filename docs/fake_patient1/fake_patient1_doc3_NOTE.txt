@@ -1,0 +1,24 @@
+===================================================================
+Report ID.....................3,doc3
+Patient ID....................pt123123123
+Patient Name..................Fake Patient1
+Principal Date................20100131 1015
+Record Type...................NOTE
+Patient DOB...................04/01/1960
+
+CLINICAL HISTORY:
+This is a 50 year old peri-menopausal female with clinical stage 2A (T1,N2,M0) triple negative infiltrating ductal carcinoma and DCIS of the right breast. An enlarged right axillary lymph node was biopsied and found to be positive for metastatic disease. MRI revealed a tumor 1.9 cm in diameter. She presents now to discuss options for treatment.
+
+INTERIM HISTORY:
+Patient seen post biopsy for evaluation and management of newly diagnosed infiltrating ductal carcinoma of the right breast with a focus of DCIS. She underwent a U/S core biopsy of the right breast and lymph node on 1/23/10 which revealed infiltrating ductal carcinoma. Breast MRI on 1/25/10 demonstrated a right breast malignancy at the 1 o’clock position measuring 1.2x3.4x5.6 cm. MRI also showed a left axillary lymphadenopathy. MRI of the left breast was without malignancy. PET/CT on 1/26/10 showed no evidence of distant metastases.
+Physical Exam: Well appearing female in NAD
+VS: BP 120/80, Pulse 71, Temp 97.0
+HEENT: NC/AT, PERRL, EOMI, sclera non-icteric
+Neck: Supple, no masses, thyroid not enlarged
+LUNGS: CTA, No wheezes, rales, rhonchi
+COR: RRR, No murmurs, rubs or gallops
+ABD: Soft, non-tender, non-distended, No HSM.
+EXT: Good pulses, No clubbing, cyanosis or edema
+
+IMPRESSION: 
+On review of the patient’s screening and diagnostic imaging and biopsy results she has a stage IIA (T1,N2,M0) infiltrating ductal carcinoma of the right breast with metastatic lymph node in the right axilla. She will be treated with neoadjuvant chemotherapy consisting of Adriamycin and Carboplatin for 4 cycles followed by weekly Abraxane. We will obtain a mammography midway through therapy to assess tumor response. 

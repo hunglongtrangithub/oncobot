@@ -1,0 +1,30 @@
+===================================================================
+Report ID.....................6,doc6
+Patient ID....................pt246246246
+Patient Name..................Fake Patient2
+Principal Date................20100130 1525
+Record Type...................NOTE
+Patient DOB...................06/21/1958
+
+DIAGNOSIS:  Stage IIIA (T3 N2 M0) invasive ductal carcinoma of the left breast, ER positive, PR positive and HER2 negative.
+
+Therapy: Completed 8 cycles of Taxotere.
+
+REASON FOR VISIT:  Assess response to neoadjuvant chemotherapy.
+
+Patient returns to the office today for ongoing management of biopsy-proven left breast cancer with axillary lymph node metastasis.
+Her initial office visit was on November 3, 2009.
+Her clinical breast examination at that time was significant for a 2 cm palpable mass in the upper outer aspect of the left breast at the 2 o’clock position.
+She also had multiple abnormally enlarged left axillary lymph nodes.
+
+She had core biopsies of the left breast mass and the left axillary lymph node.  Pathology confirmed the diagnosis of invasive ductal carcinoma of the left breast with metastases to the left axillary lymph node.
+
+She completed 4 cycles of chemotherapy with Adriamycin and Cytoxan.
+She has now completed 8 of a planned 12 cycles of Taxotere. She has tolerated her chemotherapy without significant sequela.
+
+She denies any hospitalizations.
+
+Her past medical history, surgical history, medications, and allergies were reviewed as noted in the electronic medical record.
+
+IMPRESSION:  Patient has had a partial response to neoadjuvant chemotherapy for a locally advanced, ER positive, PR positive and HER2 negative, left breast cancer.
+

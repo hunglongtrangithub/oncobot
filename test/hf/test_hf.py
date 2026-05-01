@@ -17,7 +17,10 @@ def test_login():
 
     from src.utils.env_config import settings
 
-    token = settings.hf_token.get_secret_value()
+    token = settings.get_hf_token()
+    if token is None:
+        print("No Hugging Face token found. Skipping login.")
+        return
     login(token=token)
 
 
@@ -57,11 +60,11 @@ def test_model():
     )
     print(model.get_memory_footprint() / 1024**3)  # in GB
     generator = pipeline(task="text-generation", model=model, tokenizer=tokenizer)
-    print(generator("Hello, how are you?", max_length=100)[0]["generated_text"])  # type: ignore
+    print(generator("Hello, how are you?", max_length=100)[0]["generated_text"])
 
 
 def test_chat_pipeline():
-    checkpoint = "meta-llama/Meta-Llama-3-8B-Instruct"
+    # checkpoint = "meta-llama/Meta-Llama-3-8B-Instruct"
     checkpoint = "meta-llama/Llama-2-7b-chat-hf"
     generator = pipeline("text-generation", model=checkpoint, tokenizer=checkpoint)
     messages = [
@@ -74,4 +77,4 @@ def test_chat_pipeline():
             "content": "How many helicopters can a human eat in one sitting?",
         },
     ]
-    print(generator(messages, max_new_tokens=128)[0]["generated_text"])  # type: ignore
+    print(generator(messages, max_new_tokens=128)[0]["generated_text"])

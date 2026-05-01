@@ -1,0 +1,21 @@
+===================================================================
+Report ID.....................9,doc9
+Patient ID....................pt246246246
+Patient Name..................Fake Patient2
+Principal Date................20100819 1130
+Record Type...................NOTE
+Patient DOB...................06/21/1958
+Reason for Visit:  Back Pain.
+
+History of Present Illness:
+52 year old female admitted with severe back pain. She rates the pain as 10/10 and located in the thoracic spine. The pain has been ongoing for this patient since July of this year. She has been followed in the pain service and has been receiving injections. Spinal injections with the pain service have not helped with the pain. The pain is also associated with worsening fatigue and shortness of breath. Patient reports increase weakness.  MRI was recommended but patient declined. Instead she underwent a CT scan. 
+CT spine appears to have extensive metastatic disease of the vertebral column as well as pulmonary nodules that have not been seen well previously. Based on these new findings she will need a CT of the chest/abdomen and pelvis to evaluate for any further lesions.
+Past Medical History:
+Patient with known history of left breast cancer stage IIIA status post left modified radical mastectomy with metastatic disease to the left axillary lymph node. She is status post chemotherapy with Adriamycin, Cytoxan and Taxotere. She also received Radiation Therapy as an outpatient.
+As per last visit with oncology in May of this year, it appeared the patient was in remission.
+Since then patient has had worsening back pain and did not have MRI because of claustrophobia.
+ 
+IMPRESSION:
+52 year old female admitted with severe back pain found to have pulmonary lesions and compression fracture of Thoracic spine concerning for underlying metastatic disease.
+CT scan revealed small pleural effusions right greater than left with atelectasis. New 6 mm pulmonary nodule is seen in the right lower lobe. New 4 mm nodule is seen in the right upper lobe.  Additional 2 mm nodules are seen in the left middle lobe. There are bony metastasis seen in the vertebral column at T9 and T10. Additionally there are metastatic deposits in the left sixth rib and right fifth rib. 
+Patient has metastatic disease from her previously treated stage 3A invasive ductal carcinoma of the left breast, ER, PR positive and HER2 negative.    

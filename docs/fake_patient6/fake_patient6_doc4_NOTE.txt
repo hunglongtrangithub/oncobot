@@ -1,0 +1,20 @@
+===================================================================
+Report ID.....................4,doc4
+Patient ID....................pt789789789
+Patient Name..................Fake Patient6
+Principal Date................20100830 1415
+Record Type...................NOTE
+Patient DOB...................05/01/1941
+CLINICAL HISTORY: This is a 69 year old post-menopausal female with a newly diagnosed invasive ductal carcinoma of the left breast. She is ER positive, PR negative and HER2 positive. She presents now to discuss options for treatment.
+INTERIM HISTORY: She underwent a U/S core biopsy of the left breast and lymph node on 8/18/10 which revealed invasive ductal carcinoma. Breast MRI on 8/20/10 demonstrated a left breast malignancy at the 4 o’clock position measuring 1.2x1.3x1.1 cm. MRI also showed a left axillary lymphadenopathy. MRI of the right breast showed post-surgical changes consistent previous lumpectomy and changes consistent with radiation therapy. PET/CT on 8/24/10 showed no evidence of distant metastases.
+PMH: She has a history DCIS of the right breast ER and PR positive diagnosed in January of 1999.  She was stage 0 (pTis, pNx).She underwent a right segmental mastectomy on 2/1/99 followed by re-excision for positive margins. She started Tamoxifen in March of 2009 followed by radiation therapy from April to May 1999. 
+Physical Exam: Well appearing female in NAD
+VS: BP 120/80, Pulse 71, Temp 97.0
+HEENT: NC/AT, PERRL, EOMI, sclera non-icteric
+Neck: Supple, no masses, thyroid not enlarged
+LUNGS: CTA, No wheezes, rales, rhonchi
+COR: RRR, No murmurs, rubs or gallops
+ABD: Soft, non-tender, non-distended, No HSM.
+EXT: Good pulses, No clubbing, cyanosis or edema
+IMPRESSION: 
+Patient with 2A (T1,N1,M0) invasive ductal carcinoma of the left breast with left axillary lymph node metastases. She will start chemotherapy with Taxotere and Carboplatin. 

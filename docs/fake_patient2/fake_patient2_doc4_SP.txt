@@ -1,0 +1,32 @@
+===================================================================
+Report ID.....................4,doc4
+Patient ID....................pt246246246
+Patient Name..................Fake Patient2
+Principal Date................20091130 1530
+Record Type...................SP
+Patient DOB...................06/21/1958
+
+
+FINAL DIAGNOSIS:
+PART 1:  BREAST, LEFT, 2 O' CLOCK, ULTRASOUND GUIDED CORE BIOPSY
+A.          INVASIVE DUCTAL CARCINOMA, NUCLEAR GRADE 3.
+B.     FOCAL DUCTAL CARCINOMA IN SITU, NUCLEAR GRADE 2-3.
+PART 2:  LYMPH NODE, LEFT AXILLA, ULTRASOUND GUIDED CORE BIOPSY
+   METASTATIC CARCINOMA INVOLVING LYMPH NODE CORES.
+COMMENT:
+HORMONE IMMUNOHISTOCHEMISTRY: 
+Estrogen Receptor: positive, H-score: 90
+Progesterone Receptor: positive, H-score: 60
+Her2/NEU: negative, 0
+Her2/NEU (FISH): Not applicable
+GROSS DESCRIPTION:
+The specimen is received in formalin in two properly labeled containers.
+Part 1 is labeled with the patient's name, and "left breast at 2
+o'clock".  It consists of 2 cylindrical portions of white-yellow focally hemorrhagic fibrous cores.
+Formalin exposure time: 50 hours and 25 minutes
+Part 2 is labeled with the patient's name, and "left axilla lymph
+node".  It consists of two cylindrical portions of white-yellow focally hemorrhagic fibrous cores.
+Formalin exposure time: 52 hours and 25 minutes.
+
+
+

@@ -1,0 +1,22 @@
+===================================================================
+Report ID.....................2,doc2
+Patient ID....................pt567567567
+Patient Name..................Fake Patient4
+Principal Date................20110312 1045
+Record Type...................RAD
+Patient DOB...................01/15/1949
+CLINICAL HISTORY:
+62 year old post-menopausal female with a new hard palpable lump in the left breast and a new mass in the right breast for ultrasound guided core biopsy.
+PROCEDURE TITLE:
+Targeted ultrasound right breast
+Ultrasound core biopsy of right 2 o’clock mass
+Targeted ultrasound of left breast
+Ultrasound core biopsy of left 11 o’clock mass
+Ultrasound guided core biopsy of right axillary abnormal lymph node
+ 
+PROCEDURE AND FINDINGS:
+The right breast and axilla were sterilely prepped and draped in the usual standard fashion.  First the right 2 o’clock position 5 cm from the nipple was targeted.  Local anesthesia was obtained with 2% xylocaine. A small skin incision was made.  Under ultrasound guidance from a medial approach, 2 passes with a 14 gauge biopsy device were performed and sent to pathology.  A wing clip was placed at the 2 o’clock position 5 cm from the nipple under ultrasound guidance.
+Then attention was turned to the right abnormal axillary lymph node.  Local anesthesia was obtained with 2% xylocaine.  A small skin incision was made.  Under ultrasound guidance from an inferomedial approach, 2 passes with a 14 gauge biopsy device were performed and sent to pathology.  A coil clip was placed at the site of the biopsy.
+The left breast was sterilely prepped and draped in the usual standard fashion.  The left 11 o’clock position 3 cm from the nipple was targeted.  Local anesthesia was obtained with 2% xylocaine. A small skin incision was made.  Under ultrasound guidance from a medial approach, 2 passes with a 14 gauge biopsy device were performed and sent to pathology.  A wing clip was placed at the 11 o’clock position 3 cm from the nipple under ultrasound guidance.
+IMPRESSION:
+Uncomplicated ultrasound guided core biopsies of the right breast at the 2 o’clock position, the left breast at the 11 o’clock position and the abnormal right axillary lymph node.

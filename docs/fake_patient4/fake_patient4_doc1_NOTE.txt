@@ -1,0 +1,26 @@
+===================================================================
+Report ID.....................1,doc1
+Patient ID....................pt567567567
+Patient Name..................Fake Patient4
+Principal Date................20110310 1025
+Record Type...................NOTE
+Patient DOB...................01/15/1949
+
+Reason for Visit:  Patient is a 62 year old post-menopausal female with a long history of lumpy breasts. She felt a mass on her right breast on self-examination that she hadn’t noticed before.  She also felt another lump in her left breast which she described as hard and painful.
+
+Interim History: The patient is a 62 year old female who presents for evaluation of the masses. The patient’s recent mammography on March 1, 2011 revealed a lobulated mass in the upper inner quadrant of the right breast at 2 o’clock position that measured 1.2x3.0 cm.  Mammography also revealed a nodular mass in the upper inner quadrant of the left breast at 11 o’clock position that measured 2 cm in diameter. 
+Ultrasound evaluation was performed on the area of the right breast and a 1.1x2.2x3.3 cm hypoechoic mass is seen in the 2 o’clock region. Ultrasound of the left breast at 11 o’clock revealed a 1.1x1.2x1.2 cm mass.  Ultrasound of the right axillary lymph nodes was performed showing multiple thickened lymph nodes.  Ultrasound of the left axilla revealed normal appearing lymph nodes.
+
+Past History: She has a history of left ovarian carcinoma, treated with total abdominal hysterectomy, bilateral salpingo-oophorectomy in July 2002.  She received neoadjuvant chemotherapy with Taxol and Carboplatin.
+
+Physical Exam: Health appearing female in NAD. 
+HEENT: NC/AT, PERRL, EOMI, Sclera non icteric
+NECK: Supple, no masses
+LUNGS: CTA, no wheezes, rales, rhonchi
+CARDIAC: RRR. No murmurs, rubs or gallops
+ADB: Soft, NT, ND, No HSM
+EXT: No clubbing, cyanosis or edema
+
+
+Impression: A 62 year old female with bilateral breast masses seen on mammography and ultrasound scheduled for core biopsy of the right breast mass as well as the left breast nodule. She will return to discuss further treatment options once pathology is finalized.
+

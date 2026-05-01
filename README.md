@@ -8,22 +8,30 @@
 
 ## SadTalker:
 
+Install `wget` if not already installed, then run the following command to download the pre-trained model weights for SadTalker:
+
 ```sh
-cd src/sadtalker && chmod +x scripts/download_models.sh && ./scripts/download_models.sh
+cd src/sadtalker && chmod +x scripts/download_models.sh && ./scripts/download_models.sh && cd ../..
 ```
 
 ## Install:
 
+Install dependencies for Python side:
+
 ```sh
-uv sync && source .venv/bin/activate
-cd ui && yarn install
+uv sync
+```
+
+Install dependencies for Next.js side:
+
+```sh
+cd ui && bun install && cd ..
 ```
 
 ## Prepare Environment Variables:
 
-1. Rename `.env.example` to `.env` and fill in your environment variables
-2. Rename `config.toml.example` to `config.toml` and fill in the Meilisearch environment variables in `.env` file
-3. Make sure your Meilisearch master key is more than 16 bytes
+1. Rename `.env.example` to `.env` and configure your environment variables for LLM API key(s)
+2. Rename `config.toml.example` to `config.toml` and fill in the master key. Make sure your Meilisearch master key is more than 16 bytes (16 ASCII characters) for security
 
 ## Start Meilisearch locally:
 
@@ -34,7 +42,7 @@ cd ui && yarn install
 meilisearch --config-file-path="./config.toml"
 ```
 
-4. run the following command to index the data:
+4. run the following command to index the data (remember to activate your virtual environment first)
 
 ```sh
 python -m src.oncobot.scripts.index
@@ -46,6 +54,11 @@ python -m src.oncobot.scripts.index
 
 ```sh
 make dev
+```
+
+Use testing mode (`MODE=testing`) to start the server with dummy models:
+```sh
+MODE=testing make dev
 ```
 
 ### Start the Next.js server:

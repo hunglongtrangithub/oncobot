@@ -1,0 +1,25 @@
+===================================================================
+Report ID.....................3,doc3
+Patient ID....................pt246246246
+Patient Name..................Fake Patient2
+Principal Date................20091130 1345
+Record Type...................RAD
+Patient DOB...................06/21/1958
+
+CLINICAL HISTORY:
+51 year old peri-menopausal female who presents with a new hard palpable lump in the left breast.  Patient is here for ultrasound guided core biopsy.
+PROCEDURE TITLE:
+Targeted ultrasound left breast.
+Ultrasound guided core biopsy of left 2 o’clock abnormality.
+Clip placement.
+Ultrasound guided core biopsy of left axillary abnormal lymph node.
+Clip placement.
+Post procedure left breast mammogram.
+PROCEDURE AND FINDINGS:
+The left breast and axilla were sterilely prepped and draped in the usual standard fashion.  First the left 2 o’clock position 5 cm from the nipple was targeted.  Local anesthesia was obtained with 2% xylocaine.  A small skin incision was made.  Under ultrasound guidance from a medial approach, 2 passes with a 14 gauge biopsy device were performed and sent to pathology.  A wing clip was placed at the 2 o’clock position 5 cm from the nipple under ultrasound guidance.
+Then attention was turned to the left abnormal axillary lymph node.  Local anesthesia was obtained with 2% xylocaine.  A small skin incision was made.  Under ultrasound guidance from an inferomedial approach, 2 passes with a 14 gauge biopsy device were performed and sent to pathology.  A coil clip was placed at the site of the biopsy.
+The wounds were cleaned and dressed.  The patient tolerated the procedure well, and there were no complications.
+Post procedure mammogram of the left breast demonstrated adequate clip placement.
+IMPRESSION:
+Uncomplicated ultrasound guided core biopsies of the left breast at the 2 o’clock position and abnormal left axillary lymph node.
+

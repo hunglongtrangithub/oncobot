@@ -1,0 +1,22 @@
+===================================================================
+Report ID.....................1,doc1
+Patient ID....................pt101102103
+Patient Name..................Fake Patient5
+Principal Date................20090505 1015
+Record Type...................RAD
+Patient DOB...................08/01/1972
+CLINICAL HISTORY:
+37 year old female presents with a new hard palpable lump in the left breast. Mammography in April 2009 revealed a suspicious mass in the left breast with an enlarged left axillary lymph node. She now comes in for ultrasound and diagnostic mammography of the left breast lumps.
+Procedure performed:
+Ultrasound core biopsy of left 1 o’clock  and 2 o’clock masses
+Ultrasound guided core biopsy of left axillary abnormal lymph node
+
+
+PROCEDURE AND FINDINGS:
+Digital diagnostic mammography of the left breast with CAD was performed. Full medial lateral and magnification views confirm the presence of a 1.0 cm ill-defined mass at the 1 o’clock position and a 1.1 cm mass at the 2 o’clock position of the left breast. A left axillary view shows 2 abnormal dense round lymph nodes measuring 2.4 cm and 2.0 cm.
+Sonography of the left breast confirms a 1.0x1.0x0.8 cm hypoechoic mass at the 1 o’clock position and a 1.1x1.0x1.0 cm hypoechoic mass at the 2 o’clock position.
+Sonography of the left axilla demonstrates 2 abnormal lymph nodes, both with cortical thickening. This is worrisome for metastatic disease.
+IMPRESSION:
+Ill-defined masses located in the left breast at 1 o’clock and 2 o’clock positions are highly suspicious for malignancy.  Ultrasound guided core biopsies of the 2 masses was performed.  Ultrasound guided core biopsy of the abnormal left axillary lymph node was also performed.
+ACR BI-RADS category (left breast): 4 – Suspicious for malignancy.
+Abnormal left axillary lymph node highly suspicious for metastatic disease.

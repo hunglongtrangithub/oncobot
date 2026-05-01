@@ -1,0 +1,15 @@
+===================================================================
+Report ID.....................6,doc6
+Patient ID....................pt101102103
+Patient Name..................Fake Patient5
+Principal Date................20091001 1300
+Record Type...................NOTE
+Patient DOB...................08/01/1972
+
+DIAGNOSIS: 38 year old female with clinical stage 3A (T3, N2, M0) invasive ductal carcinoma of the left breast
+INTERIM HISTORY: This is a 38 year old pre-menopausal female with invasive ductal carcinoma of the left breast. She IS S/P left breast mastectomy with left axillary lymph node dissection on 9/2/09. The operation was performed without complication and her recovery has been uneventful. Her clinical breast exam in early May of 2009 was significant for a 1.0 cm palpable mass at the 1 o’clock position of the left breast and a 2.0 cm palpable mass at the 2 o’clock position of the left breast both in the upper outer quadrant. Imaging also revealed enlarged left axillary lymph nodes. She went to have 2 biopsies at the 1 o’clock and 2 o’clock positions that showed invasive ductal carcinoma. These were ER positive, PR positive and HER2/NEU negative. She completed 4 cycles of Adriamycin and Cytoxan and 12 cycles of Taxotere prior to her surgery.
+Past Medical History: She has a history of a right ovarian cyst and endometriosis.
+Physical Exam: Health appearing young female in NAD. There is a well-healed surgical scar of the left breast.  There are no signs of bruising, erythema or infection. She has had no fever, nausea, vomiting, chest pain or diarrhea. Cardiac exam showed normal S1 and S2 with no murmurs. Extremities were without edema.
+
+IMPRESSION: 
+Patient with stage 3A (T3, N2, M0) invasive ductal carcinoma of the left breast with left axillary lymph node metastases. She returns for discussion of maintenance therapy. Recommendation is made to start Tamoxifen.  She will follow up with me in 6 months. 

@@ -1,0 +1,21 @@
+===================================================================
+Report ID.....................4,doc4
+Patient ID....................pt357357357
+Patient Name..................Fake Patient7
+Principal Date................20100525 1415
+Record Type...................NOTE
+Patient DOB...................03/01/1938
+CLINICAL HISTORY: This is a 72 year old post-menopausal female who felt a lump in her left breast which on biopsy revealed infiltrating ductal carcinoma and DCIS of the left breast. An enlarged left axillary lymph node was biopsied and found to be benign. She is ER positive, PR positive and HER2 negative. MRI revealed a tumor 6.0 cm in diameter. She presents now to discuss options for treatment.
+INTERIM HISTORY: Patient seen post biopsy for evaluation and management of newly diagnosed infiltrating ductal carcinoma of the left breast with associated DCIS. She underwent a U/S core biopsy of the left breast and lymph node on 5/16/10 which revealed infiltrating ductal carcinoma. Breast MRI on 5/20/10 demonstrated a left breast malignancy at the 10 o’clock position measuring 1.2x1.3x1.1 cm. MRI also showed a left axillary lymphadenopathy. MRI of the right breast was without malignancy. PET/CT on 5/22/10 showed no evidence of distant metastases.
+PMH: She has Chronic Lymphocytic Leukemia diagnosed in May of 2002 receiving immunosuppressive therapy with Alemtuzumab. WBC has been normal and recent bone marrow biopsy showed stable disease.  
+Physical Exam: Well appearing female in NAD
+VS: BP 120/80, Pulse 71, Temp 97.0
+HEENT: NC/AT, PERRL, EOMI, sclera non-icteric
+Neck: Supple, no masses, thyroid not enlarged
+LUNGS: CTA, No wheezes, rales, rhonchi
+COR: RRR, No murmurs, rubs or gallops
+ABD: Soft, non-tender, non-distended, No HSM.
+EXT: Good pulses, No clubbing, cyanosis or edema
+
+IMPRESSION: 
+On review of the patient’s screening and diagnostic imaging there is an abnormality noted with significant calcifications extending posteriorly in the left breast. She is scheduled to undergo a left breast mastectomy with axillary lymph node dissection. 

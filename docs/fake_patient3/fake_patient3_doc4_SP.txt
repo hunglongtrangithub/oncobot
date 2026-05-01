@@ -1,0 +1,30 @@
+===================================================================
+Report ID.....................4,doc4
+Patient ID....................pt135135135
+Patient Name..................Fake Patient3
+Principal Date................20100301 1530
+Record Type...................SP
+Patient DOB...................11/12/1966
+
+
+FINAL DIAGNOSIS:
+PART 1:  LYMPH NODES, RIGHT AXILLA, DISSECTION
+A.          12 OF 19 LYMPH NODES POSITIVE FOR METASTATIC BREAST CARCINOMA.
+B.     LARGEST METASTATESES MEASURE UP TO 1.9 CM
+
+
+COMMENT:
+HORMONE IMMUNOHISTOCHEMISTRY: 
+Estrogen Receptor: POSITIVE
+Progesterone Receptor: POSITIVE
+Her2/NEU: NEGATIVE
+Her2/NEU (FISH): Not applicable
+
+GROSS DESCRIPTION:
+The specimen is received in formalin in two properly labeled containers.
+Part 1 is labeled with the patient's name, and "RIGHT axilla lymph
+node".  It consists of two cylindrical portions of white-yellow focally hemorrhagic fibrous cores.
+Formalin exposure time: 52 hours and 25 minutes.
+
+
+

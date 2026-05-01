@@ -1,0 +1,15 @@
+===================================================================
+Report ID.....................7,doc7
+Patient ID....................pt101102103
+Patient Name..................Fake Patient5
+Principal Date................20100205 0300
+Record Type...................NOTE
+Patient DOB...................08/01/1972
+
+CHIEF COMPLAINT: Patient admitted with shortness of breath, chest pain and abdominal pain.
+CLINICAL HISTORY: This is a 38 year old presenting to the EW with SOB, CP and abdominal pain. She was diagnosed with invasive ductal carcinoma of the left breast with left axillary lymph nodes metastases. She received 4 cycles of Adriamycin and Cytoxan followed by 12 cycles of Taxotere. She underwent a total mastectomy of the left breast with left axillary lymph node dissection on 9/2/09. At the time of surgery she was a stage 3A (T3, N2, M0) ER positive, PR positive and HER2/NEU negative. Her surgery was performed without complication and her recovery has been uneventful. She has been on Tamoxifen since October 2009. She has tolerated this well without any significant side effects.  
+Past Medical History: She has a history of a right ovarian cyst and endometriosis.
+Physical Exam: Reveals an ill-appearing female in moderate distress. Cardiac exam showed normal S1 and S2 with no murmurs. Extremities were without edema. Lung exam with coarse breath sounds in both lungs. Exam of the abdomen reveal tenderness in the lower abdomen.
+
+IMPRESSION: 
+Patient presented with chest and abdominal pain and shortness of breath. She was diagnosed with stage 3A (T3, N2 ,M0) invasive ductal carcinoma of the left breast with left axillary lymph node metastases on 5/5/09. She was started on maintenance therapy with Tamoxifen in October 2009. We will obtain a CT scan of the chest to rule out pneumonia or metastatic disease. 

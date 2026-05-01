@@ -1,0 +1,22 @@
+===================================================================
+Report ID.....................7,doc7
+Patient ID....................pt123123123
+Patient Name..................Fake Patient1
+Principal Date................20110201 1015
+Record Type...................NOTE
+Patient DOB...................04/01/1960
+
+
+CLINICAL HISTORY: The patient is a 51 year old woman who presents for 6 month follow up visit for history of stage IIA (T1, N2, M0) infiltrating ductal carcinoma of the right breast with metastatic left axillary lymph nodes. ER negative, PR negative and Her2 negative.
+
+Briefly the patient was diagnoses a year ago in January of 2010 with metastatic breast cancer of the left breast. She received chemotherapy with Adriamycin and Carboplatin followed by Abraxane. She underwent a right mastectomy with axillary lymph node dissection on 7/10/10. The surgical margins were negative and she received radiation therapy to the right breast and axilla area. She is being maintained on Tamoxifen and comes in for follow up.
+ 
+
+INTERIM HISTORY: She has been noticing an increase in size of a small nodule in her left breast. Mammography obtained on 1/31/10 revealed a firm mass in the lower outer left breast position that measures 1x2 cm. Ultrasound performed on 1/31/10 showed a 1.1x1.2x2.1 cm hypoechoic mass at the 4 o’clock region. This mass is highly suggestive of a malignancy.
+
+  
+Physical Exam: The patient’s physical examination demonstrates a firm round mass in the lower outer quadrant of the left breast. The rest of her examination reveals a well healed surgical incision of the right breast. The axillary wound is well healed. No signs of bruising and no infection are noted. She denies any pain, fever, nausea or vomiting.
+ 
+Impression: A 51 year old woman with stage 2A infiltrating ductal carcinoma of the right breast S/P chemotherapy, mastectomy and radiation comes in with a new left breast nodule. She will undergo an ultrasound guided core biopsy of the mass. 
+
+Recommendations: She will undergo an ultrasound guided core biopsy of the mass.

@@ -1,0 +1,21 @@
+===================================================================
+Report ID.....................10,doc10
+Patient ID....................pt123123123
+Patient Name..................Fake Patient1
+Principal Date................20110301 1015
+Record Type...................NOTE
+Patient DOB...................04/01/1960
+
+
+CLINICAL HISTORY: The patient is a 51 year old woman with newly diagnosed invasive lobular carcinoma of the left breast. She is ER positive, PR positive and HER2/NEU negative. 
+
+Briefly the patient was diagnosed in January of 2010 with metastatic breast cancer of the right breast. She was stage 2A (T1, N1, M0). She received chemotherapy with Adriamycin and Carboplatin followed by Abraxane. She underwent a right mastectomy with axillary lymph node dissection on 7/10/10. The surgical margins were negative and she received radiation therapy to the right breast and axilla area. She is being maintained on oral Tamoxifen.
+ 
+INTERIM HISTORY: She noticed a small nodule in her left breast. Mammography obtained on 1/31/10 revealed a firm mass in the lower outer left breast position that measures 1x2 cm. Ultrasound performed on 1/31/10 showed a 1.1x1.2x2.1 cm hypoechoic mass at the 4 o’clock region. The mass was highly suggestive of a malignancy. She underwent a left breast segmental mastectomy with left axillary lymph node biopsy on 2/1/11. Pathology came back as stage IA (pT1a, pN0) invasive lobular carcinoma with a focus of lobular carcinoma in situ of the left breast, lower outer quadrant, 4 o’clock position.
+
+  
+Physical Exam: The patient’s physical examination shows a well healed left surgical incision. The previous incision of the right breast is without masses. There are no signs of infection, swelling or erythema. She denies any pain, fever, nausea or vomiting.
+ 
+Impression: A 51 year old woman with stage 1A (pT1a, pN0) invasive lobular carcinoma and LCIS of the left breast S/P segmental mastectomy and left axillary lymph node biopsy.  
+
+Recommendations: She will undergo radiation therapy to the left breast.

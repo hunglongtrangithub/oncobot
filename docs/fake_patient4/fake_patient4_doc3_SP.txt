@@ -1,0 +1,36 @@
+===================================================================
+Report ID.....................3,doc3
+Patient ID....................pt567567567
+Patient Name..................Fake Patient4
+Principal Date................20110312 1530
+Record Type...................SP
+Patient DOB...................01/15/1949
+
+
+CLINICAL HISTORY:
+62 year old female with a new hard palpable lump in the left breast and a new mass in the right breast for ultrasound guided core biopsy.
+
+
+FINAL DIAGNOSIS:
+PART 1:  BREAST, RIGHT, 2 O' CLOCK, ULTRASOUND GUIDED CORE BIOPSY
+A.       INVASIVE DUCTAL CARCINOMA, NUCLEAR GRADE 2.
+B.       INVASIVE CARCINOMA 2.0 CM
+C.	    MICROCALCIFICATIONS ASSOCIATED WITH MALIGNANT TUMOR
+PART 2:  RIGHT, AXILLARY LYMPH NODE, ULTRASOUND GUIDED CORE BIOPSY
+A:       METASTATIC BREAST CARCINOMA
+PART 3:  BREAST, LEFT, 11 O’CLOCK, ULTRASOUND GUIDED CORE BIOPSY
+A:       INVASIVE LOBULAR CARCINOMA, NUCLEAR GRADE 2.
+B:       CARCINOMA MEASURES 1.6 CM
+C:	    ATYPICAL LOBULAR HYPERPLASIA	 	
+
+
+COMMENT:
+HORMONE IMMUNOHISTOCHEMISTRY: 
+Estrogen Receptor: positive, H-score: 250
+Progesterone Receptor: positive, H-score: 100
+Her2/NEU: positive, 3+
+
+
+
+
+

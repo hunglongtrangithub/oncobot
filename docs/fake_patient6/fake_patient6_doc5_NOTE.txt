@@ -1,0 +1,14 @@
+===================================================================
+Report ID.....................5,doc5
+Patient ID....................pt789789789
+Patient Name..................Fake Patient6
+Principal Date................20101115 1045
+Record Type...................NOTE
+Patient DOB...................05/01/1941
+
+CLINICAL HISTORY: This is a 69 year old post-menopausal female with metastatic invasive ductal carcinoma of the left breast. She is ER positive, PR negative and HER2 positive. She has completed 3 cycles of Taxotere and Carboplatin. She comes in to assess response to therapy. 
+INTERIM HISTORY: She has experienced some nausea and vomiting treated with anti-emetics and diarrhea treated with Lomotil. Briefly she was diagnosed with invasive ductal carcinoma of the left breast on biopsy dated 8/18/10. She was found to have metastatic disease to the left axillary lymph node. Decision was made to start her on Taxotere and Carboplatin and re-assess tumor response to chemotherapy. 
+On physical exam she looks and feels well. VSS. MRI of the left breast reveals decrease in tumor size which now measures 0.9x1.0x0.8 cm from previous 1.2x1.3x1.1 cm. The left axillary lymph node now measures 2.0x1.9 cm from previous 3.0x2.0 cm.
+PMH: She has a history DCIS of the right breast ER and PR positive diagnosed in January of 1999. She was stage 0 (pTis, pNx). She underwent a right segmental mastectomy on 2/1/99 followed by re-excision for positive margins. She started Tamoxifen in March of 2009 followed by radiation therapy from April to May 1999. 
+IMPRESSION: 
+Patient with clinical stage 2A (T1,N1,M0) invasive ductal carcinoma of the left breast with left axillary lymph node metastases with tumor regression S/P 3 cycles of Taxotere and Carboplatin. She will return after her 6th cycle to discuss surgery.

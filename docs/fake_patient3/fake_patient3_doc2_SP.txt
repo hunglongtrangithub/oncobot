@@ -1,0 +1,34 @@
+===================================================================
+Report ID.....................2,doc2
+Patient ID....................pt135135135
+Patient Name..................Fake Patient3
+Principal Date................20100201 1545
+Record Type...................SP
+Patient DOB...................11/12/1966
+
+PATIENT HISTORY: 44 year-old female with biopsy proven invasive ductal carcinoma of the right breast with history of stage 2B left breast adenocarcinoma status post neoadjuvant chemotherapy, right mastectomy and radiation therapy.
+
+
+FINAL DIAGNOSIS:
+RIGHT BREAST, SEGMENTAL MASTECTOMY
+PART 1:
+A. 2 FOCI OF INVASIVE DUCTAL CARCINOMA, 2.1 AND 1.1 CM IN THE 10 O’CLOCK REGION IN THE UPPER OUTER QUADRANT
+B.     DCIS, SOLID TYPE, REPRESENTING 4% OF THE TUMOR VOLUME.
+C.     MARGINS FREE OF TUMOR.
+D.     MICROCALCIFICATIONS ASSOCIATED WITH TUMOR.
+PART 2:
+E.     RIGHT AXILLA, SENTINEL LYMPH NODE EXCISION, ONE LYMPH NODE POSITIVE FOR METASTATIC CARCINOMA.
+
+HORMONE RECEPTOR IMMUNOHISTOCHEMISTRY
+RESULT                       
+ESTROGEN           POSITIVE                        150
+PROGESTERONE       POSITIVE                        160
+HER-2/NEU          NEGATIVE                        0 
+HER-2/NEU (FISH)   NOT AMPLIFIED
+
+T STAGE:	PT2
+N STAGE:	PN1
+M STAGE:	NOT APPLICABLE
+
+
+

@@ -1,0 +1,38 @@
+===================================================================
+Report ID.....................8,doc8
+Patient ID....................pt123123123
+Patient Name..................Fake Patient1
+Principal Date................20110203 1230
+Record Type...................SP
+Patient DOB...................04/01/1960
+
+
+
+CLINICAL HISTORY:
+A 51 year old woman with A history of stage 2A infiltrating ductal carcinoma of the right breast S/P chemotherapy, mastectomy and radiation. She now has a suspicious lump in the right breast and an abnormal axillary lymph node.  
+
+
+
+
+FINAL DIAGNOSIS:
+PART 1:  LEFT BREAST ULTRASOUND GUIDED CORE BIOPSY
+A.	INVASIVE LOBULAR CARCINOMA, NUCLEAR GRADE 1
+B.    LOBULAR CARCINOMA IN SITU, NUCLEAR GRADE 1
+
+PART 2: LEFT AXILLARY LYMPH NODE ULTRASOUND GUIDED CORE BIOPSY
+A.   ONE LYMPH NODE NEGATIVE FOR METASTATIC CARCINOMA
+
+
+IMMUNOHISTOCHEMISTRY:
+
+RESULT						H-SCORE
+
+ESTROGEN RECEPTOR - POSITIVE		140
+
+PROGESTERONE RECEPTOR - POSITIVE		100
+
+HER2/NEU - NEGATIVE				0
+
+
+
+

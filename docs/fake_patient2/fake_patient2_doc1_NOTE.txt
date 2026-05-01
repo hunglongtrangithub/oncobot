@@ -1,0 +1,25 @@
+===================================================================
+Report ID.....................1,doc1
+Patient ID....................pt246246246
+Patient Name..................Fake Patient2
+Principal Date................20091103 1045
+Record Type...................NOTE
+Patient DOB...................06/21/1958
+
+Chief complaint: Patient with a new hard palpable lump in the left breast.
+History of Present Illness: Patient is a 51 year old peri-menopausal female who has no previous complaints or symptoms, presents with a new hard palpable lump in the left breast.  On self-examination she noticed a lump in her left breast in October of 2009.
+Overall, she is feeling well.  She has good energy level and her ECOG performance status is 0.  She denies fever, chills, sweats, nausea, vomiting, diarrhea or constipation.  There is no change in bowel or bladder habits.
+I had a long discussion with the patient and her husband.  She will get a Mammogram and return for results.
+Allergies: No known drug allergies.
+Physical Examination:
+GENERAL: The patient is a middle aged female who is alert and in no distress.
+HEENT: NC/AT PERRLA, sclera are clear, no lesions.
+NECK: Supple without lymphadenopathy.
+HEART: RRR without murmurs.
+BREASTS: Left breast with palpable lump near 2 o’clock position. Right breast is without mass or abnormalities.
+ABDOMEN: Soft, non-tender, non-distended, no masses.
+BACK: No CVAT
+EXTREMITIES: No clubbing, cyanosis or edema.
+Assessment: Patient with a palpable lump in the left breast, scheduled for Mammogram.
+
+

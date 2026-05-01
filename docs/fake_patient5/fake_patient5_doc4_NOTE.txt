@@ -1,0 +1,16 @@
+===================================================================
+Report ID.....................3,doc3
+Patient ID....................pt101102103
+Patient Name..................Fake Patient5
+Principal Date................20090630 1015
+Record Type...................NOTE
+Patient DOB...................08/01/1972
+
+DIAGNOSIS: 37 year old female with clinical stage 3A (T3, N2, M0) invasive ductal carcinoma of the left breast
+THERAPY: Completed 6 cycles of Taxotere.
+CLINICAL HISTORY: This is a 37 year old pre-menopausal female with a newly diagnosed invasive ductal carcinoma of the left breast. She returns for ongoing management. Her clinical breast exam that time was significant for a 1.0 cm palpable mass at the 1 o’clock position of the left breast and a 2.0 cm palpable mass at the 2 o’clock position of the left breast both in the upper outer quadrant. Imaging also revealed enlarged left axillary lymph nodes. She went to have 2 biopsies at the 1 o’clock and 2 o’clock positions that showed invasive ductal carcinoma. These were ER positive, PR positive and HER2/NEU negative. She presents for assessment of tumor response to neoadjuvant chemotherapy. She completed 4 cycles of Adriamycin and Cytoxan. She also has completed 6 of 12 planned cycles of Taxotere.
+Past Medical History: She has a history of a right ovarian cyst and endometriosis.
+Physical Exam: Health appearing young female in NAD. She has tolerated chemotherapy with minimal side-effects. She has had no fever, nausea, vomiting, chest pain or diarrhea. Cardiac exam showed normal S1 and S2 with no murmurs. Extremities were without edema.
+
+IMPRESSION: 
+Patient has had a partial response to chemotherapy.  Recent imaging showed decrease in size of the invasive tumor at 1 o’clock measuring 0.8 cm from 1.0 cm and the invasive tumor at 2 o’clock now measuring 1.0 cm from 2.0 cm. Metastatic left axillary lymph nodes now measure 0.9 and 1.5 cm from previous 2.4 and 2.0 cm respectfully. Patient with clinical stage 3A (T3, N2, M0) invasive ductal carcinoma of the left breast with left axillary lymph node metastases showing tumor response to chemotherapy. Final recommendation will be made following the completion of Taxotere.

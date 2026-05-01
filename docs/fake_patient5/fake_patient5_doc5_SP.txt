@@ -1,0 +1,39 @@
+===================================================================
+Report ID.....................5,doc5
+Patient ID....................pt101102103
+Patient Name..................Fake Patient5
+Principal Date................20090902 1420
+Record Type...................SP
+Patient DOB...................08/01/1972
+
+CLINICAL HISTORY:
+This is a 38 year old pre-menopausal female with invasive ductal carcinoma of the left breast, metastatic to the left axillary lymph nodes. Clinical stage 3A, S/P neoadjuvant chemotherapy, left mastectomy and axillary lymph node dissection. 
+
+FINAL DIAGNOSIS:
+PART 1:  LEFT BREAST, MODIFIED RADICAL MASTECTOMY
+	•	INVASIVE DUCTAL CARCINOMA, NUCLEAR GRADE 2, TUMOR MASS IN THE 1 O’CLOCK REGION IN THE UPPER OUTER QUADRANT
+	•	INVASIVE DUCTAL CARINOMA, NUCLEAR GRADE 2, TUMOR MASS IN THE 2 O’CLOCK REGION IN THE UPPER OUTER QUADRANT
+	•	DUCTAL CARCINOMA IN SITU, NUCLEAR GRADE 2
+	•	SURGICAL MARGINS ARE NEGATIVE
+	•	CHANGES CONSISTANT WITH PREVIOUS CORE BIOPSY
+	•	CHANGES CONSISTANT WITH S/P CHEMOTHERAPY
+	•	MICROCALCIFICATIONS ASSOCIATED WITH MALIGNANT
+PART 2:   LEFT AXILLARY LYMPH NODE DISSECTION
+A:        2 OUT OF 6 AXILLARY LYMPH NODES POSITIVE FOR METASTATIC   CARCINOMA (2/6) 	
+
+COMMENT:
+HORMONE IMMUNOHISTOCHEMISTRY: 
+Estrogen Receptor: positive, H-score: 100
+Progesterone Receptor: positive, H-score: 45
+Her2/NEU: negative, 1+
+Her2/NEU (FISH): Not Amplified
+
+Pathologic Stage
+T Stage: PT3
+N Stage: PN2
+M Stage: PM0
+
+
+
+
+

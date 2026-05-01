@@ -1,0 +1,32 @@
+===================================================================
+Report ID.....................9,doc9
+Patient ID....................pt101102103
+Patient Name..................Fake Patient5
+Principal Date................20100207 1230
+Record Type...................SP
+Patient DOB...................08/01/1972
+
+
+
+CLINICAL HISTORY:
+The patient is a 38-year-old female with a history of metastatic breast carcinoma.
+
+PRE-OP DIAGNOSIS:     Lung mass
+POST-OP DIAGNOSIS:    Lung mass
+PROCEDURE:          Bronchoscopy, EBUS
+
+
+
+FINAL DIAGNOSIS:
+
+LUNG, LEFT LOWER LOBE, BRONCHOSCOPIC BIOPSY
+
+METASTATIC POORLY DIFFERENTIATED CARCINOMA CONSISTENT WITH BREAST PRIMARY.
+
+IMMUNOHISTOCHEMISTRY
+HER2/NEU: NEGATIVE (NOT AMPLIFIED)
+
+
+
+
+

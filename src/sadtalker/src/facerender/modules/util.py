@@ -459,9 +459,9 @@ class KPHourglass(nn.Module):
         super(KPHourglass, self).__init__()
 
         assert num_blocks > 0, "num_blocks must be greater than 0"
-        assert (
-            reshape_features % reshape_depth == 0
-        ), "reshape_features must be divisible by reshape_depth"
+        assert reshape_features % reshape_depth == 0, (
+            "reshape_features must be divisible by reshape_depth"
+        )
         self.down_blocks = nn.Sequential()
         for i in range(num_blocks):
             self.down_blocks.add_module(
@@ -495,7 +495,7 @@ class KPHourglass(nn.Module):
             )
 
         self.reshape_depth = reshape_depth
-        self.out_filters = out_filters  # type: ignore
+        self.out_filters = out_filters
 
     def forward(self, x):
         out = self.down_blocks(x)

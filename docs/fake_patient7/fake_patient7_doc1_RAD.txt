@@ -1,0 +1,23 @@
+===================================================================
+Report ID.....................1,doc1
+Patient ID....................pt357357357
+Patient Name..................Fake Patient7
+Principal Date................20100510 1045
+Record Type...................RAD
+Patient DOB...................03/01/1938
+
+CLINICAL HISTORY:
+This is a 72 year old post-menopausal female who on recent screening mammogram on 5/4/10 revealed a suspicious lump of the left breast. 
+
+TECHNIQUE:
+Spot compression views of the left breast were obtained with ultrasound of the left breast and left axilla.
+FINDINGS:
+There are calcifications in the left breast at 10 o’clock position. Findings are suspicious for carcinoma. The mass measures greater than 8 cm.
+Left breast ultrasound revealed a lobulated mass in the superior region measuring 1.7X1.6X1.5 CM. An additional 9x12 mm irregular shaped mass located at the 11 o’clock position measuring 2.9 cm.
+Ultrasound of the left axilla showed a 17 mm lymph node with focal thickening of the cortex. 
+IMPRESSION:
+Findings are consistent with multifocal carcinoma of the left breast. A thickened left axillary lymph node is noted and suspicious for metastatic disease.
+ACR BI-RADS category (left breast): 5 – Highly suspicious for malignancy.
+Abnormal left axillary lymph node highly suspicious for metastatic disease.
+RECOMMENDATION: 
+The patient is scheduled for U/S guided biopsy of the left breast mass and abnormal left axillary lymph node.

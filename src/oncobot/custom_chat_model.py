@@ -55,33 +55,39 @@ class DummyChat(BaseChat):
         self.default_message = default_message
 
     def invoke(self, current_conversation: List[Dict[str, str]]) -> str:
+        _ = current_conversation
         return "DummyChat invoke: " + self.default_message
 
     def stream(
         self, current_conversation: List[Dict[str, str]]
     ) -> Generator[str, None, None]:
+        _ = current_conversation
         yield "DummyChat stream: " + self.default_message
 
     async def ainvoke(
         self, current_conversation: List[Dict[str, str]], sleep_time=3
     ) -> str:
+        _ = current_conversation
         time.sleep(sleep_time)
         return "DummyChat ainvoke: " + self.default_message
 
     async def astream(
         self,
         current_conversation: List[Dict[str, str]],
-        num_repeats=3,
+        num_repeats=5,
         stream: bool = True,
     ) -> AsyncGenerator[str, None]:
+        _ = current_conversation
         import asyncio
 
         async def async_generator():
             await asyncio.sleep(1)
             if stream:
                 for _ in range(num_repeats):
-                    await asyncio.sleep(0.01)
-                    yield "DummyChat astream: " + self.default_message
+                    yield "DummyChat astream: "
+                    for word in self.default_message.split():
+                        await asyncio.sleep(0.05)
+                        yield word + " "
             else:
                 yield ("DummyChat astream: " + self.default_message) * num_repeats
 
@@ -170,7 +176,12 @@ class CustomChatHuggingFace(BaseChat):
             )
 
     def _huggingface_login(self):
-        token = settings.hf_token.get_secret_value()
+        token = settings.get_hf_token()
+        if token is None:
+            logger.warning(
+                "Hugging Face token is not set. You may not be able to access certain Hugging Face models. Please set the HF_TOKEN environment variable if you need to access private models."
+            )
+            return
         login(token=token)
 
     def _determine_device(self):
@@ -192,20 +203,20 @@ class CustomChatHuggingFace(BaseChat):
             raise
 
         tokenized_chat_history = self.tokenizer(
-            text=chat_history,  # type: ignore
-            return_tensors="pt",  # type: ignore
+            text=chat_history,
+            return_tensors="pt",
         )
 
         # truncate chat history to max_chat_length before moving to device
-        tokenized_chat_history["input_ids"] = tokenized_chat_history["input_ids"][  # type: ignore
+        tokenized_chat_history["input_ids"] = tokenized_chat_history["input_ids"][
             :, -self.max_chat_length :
         ]
-        tokenized_chat_history["attention_mask"] = tokenized_chat_history[  # type: ignore
+        tokenized_chat_history["attention_mask"] = tokenized_chat_history[
             "attention_mask"
         ][:, -self.max_chat_length :]
 
         tokenized_chat_history = tokenized_chat_history.to(self.device)
-        prompt_size = tokenized_chat_history["input_ids"].shape[1]  # type: ignore
+        prompt_size = tokenized_chat_history["input_ids"].shape[1]
         try:
             generated_tokens = self.model.generate(
                 **tokenized_chat_history,
@@ -222,18 +233,18 @@ class CustomChatHuggingFace(BaseChat):
                 exc_info=True,
                 stack_info=True,
             )
-            raise
-        finally:
+
             torch.cuda.empty_cache()
             torch.cuda.synchronize()
+            raise
 
     def stream(
         self, current_conversation: List[Dict[str, str]]
     ) -> Generator[str, None, None]:
         streamer = TextIteratorStreamer(
-            self.tokenizer,  # type: ignore
+            self.tokenizer,
             skip_prompt=True,
-            skip_special_tokens=True,  # type: ignore
+            skip_special_tokens=True,
         )
         chat_history = self.tokenizer.apply_chat_template(
             current_conversation,
@@ -243,14 +254,14 @@ class CustomChatHuggingFace(BaseChat):
         )
 
         tokenized_chat_history = self.tokenizer(
-            text=chat_history,  # type: ignore
-            return_tensors="pt",  # type: ignore
+            text=chat_history,
+            return_tensors="pt",
         ).to(self.device)
 
-        tokenized_chat_history["input_ids"] = tokenized_chat_history["input_ids"][  # type: ignore
+        tokenized_chat_history["input_ids"] = tokenized_chat_history["input_ids"][
             :, -self.max_chat_length :
         ]
-        tokenized_chat_history["attention_mask"] = tokenized_chat_history[  # type: ignore
+        tokenized_chat_history["attention_mask"] = tokenized_chat_history[
             "attention_mask"
         ][:, -self.max_chat_length :]
 
@@ -312,15 +323,11 @@ class CustomChatHuggingFace(BaseChat):
 
 class CustomChatOpenAI(BaseChat):
     def __init__(self, model_name: str = "gpt-3.5-turbo", base_url: str | None = None):
-        self.api_key = self._get_openai_api_key()
+        self.api_key = settings.get_openai_api_key()
         self.client = openai.OpenAI(api_key=self.api_key, base_url=base_url)
         self.async_client = openai.AsyncOpenAI(api_key=self.api_key)
         self.model_name = model_name
         logger.info("CustomChatOpenAI initialized.")
-
-    def _get_openai_api_key(self):
-        openai_api_key = settings.openai_api_key.get_secret_value()
-        return openai_api_key
 
     def _handle_api_error(self, e: Exception):
         """Centralized error handling for OpenAI API errors."""
@@ -357,9 +364,9 @@ class CustomChatOpenAI(BaseChat):
         try:
             completion = self.client.chat.completions.create(
                 model=self.model_name,
-                messages=current_conversation,  # type: ignore
+                messages=current_conversation,
                 stream=True,
-            )
+            )  # type: ignore
             for chunk in completion:
                 token = chunk.choices[0].delta.content or ""
                 yield token
@@ -385,9 +392,9 @@ class CustomChatOpenAI(BaseChat):
             try:
                 completion = await self.async_client.chat.completions.create(
                     model=self.model_name,
-                    messages=current_conversation,  # type: ignore
+                    messages=current_conversation,
                     stream=True,
-                )
+                )  # type: ignore
                 async for chunk in completion:
                     token = chunk.choices[0].delta.content or ""
                     yield token
@@ -541,16 +548,12 @@ class CustomChatGroq(BaseChat):
         model_name: str = "gemma-7b-it",
         generation_kwargs: Optional[dict] = None,
     ):
-        self.api_key = self._get_groq_api_key()
+        self.api_key = settings.get_groq_api_key()
         self.client = groq.Groq(api_key=self.api_key)
         self.async_client = groq.AsyncGroq(api_key=self.api_key)
         self.model_name = model_name
         self.generation_kwargs = generation_kwargs or self.default_generation_kwargs
         logger.info("CustomChatGroq initialized.")
-
-    def _get_groq_api_key(self):
-        groq_api_key = settings.groq_api_key.get_secret_value()
-        return groq_api_key
 
     def _handle_api_error(self, e: Exception):
         """Centralized error handling for Groq API errors."""
@@ -574,9 +577,9 @@ class CustomChatGroq(BaseChat):
         try:
             completion = self.client.chat.completions.create(
                 model=self.model_name,
-                messages=current_conversation,  # type: ignore
+                messages=current_conversation,
                 **self.generation_kwargs,
-            )
+            )  # type: ignore
             return completion.choices[0].message.content or ""
         except Exception as e:
             self._handle_api_error(e)
@@ -588,10 +591,10 @@ class CustomChatGroq(BaseChat):
         try:
             completion = self.client.chat.completions.create(
                 model=self.model_name,
-                messages=current_conversation,  # type: ignore
+                messages=current_conversation,
                 **self.generation_kwargs,
                 stream=True,
-            )
+            )  # type: ignore
             for chunk in completion:
                 token = chunk.choices[0].delta.content or ""
                 yield token
@@ -603,9 +606,9 @@ class CustomChatGroq(BaseChat):
         try:
             completion = await self.async_client.chat.completions.create(
                 model=self.model_name,
-                messages=current_conversation,  # type: ignore
+                messages=current_conversation,
                 **self.generation_kwargs,
-            )
+            )  # type: ignore
             return completion.choices[0].message.content or ""
         except Exception as e:
             self._handle_api_error(e)
@@ -618,10 +621,10 @@ class CustomChatGroq(BaseChat):
             try:
                 completion = await self.async_client.chat.completions.create(
                     model=self.model_name,
-                    messages=current_conversation,  # type: ignore
+                    messages=current_conversation,
                     **self.generation_kwargs,
                     stream=True,
-                )
+                )  # type: ignore
                 async for chunk in completion:
                     token = chunk.choices[0].delta.content or ""
                     yield token

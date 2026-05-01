@@ -1,0 +1,35 @@
+===================================================================
+Report ID.....................2,doc2
+Patient ID....................pt101102103
+Patient Name..................Fake Patient5
+Principal Date................20090505 1530
+Record Type...................SP
+Patient DOB...................08/01/1972
+
+
+CLINICAL HISTORY:
+37 year old female with a new hard palpable lump in the left breast and an abnormal left axillary lymph node status post ultrasound guided core biopsy.
+
+
+FINAL DIAGNOSIS:
+PART 1:  BREAST, LEFT, 1 O' CLOCK, ULTRASOUND GUIDED CORE BIOPSY
+A.       INVASIVE DUCTAL CARCINOMA, NUCLEAR GRADE 2.
+B.       DUCTAL CARCINOMA IN SITU, NUCLEAR GRADE 2 
+C.	    MICROCALCIFICATIONS ASSOCIATED WITH MALIGNANT TUMOR
+PART 2:  LEFT, AXILLARY LYMPH NODE, ULTRASOUND GUIDED CORE BIOPSY
+A:       METASTATIC DISEASE CONSISTANT WITH BREAST PRIMARY IN TWO OF    TWO LYMPH NODES (2/2)
+PART 3:  BREAST, LEFT, 2 O’CLOCK, ULTRASOUND GUIDED CORE BIOPSY
+A:       INVASIVE DUCTAL CARCINOMA, NUCLEAR GRADE 2.
+B:       DUCTAL CARCINOMA IN SITU, NUCLEAR GRADE 2
+C:	    ATYPICAL LOBULAR HYPERPLASIA	 	
+
+COMMENT:
+HORMONE IMMUNOHISTOCHEMISTRY: 
+Estrogen Receptor: positive, H-score: 100
+Progesterone Receptor: positive, H-score: 45
+Her2/NEU: negative, 1+
+
+
+
+
+

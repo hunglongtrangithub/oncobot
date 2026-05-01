@@ -1,0 +1,38 @@
+===================================================================
+Report ID.....................3,doc3
+Patient ID....................pt357357357
+Patient Name..................Fake Patient7
+Principal Date................20100516 1130
+Record Type...................SP
+Patient DOB...................03/01/1938
+
+
+
+CLINICAL HISTORY:
+72 year old female with a mass in the left breast and a palpable left axillary lymph node status post ultrasound guided core biopsy. 
+
+
+
+FINAL DIAGNOSIS:
+PART 1:  BREAST, LEFT, 10 O' CLOCK, ULTRASOUND GUIDED CORE BIOPSY
+A.       INFILTRATING DUCTAL CARCINOMA, NUCLEAR GRADE 2.
+B.       MICROCALCIFICATIONS IN BIOPSY SPECIMEN
+
+PART 2:  BREAST, LEFT, 11 O’CLOCK, ULTRASOUND GUIDED CORE BIOPSY
+	•	 DUCTAL CARCINOMA IN SITU, NUCLEAR GRADE 2 
+
+PART 2:  LEFT, AXILLARY LYMPH NODE, ULTRASOUND GUIDED CORE BIOPSY
+A:       BENIGN LYMPH NODE
+
+	 	
+
+COMMENT:
+HORMONE IMMUNOHISTOCHEMISTRY: 
+Estrogen Receptor: POSITIVE, H-score: 190
+Progesterone Receptor: POSITIVE, H-score: 180
+Her2/NEU: NEGATIVE, 1+
+
+
+
+
+

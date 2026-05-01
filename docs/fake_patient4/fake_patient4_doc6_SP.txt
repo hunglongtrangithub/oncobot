@@ -1,0 +1,40 @@
+===================================================================
+Report ID.....................6,doc6
+Patient ID....................pt567567567
+Patient Name..................Fake Patient4
+Principal Date................20110712 1030
+Record Type...................SP
+Patient DOB...................01/15/1949
+
+
+CLINICAL HISTORY:
+This is a 62 year old female with stage IIIB (T3 N2 M0) invasive ductal carcinoma of the right breast and invasive lobular carcinoma of the right breast. ER positive, PR positive, HER2 positive. She is S/P 4 cycles of Adriamycin and Cytoxan and 12 cycles of Taxotere.
+
+
+
+
+FINAL DIAGNOSIS:
+PART 1:  BREAST, RIGHT, 2 O' CLOCK, TOTAL MASTECTOMY
+A.       INVASIVE DUCTAL CARCINOMA, NUCLEAR GRADE 2.
+B.       INVASIVE CARCINOMA 1.5 CM
+C.	    MICROCALCIFICATIONS ASSOCIATED WITH MALIGNANT TUMOR
+PART 2:  RIGHT, AXILLARY LYMPH NODE, DISSECTION
+A:       TEN LYMPH NODES, NEGATIVE FOR NEOPLASM (0/10)
+PART 3:  BREAST, LEFT, 11 O’CLOCK, TOTAL MASTECTOMY
+A:       INVASIVE LOBULAR CARCINOMA, NUCLEAR GRADE 2.
+B:       CARCINOMA MEASURES 1.0 CM
+C:	    ATYPICAL LOBULAR HYPERPLASIA	 	
+
+COMMENT:
+HORMONE IMMUNOHISTOCHEMISTRY: 
+Estrogen Receptor: positive, H-score: 250
+Progesterone Receptor: positive, H-score: 100
+Her2/NEU: positive, 3+
+
+T STAGE:	PT3
+N STAGE:	PN2
+M STAGE:	PM0
+
+
+
+

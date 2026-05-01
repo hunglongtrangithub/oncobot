@@ -1,0 +1,22 @@
+===================================================================
+Report ID.....................1,doc1
+Patient ID....................pt123123123
+Patient Name..................Fake Patient1
+Principal Date................20100123 1045
+Record Type...................RAD
+Patient DOB...................04/01/1960
+
+CLINICAL HISTORY:
+This is a 50 year old peri-menopausal female who underwent mammogram on 1/28/09 for a palpable lump in the right breast. Ultrasonography revealed a 1.2x3.4x5.6 cm hypoechoic mass in the upper inner quadrant at the 1 0’clock position. Ultrasonography also revealed an abnormally thickened lymph node in the right axilla which had a thickened cortex of 7 mm.  She now presents for U/S guided core biopsy of the mass and the abnormal lymph node.
+PROCEDURE: 
+Ultrasound guided core biopsy of right breast 1 o’clock abnormality with clip placement
+Ultrasound guided core biopsy of right axilla abnormal lymph node with clip placement
+
+FINDINGS:
+The right breast and axilla were sterilely prepped and draped in the usual standard fashion.  First the right 1 o’clock position 5 cm from the nipple was targeted.  Local anesthesia was obtained with 2% xylocaine.  A small skin incision was made.  Under ultrasound guidance from a medial approach, 2 passes with a 14 gauge biopsy device were performed and sent to pathology.  A clip was placed. 
+Then attention was turned to the right abnormal axillary lymph node.  Local anesthesia was obtained with 2% xylocaine.  A small skin incision was made.  Under ultrasound guidance from an inferomedial approach, 2 passes with a 14 gauge biopsy device were performed and sent to pathology.  A  clip was placed at the site of the biopsy.
+The wounds were cleaned and dressed.  The patient tolerated the procedure well, and there were no complications.
+Post procedure mammogram of the right breast demonstrated adequate clip placement.
+IMPRESSION:
+Uncomplicated ultrasound guided core biopsies of the right breast at the 1 o’clock position and abnormal right axillary lymph node.
+

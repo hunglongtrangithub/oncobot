@@ -1,6 +1,5 @@
 import os
 import json
-import requests
 from uuid import uuid4
 from bson import ObjectId
 
@@ -13,7 +12,7 @@ from src.utils.logger_config import logger
 EMBEDDER_NAME = "default"
 INDEX_NAME = "clinical_docs"
 EMBEDDINGS_MODEL_NAME = "BAAI/bge-base-en-v1.5"
-MEILI_API_URL = "http://" + (settings.meili_http_addr or "localhost:7700")
+MEILI_API_URL = "http://" + settings.meili_http_addr
 
 
 def get_api_keys():
@@ -116,22 +115,6 @@ def index_docs_to_meili(docs):
         logger.info(f"Index {INDEX_NAME} created.")
 
     index = admin_client.index(INDEX_NAME)
-
-    # enable vector search
-    data = {"vectorStore": True}
-    response = requests.patch(
-        url=f"{MEILI_API_URL}/experimental-features",
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {ADMIN_API_KEY}",
-        },
-        data=json.dumps(data),
-    )
-    if response.status_code == 200:
-        logger.info("Vector search enabled successfully!")
-    else:
-        logger.error("Error enabling vector search:", response.status_code)
-        return
 
     # Clear the index before adding new documents
     delete_task = index.delete_all_documents()

@@ -1,6 +1,5 @@
 """Main entrypoint for the app."""
 
-import time
 import asyncio
 import os
 
@@ -23,18 +22,19 @@ from src.oncobot.ner import NERProcessor, DummyNERProcessor
 from src.oncobot.rag_chain import ChatRequest, RAGChain
 from src.oncobot.tts import XTTS, DummyTTS
 from src.oncobot.transcription import WhisperSTT, DummyOpenAIWhisperSTT
-from src.oncobot.talking_face import CustomSadTalker, DummyTalker, FakeTalker
+from src.oncobot.talking_face import FakeTalker
+# from src.oncobot.talking_face import CustomSadTalker
 
 
 # Load dummy models if in test mode
-if os.environ.get("MODE") == "TEST":
+if os.environ.get("MODE") == "testing":
     logger.info("Running in test mode")
     default_message = "Fake Patient 3 is diagnosed with stage 2 invasive ductal carcinoma of the right breast, metastatic to right axillary lymph nodes."
     chat_model = DummyChat(default_message=default_message)
     retriever = CustomRetriever(num_docs=5, semantic_ratio=0.1)
     ner = DummyNERProcessor()
     chain = RAGChain(retriever, chat_model, ner)
-    tts = DummyTTS()
+    tts = DummyTTS("./examples/ellie_10s.wav")
     transcribe = DummyOpenAIWhisperSTT()
     talker = FakeTalker()
 else:
@@ -44,10 +44,10 @@ else:
         max_chat_length=1024,
     )
     retriever = CustomRetriever(num_docs=5, semantic_ratio=0.1)
-    ner = NERProcessor(device="cuda:1")
+    ner = NERProcessor(device="cuda")
     chain = RAGChain(retriever, chat_model, ner)
-    tts = XTTS(use_deepspeed=True)
-    transcribe = WhisperSTT(device="cuda:1")
+    tts = XTTS(use_deepspeed=False)
+    transcribe = WhisperSTT(device="cuda")
     # The comments below show a few options to configure the inference of the talker model.
     # The current settings works well on a 40GB NVIDIA A100 GPU.
     # talker = CustomSadTalker(
@@ -184,7 +184,6 @@ async def text_to_speech(
     conversationId: str = Form(...),
     chatbot: str = Form(...),
 ):
-    start = time.perf_counter()
     speech_file_name = f"{conversationId}.wav"
     speech_folder = Path(__file__).resolve().parent / "audio"
     speech_folder.mkdir(exist_ok=True)
@@ -217,8 +216,6 @@ async def text_to_speech(
             status_code=500,
             detail=error_message,
         )
-    finally:
-        logger.info(f"/text_to_speech Total time taken: {time.perf_counter() - start}")
 
 
 @app.post("/text_to_video")
@@ -229,7 +226,6 @@ async def text_to_video(
     conversationId: str = Form(...),
     chatbot: str = Form(...),
 ):
-    start = time.perf_counter()
     voice_folder = Path(__file__).resolve().parent / "voices"
     voice_folder.mkdir(exist_ok=True)
     voice_file_path = str(voice_folder / f"{chatbot}.mp3")
@@ -280,8 +276,6 @@ async def text_to_video(
             status_code=500,
             detail=error_message,
         )
-    finally:
-        logger.info(f"/text_to_video Total time taken: {time.perf_counter() - start}")
 
 
 if __name__ == "__main__":

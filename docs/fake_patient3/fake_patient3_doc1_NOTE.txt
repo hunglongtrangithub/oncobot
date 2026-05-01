@@ -1,0 +1,25 @@
+===================================================================
+Report ID.....................1,doc1
+Patient ID....................pt135135135
+Patient Name..................Fake Patient3
+Principal Date................20100116 1045
+Record Type...................NOTE
+Patient DOB...................11/12/1966
+
+Chief complaint: Patient with newly diagnosed right breast cancer.
+History of Present Illness: Patient is a 44 year old-female seen for management of recently diagnosed right  breast cancer.  She was asymptomatic at the time of her yearly mammogram in December of 2009.  Mammogram showed architectural distortion associated with calcifications in the upper outer quadrant of the right breast.  Ultrasound showed an irregular hypoechoic mass at the 10 o’clock position measuring approximately 1.5x1.9x1.0 cm.  Core needle biopsy on 1/3/2010 showed an invasive ductal carcinoma, ER positive, PR positive, HER2/NEU negative by FISH.
+Her past medical history is significant for diagnosis of breast cancer in 2001 when she found a lump in her left breast during self-exam.  At that time she had a biopsy done and had stage 2B adenocarcinoma.  She underwent adjuvant chemotherapy and then had a left mastectomy followed by XRT.  
+Overall, she is feeling well.  She has good energy level and her ECOG performance status is 0.  She denies fever, chills, sweats, nausea, vomiting, diarrhea or constipation.  There is no change in bowel or bladder habits.
+Physical Examination:
+GENERAL: The patient alert and in no distress.
+HEENT: NC/AT PERRLA, sclera are clear, no lesions.
+NECK: Supple without lymphadenopathy.
+HEART: RRR without murmurs.
+BREASTS: Right breast with healing incision at previous biopsy site.  Left breast has previous mastectomy scar.
+ABDOMEN: Soft, non-tender, non-distended, no masses.
+BACK: No CVAT
+EXTREMITIES: No clubbing, cyanosis or edema.
+
+Assessment: Patient is a 44 year-old female with clinical stage II (T2 N0 M0) invasive ductal carcinoma of the right breast associated with DCIS.  She will proceed with a right breast segmental mastectomy and sentinel lymph node biopsy.
+
+

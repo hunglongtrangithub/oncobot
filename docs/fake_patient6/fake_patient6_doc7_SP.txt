@@ -1,0 +1,37 @@
+===================================================================
+Report ID.....................7,doc7
+Patient ID....................pt789789789
+Patient Name..................Fake Patient6
+Principal Date................20110301 1115
+Record Type...................SP
+Patient DOB...................05/01/1941
+
+CLINICAL HISTORY:
+69 year old female with invasive ductal carcinoma of the left breast and axillary lymph nodes status post neoadjuvant chemotherapy. She had a history of DCIS of the right breast diagnosed in 1999.
+
+
+FINAL DIAGNOSIS:
+PART 1:  BREAST, LEFT, SEGMENTAL MASTECTOMY
+A.       S/P NEOADJUVANT CHEMOTHERAPY FOR INVASIVE DUCTAL CARCINOMA,
+NUCLEAR GRADE 2 WITH METASTASES TO THE LEFT AXILLARY LYMPH NODES
+B.       MARGINS ARE CLEAR
+C.       NO RESIDUAL CARCINOMA IDENTIFIED
+
+PART 2:  LEFT, AXILLARY LYMPH NODES
+A:       24 AXILLARY LYMPH NODES, FREE OF TUMOR (0/24)
+
+	 	
+
+COMMENT:
+HORMONE IMMUNOHISTOCHEMISTRY: 
+Estrogen Receptor: positive, H-score: 60
+Progesterone Receptor: NEGATIVE, H-score: 0
+Her2/NEU: POSITIVE, 3+
+
+PATHOLOGIC STAGE
+T STAGE: T1
+N STAGE: N1
+M STAGE: MO
+
+
+

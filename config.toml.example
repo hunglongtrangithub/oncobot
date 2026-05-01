@@ -1,3 +1,4 @@
-master_key = <use the value of MEILI_MASTER_KEY in .env file>
-http_addr = <use the value of MEILI_HTTP_ADDR in .env file>
+master_key = <enter your master key here>
+http_addr = "localhost:7700"
+db_path = "./data.ms"
 no_analytics = true

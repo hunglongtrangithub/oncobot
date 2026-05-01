@@ -1,0 +1,14 @@
+===================================================================
+Report ID.....................8,doc8
+Patient ID....................pt789789789
+Patient Name..................Fake Patient6
+Principal Date................20110415 1115
+Record Type...................NOTE
+Patient DOB...................05/01/1941
+
+CLINICAL HISTORY: This is a 69 year old post-menopausal female with clinical stage 2A (T1 N1 M0) invasive ductal carcinoma of the left breast with left axillary lymph node metastases. She is ER positive, PR negative and HER2 positive. She is status post 6 cycles of Taxotere and Carboplatin followed by left breast segmental mastectomy and left axillary lymph node dissection performed on 3/1/11.  
+INTERIM HISTORY: Her surgical incision is completely healed. She has no redness, erythema, irritation or signs of infection. She has limited range of motion from her axillary surgery and has been encouraged to perform exercises for mobility. She presents for Radiation Therapy consultation. The patient started on single agent Herceptin on 4/1/11.
+PMH: She has a history DCIS of the right breast ER and PR positive diagnosed in January of 1999. She was stage 0 (pTis, pNx). She underwent a right segmental mastectomy on 2/1/99 followed by re-excision for positive margins. She started Tamoxifen in March of 2009 followed by radiation therapy from April to May 1999. 
+On physical exam she looks and feels well. VSS. Cardiac exam reveals normal S1 and S2 without murmurs, rubs or gallops. Lungs are clear to auscultation without wheezes, rales or rhonchi. Abdomen is soft, non-tender without hepatosplenomegaly. Extremities are without clubbing, cyanosis or edema. 
+IMPRESSION: 
+Patient is a pleasant 69 year old female with clinical stage 2A (T1,N1,M0) invasive ductal carcinoma of the left breast with left axillary lymph node metastases S/P neoadjuvant chemotherapy with pathologic complete response (T0 N0) to receive radiation therapy to he left breast and tumor bed. She will continue on Herceptin. We will plan to see her after completion of radiation therapy. 

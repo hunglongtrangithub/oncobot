@@ -1,0 +1,21 @@
+===================================================================
+Report ID.....................8,doc8
+Patient ID....................pt135135135
+Patient Name..................Fake Patient3
+Principal Date................20100624 1230
+Record Type...................NOTE
+Patient DOB...................11/12/1966
+
+Reason for Visit:  Back Pain.
+
+History of Present Illness:
+44 year old female admitted with severe back pain. She rates the pain as 10/10 and located in the lower back. The pain has been ongoing for this patient since the beginning of June. She did not complete her 4th cycle of chemotherapy due to the severe back pain. She will get a CT scan. 
+
+CT spine appears to show extensive metastatic disease of the lumbar vertebra as well as pulmonary nodules that were not seen previously. Based on these new findings she will need a CT of the chest/abdomen and pelvis to evaluate for any further lesions.
+Past Medical History:
+Patient with history of right breast cancer stage II status post right segmental mastectomy followed by right axillary lymph node dissection for metastatic disease to the right axillary lymph node. She had received 3 cycles of chemotherapy with Doxorubicin and Paclitaxel with minimal side-effects. She had complained of back pain shortly after receiving her 4th cycle. She underwent a CT of the spine which revealed metastatic disease in the lumbar vertebra. 
+ 
+IMPRESSION:
+44 year old female admitted with severe back pain found to have pulmonary lesions and compression fracture of Lumbar spine concerning for metastatic disease.
+CT scan revealed a 6 mm pulmonary nodule in the right lower lobe and a 4 mm nodule is seen in the right upper lobe.  Additional 2 mm nodules are seen in the left middle lobe. There are bony metastases seen in the lumbar vertebra. Addition metastatic deposits are seen in the left sixth rib and right fifth rib. 
+She is scheduled to be seen by radiation therapy for treatment recommendations. 

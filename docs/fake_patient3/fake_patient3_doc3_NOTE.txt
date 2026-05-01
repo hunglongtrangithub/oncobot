@@ -1,0 +1,23 @@
+===================================================================
+Report ID.....................3,doc3
+Patient ID....................pt135135135
+Patient Name..................Fake Patient3
+Principal Date................20100210 1015
+Record Type...................NOTE
+Patient DOB...................11/12/1966
+
+
+
+Reason For Visit:  Post op breast surgery
+
+Diagnosis: Stage II (T2, N1, M0) invasive ductal carcinoma of the right breast:  ER positive, PR positive, and Her2 negative by FISH.
+
+Procedure: Right segmental mastectomy and right axilla, sentinel lymph node excision on February 1, 2010. 
+
+Interim History: The patient is a 44 year old woman who presents for her postoperative visit. The operation was performed without complication and her recovery has been uneventful.
+
+Physical Exam: The patient’s physical examination demonstrates a well healed surgical incision of the right breast. The axillary wound is well healed. No signs of bruising and no infection are noted. She denies any pain, fever, nausea or vomiting.
+ 
+Impression: A 44 year old woman with stage 2 invasive ductal carcinoma of the right breast, treated with segmental mastectomy and axillary, sentinel lymph node excision.
+
+Recommendations:  The patient is to have a right axillary lymph node dissection due to multifocal carcinoma and micro-metastases in the sentinel lymph node. Further treatment plan to be discussed after this procedure.

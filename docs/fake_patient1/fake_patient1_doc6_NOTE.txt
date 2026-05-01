@@ -1,0 +1,14 @@
+===================================================================
+Report ID.....................6,doc6
+Patient ID....................pt123123123
+Patient Name..................Fake Patient1
+Principal Date................20100830 1115
+Record Type...................NOTE
+Patient DOB...................04/01/1960
+
+
+CLINICAL HISTORY: This is a 51 year old peri-menopausal female with stage 2A (T1 N2 M0) infiltrating ductal carcinoma of the right breast with right axillary lymph node metastases. She is ER negative, PR negative and HER2 negative. She is status post 4 cycles of Adriamycin and Carboplatin followed 12 cycles of Abraxane. She underwent a right breast modified radical mastectomy and right axillary lymph node dissection on 7/10/10. She was started Tamoxifen on 7/30/2010.  
+INTERIM HISTORY: Her surgical incision is completely healed. She has no redness, erythema, irritation or signs of infection. She underwent a chest CT for radiation therapy planning which revealed no evidence of any lymphadenopathy in the visualized field. There were post-surgical changes in the right breast and right axilla. No evidence of metastatic disease. She received radiation to her right breast with additional treatment to the tumor bed. 
+On physical exam she looks and feels well. VSS. Cardiac exam reveals a normal S1 and S2 without murmurs, rubs or gallops. Lungs are clear to auscultation without wheezes, rales or rhonchi. Abdomen is soft, non-tender without hepatosplenomegaly. Extremities are without clubbing, cyanosis or edema. 
+IMPRESSION: 
+Patient is a pleasant 51 year old female with stage 2A (T1,N2,M0)infiltrating ductal carcinoma of the left breast with left axillary lymph node metastases S/P neoadjuvant chemotherapy and radiation therapy. She will continue on Tamoxifen. She has no evidence of disease and we will see her in 6 months. 

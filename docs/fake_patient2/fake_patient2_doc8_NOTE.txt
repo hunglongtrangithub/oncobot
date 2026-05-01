@@ -1,0 +1,23 @@
+===================================================================
+Report ID.....................8,doc8
+Patient ID....................pt246246246
+Patient Name..................Fake Patient2
+Principal Date................20100301 1015
+Record Type...................NOTE
+Patient DOB...................06/21/1958
+
+
+Reason For Visit:  Post op breast surgery
+
+Diagnosis: IIIA (T3, N2, M0) Left breast cancer:  ER positive, PR positive, and Her2 negative.
+
+Procedure: Left modified radical mastectomy and axillary lymph node dissection on January 30, 2010. 
+
+Interim History: The patient is a 51 year old woman who presents for her postoperative visit. The operation was performed without complication and her recovery has been uneventful.
+
+Physical Exam: The patient’s physical examination demonstrates a well healed surgical incision of the left breast. The axillary wound is well healed.
+No signs of bruising and no infection are noted. The breasts appear symmetric. The overall cosmetic outcome is good
+
+Impression: A 51 year old woman with stage 3A invasive ductal carcinoma of the left breast, treated with modified radical mastectomy and axillary lymph node dissection.
+
+Recommendations:  The patient’s surgical management is now complete.  She has a Medical Oncology consult 3/10/10, to discuss systemic therapies as indicated. Radiation Oncology consult on 3/29/10 to discuss required adjuvant breast irradiation. She will return to office in 6 months for a follow-up visit.

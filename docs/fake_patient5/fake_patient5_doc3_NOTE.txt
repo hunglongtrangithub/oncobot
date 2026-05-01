@@ -1,0 +1,20 @@
+===================================================================
+Report ID.....................3,doc3
+Patient ID....................pt101102103
+Patient Name..................Fake Patient5
+Principal Date................20090510 1015
+Record Type...................NOTE
+Patient DOB...................08/01/1972
+
+CLINICAL HISTORY: This is a 37 year old pre-menopausal female with a newly diagnosed left breast cancer. She felt a lump in the upper outer quadrant of the left breast. Breast imaging on 5/5/09 revealed multiple areas of concern. She went to have 2 biopsies at the 1 o’clock and 2 o’clock positions that showed invasive ductal carcinoma. These were ER positive, PR positive and HER2/NEU negative. She presents now to discuss options for treatment.
+Past Medical History: She has a history of a right ovarian cyst and endometriosis.
+Physical Exam: Health appearing young female in NAD
+VS: BP 120/80, Pulse 71, Temp 97.0
+HEENT: NC/AT, PERRL, EOMI, sclera non-icteric
+Neck: Supple, no masses, thyroid not enlarged
+LUNGS: CTA, No wheezes, rales, rhonchi
+COR: RRR, No murmurs, rubs or gallops
+ABD: Soft, non-tender, non-distended
+EXT: Good pulses, No clubbing, cyanosis or edema
+IMPRESSION: 
+Patient with newly diagnoses clinical stage 3A (T3,N2,M0) invasive ductal carcinoma of the left breast with left axillary lymph node metastases. Recommendation was made for her to start chemotherapy with Adriamycin and Cytoxan for 4 cycles, followed by 12 cycles of Taxotere. We will assess tumor response midway through therapy.

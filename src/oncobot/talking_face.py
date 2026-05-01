@@ -22,6 +22,8 @@ class DummyTalker:
         self.dummy_video_file = dummy_video_file
 
     def run(self, video_path: str, audio_path: str, image_path: str):
+        _ = audio_path
+        _ = image_path
         shutil.copy(self.dummy_video_file, video_path)
         time.sleep(5)
         logger.info(f"Created video {video_path}")
@@ -50,16 +52,17 @@ class FakeTalker:
 
         sample_video = VideoFileClip(str(sample_video_path))
         audio_clip = AudioFileClip(str(audio_path))
-        audio_duration = audio_clip.duration
+        audio_duration = float(audio_clip.duration or float("inf"))
+        video_duration = float(sample_video.duration or float("inf"))
 
         video_data = []
         total_duration = 0
 
         while total_duration < audio_duration:
             # n = random.uniform(1, min(10, sample_video.audio_duration))
-            n = min(sample_video.duration, audio_duration)
+            n = min(video_duration, audio_duration)
             # Pick a random start time within the video
-            start_time = random.uniform(0, sample_video.duration - n)
+            start_time = random.uniform(0, video_duration - n)
 
             video_segment = sample_video.subclip(start_time, start_time + n)
             video_data.append(video_segment)

@@ -29,7 +29,6 @@ dependencies = [
   "pydantic>=2.3.0",
   "pydantic-settings>=2.2.1",
   "pydub>=0.25.1",
-  "python-dotenv>=1.0.1",
   "python-multipart>=0.0.9",
   "pyyaml>=6.0.1",
   "replicate>=0.25.1",

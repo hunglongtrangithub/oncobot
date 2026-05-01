@@ -280,7 +280,7 @@ class RAGChain:
         )
 
         system_prompt = SYSTEM_TEMPLATE.format(context=serialized_docs)
-        formatted_chat_history = self.format_chat_history(request.chat_history)
+        # formatted_chat_history = self.format_chat_history(request.chat_history)
         current_conversation = [
             {"role": "system", "content": system_prompt},
             # *formatted_chat_history,
@@ -362,8 +362,8 @@ class RAGChain:
 
 
 if __name__ == "__main__":
-    from retriever import CustomRetriever
-    from custom_chat_model import CustomChatHuggingFace
+    from .retriever import CustomRetriever
+    from .custom_chat_model import CustomChatHuggingFace
 
     retriever = CustomRetriever()
     chat_llm = CustomChatHuggingFace()

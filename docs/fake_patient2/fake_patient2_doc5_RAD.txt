@@ -1,0 +1,22 @@
+===================================================================
+Report ID.....................5,doc5
+Patient ID....................pt246246246
+Patient Name..................Fake Patient2
+Principal Date................20091206 1445
+Record Type...................RAD
+Patient DOB...................06/21/1958
+
+51 year old peri-menopausal female with newly diagnosed with left breast Invasive ductal carcinoma and DCIS on biopsy presents for MRI for evaluation of extent of disease. 
+TECHNIQUE:
+Bilateral breast MRI with and without IV contrast.
+FINDINGS:
+There are post biopsy changes seen in the retro areolar region aspect of the left breast at the post biopsy site.
+There is abnormal enhancement seen in this location compatible with patient’s history of malignancy.
+There is increased enhancement seen in the inferior aspect of the left breast at the 2 o’clock position measuring 1.2 cm.
+There are other multiple benign appearing enhancing masses seen in both the right and left breasts.
+None of the remaining masses appear worrisome for malignancy based upon MRI criteria.
+IMPRESSION:
+BIRADS CATEGORY: 5
+There is a malignant appearing area of enhancement in the left breast which does correspond to the patient’s history of recent diagnosis of malignancy.
+She has been scheduled to see a Medical Oncologist, as well as a Surgeon.
+

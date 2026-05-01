@@ -1,0 +1,18 @@
+===================================================================
+Report ID.....................1,doc1
+Patient ID....................pt789789789
+Patient Name..................Fake Patient6
+Principal Date................20100816 1045
+Record Type...................RAD
+Patient DOB...................05/01/1941
+CLINICAL HISTORY:
+Patient is a 69 year old post-menopausal female presenting for evaluation of a left breast lump and enlarged left axillary lymph node identified on routine screening mammography performed on 8/8/10. 
+
+MAMMOGRAPHY:
+Digital diagnostic mammography of the left breast was performed. Full lateral inferior and magnification views confirm the presence of a 1.0 cm ill-defined mass at the 4 o’clock position of the left breast. A left axillary view shows 2 abnormal dense round lymph nodes measuring 3.0 cm and 2.1 cm.
+Sonography of the left breast confirms a 1.0x0.8x0.7 cm hypoechoic mass at the 4 o’clock central position. This mass has an irregular shape and no other masses are seen.
+Sonography of the left axilla demonstrates 2 abnormal lymph nodes, both with cortical thickening. This is worrisome for extra-nodal extension and favors a diagnosis of metastatic disease.
+IMPRESSION:
+There is a suspicious 1.0 cm solid mass located in the left breast at 4 o’clock. There are 2 palpable enlarged left axillary lymph nodes. Ultrasound guided core biopsy the left breast mass is recommended. Ultrasound guided core biopsy of the abnormal left axillary lymph node was recommended.
+ACR BI-RADS category (left breast): 5 – Highly suggestive of malignancy.
+Abnormal left axillary lymph node highly suspicious for metastatic disease.

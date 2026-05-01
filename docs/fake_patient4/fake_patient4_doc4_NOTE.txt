@@ -1,0 +1,33 @@
+===================================================================
+Report ID.....................4,doc4
+Patient ID....................pt567567567
+Patient Name..................Fake Patient4
+Principal Date................20110404 1025
+Record Type...................NOTE
+Patient DOB...................01/15/1949
+
+
+DIAGNOSIS:  Stage IIIB (T3 N2 M0) invasive ductal carcinoma of the right breast, and invasive lobular carcinoma of the left breast. ER positive, PR positive, HER2 positive.
+
+Therapy: 7 of planned 12 cycles of Taxotere.
+
+REASON FOR VISIT:  Assess response to neoadjuvant chemotherapy.
+
+Patient returns to the office today for ongoing management of biopsy-proven bilateral breast cancer with right axillary lymph node metastases. Her initial visit was on March 10, 2011 at which time her clinical breast examination revealed a new mass in the right breast biopsy revealing invasive ductal carcinoma and a lump in the left breast biopsy revealing invasive lobular carcinoma. She also had multiple abnormally enlarged right axillary lymph nodes.
+
+She completed 4 cycles of chemotherapy with Adriamycin and Cytoxan.
+She is now admitted for cycle 7 of 12 planned cycles of Taxotere. She has tolerated her chemotherapy without significant sequela.
+
+Past History: She has a history of left ovarian carcinoma, treated with total abdominal hysterectomy, bilateral salpingo-oophorectomy in July 2002.  She received neoadjuvant chemotherapy with Taxol and Carboplatin.
+
+Physical Exam: Health appearing female in NAD. 
+HEENT: NC/AT, PERRL, EOMI, Sclera non icteric
+NECK: Supple, no masses
+LUNGS: CTA, no wheezes, rales, rhonchi
+CARDIAC: RRR. No murmurs, rubs or gallops
+ADB: Soft, NT, ND, No HSM
+EXT: No clubbing, cyanosis or edema
+
+
+IMPRESSION:  Patient is a 62 year old post-menopausal female who has had a partial response to neoadjuvant chemotherapy for her bilateral breast carcinoma. We will re-assess patient’s disease after the 12th cycle of Taxotere.
+

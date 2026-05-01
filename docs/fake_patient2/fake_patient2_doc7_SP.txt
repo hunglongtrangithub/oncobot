@@ -1,0 +1,30 @@
+===================================================================
+Report ID.....................7,doc7
+Patient ID....................pt246246246
+Patient Name..................Fake Patient2
+Principal Date................20100220 1645
+Record Type...................SP
+Patient DOB...................06/21/1958
+
+PATIENT HISTORY: 51 year-old female with triple negative invasive ductal carcinoma of the left breast with multiple positive axillary lymph nodes.  Status post neoadjuvant chemotherapy.
+
+
+FINAL DIAGNOSIS:
+LEFT BREAST, MODIFIED RADICAL MASTECTOMY
+A.          INVASIVE DUCTAL CARCINOMA, MAIN TUMOR MASS IN THE 2 O’CLOCK REGION IN THE UPPER OUTER QUADRANT
+B.     SURGICAL MARGINS ARE NEGATIVE.
+C.     CHANGES CONSISTENT WITH PREVIOUS CORE BIOPSY
+D.     TUMOR IS ESTROGEN RECEPTOR NEGATIVE, PROGESTERONE RECEPTOR   NEGATIVE, HER-2/NEU NEGATIVE
+E.     CHANGES CONSISTENT WITH STATUS POST CHEMOTHERAPY.
+F.     TWO OUT OF EIGHT AXILLARY LYMPH NODES POSITIVE FOR METASTATIC CARCINOMA (2/8).
+
+HORMONE RECEPTOR IMMUNOHISTOCHEMISTRY
+RESULT                       
+ESTROGEN           Positive                        90
+PROGESTERONE       Positive                        60
+HER-2/NEU          Negative                        0 
+
+T STAGE PATHOLOGIC:		pT3
+N STAGE PATHOLOGIC:		pN2
+M STAGE PATHOLOGIC:		pM0
+

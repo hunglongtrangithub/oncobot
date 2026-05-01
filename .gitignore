@@ -147,9 +147,8 @@ node_modules/
 # ignore model directory
 llm_llama/
 
-# ignore docs directories and index files
+# ignore index files
 index/
-docs/
 
 # ignore generated audio and video files
 audio/
@@ -167,3 +166,4 @@ gfpgan
 config.toml
 data.ms/
 dumps/
+processed_docs.jsonl

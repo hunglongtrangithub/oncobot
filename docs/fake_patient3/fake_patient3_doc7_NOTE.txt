@@ -1,0 +1,31 @@
+===================================================================
+Report ID.....................7,doc7
+Patient ID....................pt135135135
+Patient Name..................Fake Patient3
+Principal Date................20100508 1045
+Record Type...................NOTE
+Patient DOB...................11/12/1966
+
+DIAGNOSIS:  Stage II (T2 N1 M0) invasive ductal carcinoma of the right breast, metastatic to right axillary lymph nodes. ER positive, PR positive, Her2 negative.
+
+REASON FOR VISIT:  3rd cycle of Doxorubicin and Paclitaxel.
+
+Patient returns to the office today for management of invasive ductal carcinoma of the right breast with axillary lymph node metastasis.
+Her initial office visit was on January 16, 2010.
+
+She has received two cycles of chemotherapy with Doxorubicin and Paclitaxel. She has tolerated chemotherapy well with minimal nausea and vomiting. Her blood counts have remained stable with WBC 10.01, HGB 17, HCT 50.6, PLT 290. BUN and CR have been within normal limits.
+
+PMH: Her past medical history is significant for diagnosis of breast cancer in 2001 when she found a lump in her left breast during self-exam.  At that time she had a biopsy done and had stage 2B adenocarcinoma.  She underwent adjuvant chemotherapy and then had a left mastectomy followed by XRT. 
+
+Physical Exam: Blood pressure 114/80, temperature 97.6, pulse 72
+GEN: She is nontoxic, non-cachectic appearing.
+HEAD: NC/AT with Alopecia
+EYES: Anicteric
+ENT: No oral lesions.
+HEART: RRR, no murmurs, rubs or gallops.
+LUNGS: Clear to auscultation bilaterally.
+ADB: Non-tender. Non-distended. No HSM.
+EXT: No clubbing, cyanosis or edema. 
+
+IMPRESSION:  Patient is a 44 year-old female with stage 2, invasive ductal carcinoma of the right breast s/p right segmental mastectomy followed by right axillary lymph node dissection for metastatic disease. She has received 2 cycles of Doxorubicin and Paclitaxel. She is admitted for her third cycle. She has tolerated chemotherapy reasonably well with minimal side-effects.
+

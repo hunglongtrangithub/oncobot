@@ -1,0 +1,38 @@
+===================================================================
+Report ID.....................2,doc2
+Patient ID....................pt123123123
+Patient Name..................Fake Patient1
+Principal Date................20100123 1315
+Record Type...................SP
+Patient DOB...................04/01/1960
+
+
+
+CLINICAL HISTORY:
+This 50 year old peri-menopausal female is S/P ultrasound guided core biopsy of a suspicious lump in the right breast and an abnormal axillary lymph node.  
+
+
+
+
+FINAL DIAGNOSIS:
+PART 1:  RIGHT BREAST ULTRASOUND GUIDED CORE BIOPSY
+A.	INFILTRATING DUCTAL CARCINOMA, NUCLEAR GRADE 3
+B.    FOCAL DUCTAL CARCINOMA IN SITU, NUCLEAR GRADE 2
+
+PART 2: RIGHT AXILLARY LYMPH NODE ULTRASOUND GUIDED CORE BIOPSY
+A. METASTATIC CARCINOMA INVLOVING LYMPH NODE CORES
+
+
+IMMUNOHISTOCHEMISTRY:
+
+RESULT						H-SCORE
+
+ESTROGEN RECEPTOR - NEGATIVE		0
+
+PROGESTERONE RECEPTOR - NEGATIVE		0
+
+HER2/NEU - NEGATIVE				0
+
+
+
+

@@ -1,0 +1,23 @@
+===================================================================
+Report ID.....................6,doc6
+Patient ID....................pt135135135
+Patient Name..................Fake Patient3
+Principal Date................20100325 1125
+Record Type...................NOTE
+Patient DOB...................11/12/1966
+
+DIAGNOSIS:  Stage II (T2 N1 M0) invasive ductal carcinoma of the right breast, metastatic to right axillary lymph nodes. ER positive, PR positive, Her2 negative.
+
+REASON FOR VISIT:  Discuss chemotherapy.
+
+Patient returns to the office today for management of invasive ductal carcinoma of the right breast with axillary lymph node metastasis.
+Her initial office visit was on January 16, 2010.
+
+I discussed treatment options with her and her husband. I recommended chemotherapy with Doxorubicin and Paclitaxel. She will come in next week to start this regimen.
+
+PMH: Her past medical history is significant for diagnosis of breast cancer in 2001 when she found a lump in her left breast during self-exam.  At that time she had a biopsy done and had stage 2B adenocarcinoma.  She underwent adjuvant chemotherapy and then had a left mastectomy followed by XRT.  
+
+Physical Exam: The patient’s physical examination demonstrates a healing axillary wound.  There is no erythema, swelling, redness or edema. No signs of bruising and no infection are noted. She denies any fever or pain. 
+
+IMPRESSION:  Patient is a 44 year-old female with stage 2, invasive ductal carcinoma of the right breast s/p right segmental mastectomy followed by right axillary lymph node dissection for metastatic disease. She will receive 4 cycles of Doxorubicin and Paclitaxel. We will monitor her for any side effects and will re-assess her response after the 4th cycle.
+

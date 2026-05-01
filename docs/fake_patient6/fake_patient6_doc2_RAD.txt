@@ -1,0 +1,17 @@
+===================================================================
+Report ID.....................2,doc2
+Patient ID....................pt789789789
+Patient Name..................Fake Patient6
+Principal Date................20100818 1245
+Record Type...................RAD
+Patient DOB...................05/01/1941
+
+CLINICAL HISTORY:
+Patient is a 69 year old female who returns for ultrasound guided core biopsy of the 1.0 cm solid mass at the 4 o’clock position of the left breast and the 3.0 cm palpable left axillary lymph node. 
+
+TECHNIQUE:
+The left breast was prepped in the usual sterile fashion. Under ultrasound guidance 2cc of 1% lidocaine was injected. A small incision in the skin was made. Core biopsy was performed using a 14 gauge needle. Two passes were made directly through the lesion. A clip was placed at the biopsy site.
+The left axilla was prepped in the usual sterile fashion. Under ultrasound guidance 2cc of 1% lidocaine was injected. A small incision in the skin was made. Core biopsy was performed using a 14 gauge needle. Two passes were made directly through the lesion. A clip was placed at the biopsy site.
+Post procedure digital mammography was obtained and shows the clips at the sites of the lesions.
+IMPRESSION:
+Successful core biopsy of a 1.0 cm left breast mass and a 3.0 cm left axillary lymph node has been performed under ultrasound guidance. The specimens were sent to pathology. 

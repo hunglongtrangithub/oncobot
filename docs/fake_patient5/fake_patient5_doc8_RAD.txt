@@ -1,0 +1,19 @@
+===================================================================
+Report ID.....................8,doc8
+Patient ID....................pt101102103
+Patient Name..................Fake Patient5
+Principal Date................20100206 1015
+Record Type...................RAD
+Patient DOB...................08/01/1972
+
+CLINICAL HISTORY:
+38 year old female with a history of left breast invasive ductal carcinoma metastatic to axillary lymph nodes on Tamoxifen presents with chest pain and shortness of breath. She is here for CT of the chest and abdomen.
+Technique: Serial helical images were obtained at 2.0 mm increments from the lung apices to the abdomen.
+
+FINDINGS:
+Lungs: 
+There are small pleural effusions on the left associated with atelectasis. There are larger pleural effusions on the right. A 3 mm nodule is seen in the right middle lobe of the lung. A 4 mm nodule is seen in the left lower lung. Additional 2 mm pulmonary nodules in the right lower lobe are noted.
+Abdomen:
+Abdominal CT showed new 2 mm nodules in the left lobe of the liver. 
+IMPRESSION:
+New pulmonary nodules in both lungs and a new nodule in the left lobe of the liver are concerning for malignancy.  Biopsy of the lung nodules was recommended. 

@@ -1,0 +1,41 @@
+===================================================================
+Report ID.....................5,doc5
+Patient ID....................pt123123123
+Patient Name..................Fake Patient1
+Principal Date................20100710 1015
+Record Type...................SP
+Patient DOB...................04/01/1960
+
+CLINICAL HISTORY:
+This 51 year old peri-menopausal female is S/P neoadjuvant chemotherapy for infiltrating ductal carcinoma of the right breast with left axillary lymph node metastasis. Recent imaging showed significant tumor shrinkage. She was admitted for right breast mastectomy with axillary lymph node dissection.  
+
+FINAL DIAGNOSIS:
+PART 1:  RIGHT BREAST MODIFIED RADICAL MASTECTOMY
+A.	INFILTRATING DUCTAL CARCINOMA IN THE UPPER INNER QUADRANT, 1.3 CM IN GREATEST DIMENSION ASSOCIATED WITH MICROCALCIFICATIONS, NUCLEAR GRADE 3
+B.    FOCAL DUCTAL CARCINOMA IN SITU, 0.1 CM IN DIAMETER WITHOUT CALCIFICATIONS, NUCLEAR GRADE 2
+C.    SURGICAL MARGINS ARE NEGATIVE
+
+PART 2: RIGHT AXILLARY LYMPH NODE DISSECTION 
+A. TWO OUT OF 10 AXILLARY LYMPH NODES POSITIVE FOR METASTATIC CARCINOMA (2/10)
+B. LARGEST METASTATIC TUMOR MEASURES 2 MM
+C. NO EXTRACAPSULAR EXTENSION IS IDENTIFIED
+
+
+IMMUNOHISTOCHEMISTRY:
+
+RESULT						H-SCORE
+
+ESTROGEN RECEPTOR - NEGATIVE		0
+
+PROGESTERONE RECEPTOR - NEGATIVE		0
+
+HER2/NEU - NEGATIVE				0
+
+
+T STAGE, PATHOLOGIC:		pT1
+N STAGE, PATHOLOGIC:		pN2
+M STAGE, PATHOLOGIC:		pM0
+
+
+
+

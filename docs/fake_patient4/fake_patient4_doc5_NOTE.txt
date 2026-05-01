@@ -1,0 +1,31 @@
+===================================================================
+Report ID.....................5,doc5
+Patient ID....................pt567567567
+Patient Name..................Fake Patient4
+Principal Date................20110625 1115
+Record Type...................NOTE
+Patient DOB...................01/15/1949
+
+
+DIAGNOSIS:  Stage IIIB (T3 N2 M0) invasive ductal carcinoma of the right breast, and invasive lobular carcinoma of the left breast. ER positive, PR positive, HER2 positive.
+
+Therapy: Completed 4 cycles of Adriamycin and Cytoxan and 12 cycles of Taxotere.
+
+REASON FOR VISIT:  Assess response to neoadjuvant chemotherapy.
+
+Patient returns to the office today for ongoing management of biopsy-proven bilateral breast cancer with right axillary lymph node metastases. Her initial visit was on March 10, 2011 at which time her clinical breast examination revealed a new mass in the right breast biopsy revealing invasive ductal carcinoma and a lump in the left breast biopsy revealing invasive lobular carcinoma. She also had multiple abnormally enlarged right axillary lymph nodes.
+
+She is being seen to assess her response to chemotherapy.  Breast MRI on 6/21/11 showed tumor responded to chemotherapy. Right breast mass now measures 1.0x1.9x2.0 cm from previous 1.1x2.2x3.3 cm. Left breast mass now measures 1.0x1.0x1.0 cm from previous 1.1x1.2x1.2 cm. Right axillary lymph node metastasis now measures 2.0x1.9 cm form previous 3.2x2.5 cm. 
+
+Past History: She has a history of left ovarian carcinoma, treated with total abdominal hysterectomy, bilateral salpingo-oophorectomy in July 2002.  She received neoadjuvant chemotherapy with Taxol and Carboplatin.
+
+Physical Exam: Health appearing female in NAD. 
+HEENT: NC/AT, PERRL, EOMI, Sclera non icteric
+NECK: Supple, no masses
+LUNGS: CTA, no wheezes, rales, rhonchi
+CARDIAC: RRR. No murmurs, rubs or gallops
+ADB: Soft, NT, ND, No HSM
+EXT: No clubbing, cyanosis or edema
+
+IMPRESSION:  Patient has had a good response to neoadjuvant chemotherapy for her bilateral breast carcinoma. She will now proceed with bilateral mastectomies and right axillary dissection.
+

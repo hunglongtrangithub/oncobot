@@ -1,0 +1,23 @@
+===================================================================
+Report ID.....................7,doc7
+Patient ID....................pt357357357
+Patient Name..................Fake Patient7
+Principal Date................20101026 1015
+Record Type...................NOTE
+Patient DOB...................03/01/1938
+CLINICAL HISTORY: This is a 72 year old post-menopausal female with Stage 1B (T1, N1mi, M0) infiltrating ductal carcinoma and DCIS of the left breast. She is ER positive, PR positive and HER2 negative. 
+INTERIM HISTORY: She returns having been on Anastrozole for 3 months. She has tolerated therapy well without significant side effects. She completed radiation therapy to the left breast with additional treatment to the tumor bed in August 2010. 
+Briefly she was diagnosed with left breast infiltrating ductal carcinoma by biopsy on 5/16/10. She underwent a left modified radical mastectomy with left axillary sentinel lymph node biopsy and left axillary lymph node dissection on 6/21/10. Pathology revealed infiltrating ductal carcinoma of the left breast, 1.8 cm, nuclear grade 3. Lympho-vascular invasion was present. Surgical margins were negative. Fourteen (14) lymph nodes were removed with one positive for metastatic carcinoma. She has a well healed left mastectomy incision without signs of infection, erythema or swelling. 
+PMH: She has Chronic Lymphocytic Leukemia diagnosed in May of 2002 receiving immunosuppressive therapy with Alemtuzumab. WBC has been normal and recent bone marrow biopsy showed stable disease.  
+Physical Exam: Well appearing female in NAD
+VS: BP 120/80, Pulse 71, Temp 97.0
+HEENT: NC/AT, PERRL, EOMI, sclera non-icteric
+NECK: Supple, no masses, thyroid not enlarged
+LUNGS: CTA, No wheezes, rales, rhonchi
+BREAST: left breast with well healed surgical scar without skin breakdown or burns. 
+COR: RRR, No murmurs, rubs or gallops
+ABD: Soft, non-tender, non-distended, No HSM.
+EXT: Good pulses, No clubbing, cyanosis or edema
+
+IMPRESSION: 
+She has tolerated her therapy with Anastrozole reasonably well. We will continue to see her every 6 months.

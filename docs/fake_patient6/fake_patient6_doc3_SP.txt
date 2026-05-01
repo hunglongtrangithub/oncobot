@@ -1,0 +1,34 @@
+===================================================================
+Report ID.....................3,doc3
+Patient ID....................pt789789789
+Patient Name..................Fake Patient6
+Principal Date................20100818 1130
+Record Type...................SP
+Patient DOB...................05/01/1941
+
+
+
+CLINICAL HISTORY:
+69 year old female with a mass in the left breast and a palpable left axillary lymph node status post ultrasound guided core biopsy. She had a history of DCIS of the right breast diagnosed in 1999.
+
+
+FINAL DIAGNOSIS:
+PART 1:  BREAST, LEFT, 4 O' CLOCK, ULTRASOUND GUIDED CORE BIOPSY
+A.       INVASIVE DUCTAL CARCINOMA, NUCLEAR GRADE 2.
+B.       DUCTAL CARCINOMA IN SITU, NUCLEAR GRADE 2 
+
+PART 2:  LEFT, AXILLARY LYMPH NODE, ULTRASOUND GUIDED CORE BIOPSY
+A:       INVASIVE DUCTAL CARCINOMA, NUCLEAR GRADE 2
+
+	 	
+
+COMMENT:
+HORMONE IMMUNOHISTOCHEMISTRY: 
+Estrogen Receptor: positive, H-score: 60
+Progesterone Receptor: NEGATIVE, H-score: 0
+Her2/NEU: POSITIVE, 3+
+
+
+
+
+

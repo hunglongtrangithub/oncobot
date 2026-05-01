@@ -172,7 +172,7 @@ class XTTS:
 
 class OpenAITTS:
     def __init__(self, voice: str = "alloy"):
-        self.api_key = self._get_openai_api_key()
+        self.api_key = settings.get_openai_api_key()
         self.client = OpenAI(api_key=self.api_key)
         self.async_client = AsyncOpenAI(api_key=self.api_key)
         if voice not in ["alloy", "echo", "fable", "onyx", "nova", "shimmer"]:
@@ -180,9 +180,6 @@ class OpenAITTS:
                 f"Invalid voice '{voice}' selected. Please select from: 'alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'."
             )
         self.voice = voice
-
-    def _get_openai_api_key(self):
-        return settings.openai_api_key.get_secret_value()
 
     def run(self, text: str, file_path: str, voice_path=None):
         if voice_path is not None:
@@ -237,7 +234,7 @@ class ReplicateTortoiseTTS:
                 self.replicate_id,
                 input=input,
             )
-            r = requests.get(output_url)  # type: ignore
+            r = requests.get(output_url)
             with open(file_path, "wb") as f:
                 f.write(r.content)
         except Exception as e:
@@ -258,7 +255,7 @@ class ReplicateTortoiseTTS:
                 self.replicate_id,
                 input=input,
             )
-            r = requests.get(output_url)  # type: ignore
+            r = requests.get(output_url)
             with open(file_path, "wb") as f:
                 f.write(r.content)
         except Exception as e:
@@ -287,8 +284,8 @@ class BarkSuno:
                 voice_preset=self.voice_preset,
                 return_tensors="pt",
             )
-            audio_array = self.model.generate(**inputs)  # type: ignore
-            audio_array = audio_array.cpu().numpy().squeeze()
+            audio_array = self.model.generate(**inputs)
+            audio_array = audio_array.cpu().numpy().squeeze()  # type: ignore
 
             sampling_rate = self.model.generation_config.sample_rate  # type: ignore
             scipy.io.wavfile.write(
@@ -313,12 +310,13 @@ class BarkSuno:
 
 
 class DummyTTS:
-    def __init__(self, dummy_audio_file: str = "examples/chatbot1.mp3"):
+    def __init__(self, dummy_audio_file: str):
         logger.info("Dummy TTS initialized.")
         self.dummy_audio_file = dummy_audio_file
 
     def run(self, text: str, file_path: str, voice_path: str):
         """Synchronously copy audio content to specified file path."""
+        _ = text, voice_path
         try_create_directory(Path(file_path).resolve().parent)
         try:
             # Copy the content of the dummy audio file to the specified file path
@@ -330,6 +328,7 @@ class DummyTTS:
 
     async def arun(self, text: str, file_path: str, voice_path: str):
         """Asynchronously copy audio content to specified file path."""
+        _ = text, voice_path
         try_create_directory(Path(file_path).resolve().parent)
         try:
             # Simulate async operation, if needed

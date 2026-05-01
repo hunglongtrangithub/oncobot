@@ -88,7 +88,7 @@ def get_facerender_data(
     remainder = frame_num % batch_size
     if remainder != 0:
         for _ in range(batch_size - remainder):
-            target_semantics_list.append(target_semantics)  # type: ignore
+            target_semantics_list.append(target_semantics)
 
     target_semantics_np = np.array(
         target_semantics_list

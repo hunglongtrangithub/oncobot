@@ -1,0 +1,21 @@
+===================================================================
+Report ID.....................4,doc4
+Patient ID....................pt123123123
+Patient Name..................Fake Patient1
+Principal Date................20100531 1145
+Record Type...................NOTE
+Patient DOB...................04/01/1960
+
+DIAGNOSIS: Stage 2A (T1,N2,M0) infiltrating ductal carcinoma of the right breast triple negative. 
+INTERIM HISTORY: Patient returns for ongoing management of biopsy proven right breast cancer with axillary lymph node metastasis. Her initial visit was on 1/21/2010. Breast examination at that time was significant for a 2 cm palpable lump in the upper inner quadrant of the right breast at the 1 o’clock position. She also had multiple abnormally enlarged right axillary lymph nodes. She has completed 4 cycles of Adriamycin and Carboplatin. She is currently undergoing therapy with Abraxane and has completed 9 of 12 cycles. She has tolerated her chemotherapy well without nausea, vomiting or diarrhea. Breast MRI on 5/25/10 revealed the mass at the 1 o’clock position measuring 1.0x2.9x3.5 cm from previous 1.2x3.4x5.6 cm. The metastatic right axillary lymph node now measures 4.0 mm from previous 7.0 mm. PET/CT on 5/26/10 showed no evidence of distant metastases.
+Physical Exam: Well appearing female in NAD
+VS: BP 120/80, Pulse 72, Temp 97.2
+HEENT: NC/AT, PERRL, EOMI, sclera non-icteric
+Neck: Supple, no masses, thyroid not enlarged
+LUNGS: CTA, No wheezes, rales, rhonchi
+COR: RRR, No murmurs, rubs or gallops
+ABD: Soft, non-tender, non-distended, No HSM.
+EXT: Good pulses, No clubbing, cyanosis or edema
+
+IMPRESSION: 
+Patient has had a partial response to neoadjuvant chemotherapy for triple negative infiltrating ductal carcinoma of the right breast.

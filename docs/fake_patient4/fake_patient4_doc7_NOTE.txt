@@ -1,0 +1,26 @@
+===================================================================
+Report ID.....................7,doc7
+Patient ID....................pt567567567
+Patient Name..................Fake Patient4
+Principal Date................20110727 1115
+Record Type...................NOTE
+Patient DOB...................01/15/1949
+
+
+
+Reason For Visit:  Post op breast surgery
+
+Diagnosis: IIIB (T3, N2, M0) invasive ductal carcinoma of the right breast and invasive lobular carcinoma of the left breast. ER positive, PR positive, and Her2 positive.
+
+Procedure: On 7/12/11 the patient underwent bilateral total mastectomy with right breast specimen revealing invasive ductal carcinoma and right axillary lymph node dissection. Lymph nodes were negative for malignancy. Left breast specimen revealed invasive lobular carcinoma.
+
+Interim History: The patient is a 62 year old woman who presents for her postoperative visit. The operation was performed without complication and her recovery has been uneventful.
+
+Past Medical History: She has a history of left ovarian carcinoma, treated with total abdominal hysterectomy, bilateral salpingo-oophorectomy in July 2002.  She received neoadjuvant chemotherapy with Taxol and Carboplatin.
+
+
+Physical Exam: The patient’s physical examination demonstrates a well healed surgical incision of the right breast. The axillary wound is well healed. No signs of bruising and no infection are noted. She denies any pain, fever, nausea or vomiting.
+ 
+Impression: A 62 year old woman with stage 3B invasive ductal carcinoma of the right breast, and invasive lobular carcinoma of the left breast, treated with bilateral total mastectomy and left axillary lymph node excision.
+
+Recommendations:  She will be seen by Radiation Oncology to begin treatment to the breast.  Patient was started on Tamoxifen. 

@@ -1,0 +1,43 @@
+===================================================================
+Report ID.....................5,doc5
+Patient ID....................pt357357357
+Patient Name..................Fake Patient7
+Principal Date................20100621 1330
+Record Type...................SP
+Patient DOB...................03/01/1938
+CLINICAL HISTORY:
+72 year old female with infiltrating ductal carcinoma of the left breast status post left breast total mastectomy and axillary lymph node dissection. 
+
+FINAL DIAGNOSIS:
+PART 1:  LEFT BREAST, TOTAL MASTECTOMY
+A.       INFILTRATING DUCTAL CARCINOMA
+B.       2 FOCI OF INVASIVE CARCINOMA, NUCLEAR GRADE 3
+C.       LARGER FOCUS 1.8 CM AT 10 O’CLOCK
+D.       SMALLER FOCUS 1.1 CM AT 11 O’CLOCK
+E.       DUCTAL CARCINOMA IN SITE WITH CALCIFICATIONS,NUCLEAR GRADE 2
+F.       SURGICAL MARGINS ARE NEGATIVE
+
+PART 2:  LEFT AXILLARY SENTINEL LYMPH NODE #1 BIOPSY
+A.       ONE LYMPH NODE WITH METASTATIC CARCINOMA (1/1)
+
+PART 3:  LEFT AXILLARY SENTINEL LYMPH NODE #2 BIOPSY
+A.       ONE LYMPH NODE NEGATIVE FOR MALIGNANCY (0/1)
+
+PART 2:  LEFT AXILLARY LYMPH NODE DISSECTION
+A:       TWELVE LYMPH NODES NEGATIVE FOR MALIGNANCY (0/12)
+
+COMMENT:
+
+HORMONE IMMUNOHISTOCHEMISTRY: 
+Estrogen Receptor: POSITIVE, H-score: 190
+Progesterone Receptor: POSITIVE, H-score: 180
+Her2/NEU: NEGATIVE, 1+
+
+PATHOLOGIC STAGE
+PT1
+PN1mi
+PMX
+
+
+
+

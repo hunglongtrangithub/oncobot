@@ -1,0 +1,24 @@
+===================================================================
+Report ID.....................5,doc5
+Patient ID....................pt135135135
+Patient Name..................Fake Patient3
+Principal Date................20100311 1525
+Record Type...................NOTE
+Patient DOB...................11/12/1966
+
+Reason for Visit:  Post op right axillary lymph node dissection.
+
+Diagnosis: Stage II (T2, N1, M0) right invasive ductal breast carcinoma with metastatic disease to the right axillary lymph nodes:  ER positive, PR positive, and Her2 negative.
+
+Procedure: Right axillary lymph node dissection on March 1, 2010. 
+
+Interim History: The patient is a 44 year old female who presents for her postoperative visit following axillary lymph node dissection for metastatic breast cancer. The procedure was performed without complication and her recovery has been uneventful.
+
+PMH: Her past medical history is significant for diagnosis of breast cancer in 2001 when she found a lump in her left breast during self-exam.  At that time she had a biopsy done and had stage 2B adenocarcinoma.  She underwent adjuvant chemotherapy and then had a left mastectomy followed by XRT.  
+
+Physical Exam: The patient’s physical examination demonstrates a healing axillary wound.  There is no erythema, swelling, redness or edema. No signs of bruising and no infection are noted. She denies any fever or pain. 
+
+Impression: A 44 year old female with stage 2 invasive ductal carcinoma of the right breast, treated with a right segmental mastectomy and right axillary lymph node dissection.
+
+Recommendations:  The patient’s surgical management is now complete.  She has a Medical Oncology consult 3/25/10, to discuss systemic therapies as indicated. Radiation Oncology consult to follow, to discuss required adjuvant breast irradiation.
+

@@ -64,7 +64,7 @@ class WhisperSTT:
     def run(self, audio_path: str) -> str:
         try:
             transcription = self.pipe(audio_path)
-            return transcription["text"]  # type: ignore
+            return transcription["text"]
         except Exception as e:
             logger.error(f"Error in loading {self.model_name}: {e}")
             raise
@@ -112,12 +112,9 @@ class ReplicateWhisperSTT:
 
 class OpenAIWhisperSTT:
     def __init__(self):
-        self.api_key = self._get_openai_api_key()
+        self.api_key = settings.get_openai_api_key()
         self.client = OpenAI(api_key=self.api_key)
         self.async_client = AsyncOpenAI(api_key=self.api_key)
-
-    def _get_openai_api_key(self):
-        return settings.openai_api_key.get_secret_value()
 
     def run(self, audio_path: str) -> str:
         audio = try_open_audio_file(Path(audio_path))

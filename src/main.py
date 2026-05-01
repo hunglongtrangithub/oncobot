@@ -1,30 +1,26 @@
 """Main entrypoint for the app."""
 
 import asyncio
+import json
 import os
-
+from pathlib import Path
 from typing import AsyncGenerator
-from fastapi import FastAPI, File, HTTPException, UploadFile, Form
-from fastapi.responses import FileResponse, StreamingResponse, JSONResponse
-from fastapi.staticfiles import StaticFiles
+
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.background import BackgroundTask
 
-from pathlib import Path
-import json
-
-
-from src.utils.logger_config import logger
-from src.utils.env_config import settings
-from src.oncobot.retriever import CustomRetriever
 from src.oncobot.custom_chat_model import CustomChatHuggingFace, DummyChat
-from src.oncobot.ner import NERProcessor, DummyNERProcessor
+from src.oncobot.ner import DummyNERProcessor, NERProcessor
 from src.oncobot.rag_chain import ChatRequest, RAGChain
-from src.oncobot.tts import XTTS, DummyTTS
-from src.oncobot.transcription import WhisperSTT, DummyOpenAIWhisperSTT
+from src.oncobot.retriever import CustomRetriever
 from src.oncobot.talking_face import FakeTalker
-# from src.oncobot.talking_face import CustomSadTalker
-
+from src.oncobot.transcription import DummyOpenAIWhisperSTT, WhisperSTT
+from src.oncobot.tts import XTTS, DummyTTS
+from src.utils.env_config import settings
+from src.utils.logger_config import logger
 
 # Load dummy models if in test mode
 if os.environ.get("MODE") == "testing":
@@ -50,6 +46,7 @@ else:
     transcribe = WhisperSTT(device="cuda")
     # The comments below show a few options to configure the inference of the talker model.
     # The current settings works well on a 40GB NVIDIA A100 GPU.
+    # from src.oncobot.talking_face import CustomSadTalker
     # talker = CustomSadTalker(
     #         batch_size=50,
     #         device=[3, 4, 7],

@@ -67,6 +67,13 @@ MODE=testing make dev
 cd ui && bun run dev
 ```
 
+### Modes in the backend:
+Configured by the `MODE` environment variable, there are 4 modes for the backend server:
+1. `production`: logs to file `./log/oncobot.log` with level `INFO`
+2. `development`: default mode, logs to console with level `DEBUG`
+3. `testing`: logs to console with level `DEBUG`, and uses dummy models for LLM and image captioning, which return fixed responses. This mode is for testing the integration of the frontend and backend without needing real models.
+4. `profile`: enables `line_profiler` for profiling SadTalker.
+
 ## TODO
 
 1. need a lightweight Ollama moddel to test integrating that model being served locally with Oncobot

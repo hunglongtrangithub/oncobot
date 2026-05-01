@@ -17,7 +17,7 @@ dev:
 
 # Start the local test server with uvicorn
 test:
-	MODE=TEST uvicorn src.main:app --reload --port $(PORT)
+	MODE=testing uvicorn src.main:app --reload --port $(PORT)
 
 # Format the code using black and isort
 format:
